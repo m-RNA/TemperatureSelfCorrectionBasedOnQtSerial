@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/clear.ico</file>
+        <file>icon/pause.ico</file>
+        <file>icon/play.ico</file>
+        <file>icon/save.ico</file>
+        <file>icon/time.ico</file>
+        <file>icon/hex.ico</file>
+        <file>icon/connect.ico</file>
+        <file>icon/disconnect.ico</file>
+        <file>icon/send.ico</file>
+        <file>icon/collect.ico</file>
+        <file>icon/check.ico</file>
+        <file>icon/fit.ico</file>
+    </qresource>
+</RCC>
