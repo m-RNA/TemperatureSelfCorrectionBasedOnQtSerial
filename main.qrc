@@ -12,5 +12,7 @@
         <file>icon/collect.ico</file>
         <file>icon/check.ico</file>
         <file>icon/fit.ico</file>
+        <file>icon/app.ico</file>
+        <file>icon/svg/app.svg</file>
     </qresource>
 </RCC>
