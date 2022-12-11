@@ -33,7 +33,7 @@ signals:
 
 private:
     Ui::StartCommunication *ui;
-    QString deviceName;
+    QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial;
     bool serialState = false;
 
