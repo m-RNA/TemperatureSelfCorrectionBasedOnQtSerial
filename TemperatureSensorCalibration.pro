@@ -20,16 +20,19 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     qcustomplot/qcustomplot.cpp \
-    serial/myserial.cpp
+    serial/myserial.cpp \
+    startcommunication.cpp
 
 HEADERS += \
     mainwindow.h \
     qcustomplot/qcustomplot.h \
-    serial/myserial.h
+    serial/myserial.h \
+    startcommunication.h
 
 FORMS += \
     collectcomplete.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    startcommunication.ui
 
 TRANSLATIONS += \
     TemperatureSensorCalibration_zh_CN.ts
