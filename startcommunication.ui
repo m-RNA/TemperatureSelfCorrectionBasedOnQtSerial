@@ -479,7 +479,7 @@
          <number>0</number>
         </property>
         <item row="1" column="0">
-         <widget class="QTextEdit" name="textEdit_8">
+         <widget class="QTextEdit" name="teRecv">
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -569,7 +569,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_29">
+            <widget class="QCheckBox" name="cbPause">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -582,7 +582,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_5">
+            <widget class="QPushButton" name="btnClearRecvTE">
              <property name="whatsThis">
               <string>清除</string>
              </property>
@@ -667,7 +667,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QTextEdit" name="textEdit_2">
+         <widget class="QTextEdit" name="teSend">
           <property name="placeholderText">
            <string>数据发送区</string>
           </property>
@@ -740,7 +740,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_7">
+           <widget class="QPushButton" name="btnClearSendTE">
             <property name="text">
              <string>清除</string>
             </property>
@@ -751,7 +751,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="btnSend">
             <property name="text">
              <string>发送</string>
             </property>
