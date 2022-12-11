@@ -17,14 +17,8 @@ StartCommunication::StartCommunication(QWidget *parent) :
     serial = new QSerialPort;
 
     connect(this, &StartCommunication::serialStateChange, this, &StartCommunication::uiLookUpdata);
-    connect(this, &StartCommunication::destroyed, this, [=](){
-        if(serialState)
-        {
-            serial->close();     // 关闭串口
-            serial->deleteLater();
-            qDebug() << deviceName << "关闭串口";
-        }
-    });
+
+
 }
 
 bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
@@ -40,7 +34,7 @@ bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
     return QWidget::eventFilter(obj, event);
 }
 
-void StartCommunication::setTitle(QString s)
+void StartCommunication::setDeviceName(QString s)
 {
     deviceName = s;
     ui->gbxSerialSetting->setTitle(deviceName);
@@ -63,11 +57,17 @@ void StartCommunication::serialInfoUpdata(void)
 
 StartCommunication::~StartCommunication()
 {
+    if(serialState)    // 退出程序时，关闭使用中的串口
+    {
+        serial->close();     // 关闭串口
+        serial->deleteLater();
+        qDebug() << deviceName << "关闭串口";
+    }
     delete ui;
 }
 void StartCommunication::on_btnSerialSwitch_clicked()
 {
-    qDebug() << deviceName << "串口开关";
+    qDebug() << deviceName << "点击串口开关";
     if (serialState == false)
     {
         serial->setPortName(ui->cbSerial->currentText());
@@ -149,9 +149,6 @@ void StartCommunication::uiLookUpdata(bool state)
         ui->btnSerialSwitch->setText("关闭");
         ui->btnSerialSwitch->setIcon(QIcon(":/icon/connect.ico"));
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
-
-        //ui->ledText->setText("在线");
-        //ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
     }
     else
     {
@@ -161,10 +158,11 @@ void StartCommunication::uiLookUpdata(bool state)
         ui->btnSerialSwitch->setText("打开");
         ui->btnSerialSwitch->setIcon(QIcon(":/icon/disconnect.ico"));
         ui->led->setStyleSheet("border-radius:7px;background-color: red;");
-
-        //ui->ledText->setText("离线");
-        //ui->led->setStyleSheet("border-radius:7px;background-color: red;");
     }
 }
+
+/*  串口接收任务   */
+
+
 
 

@@ -20,7 +20,7 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *event);
 
-    void setTitle(QString s);
+    void setDeviceName(QString s);
 
 public slots:
 
@@ -35,7 +35,7 @@ private:
     Ui::StartCommunication *ui;
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial;
-    bool serialState = false;
+    bool serialState = false; // 串口状态 true为开 false为关
 
     void serialInfoUpdata(void);
 
