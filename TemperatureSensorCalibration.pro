@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH +=  qcustomplot serial
 
 SOURCES += \
+    customchart.cpp \
     main.cpp \
     mainwindow.cpp \
     qcustomplot/qcustomplot.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
     startcommunication.cpp
 
 HEADERS += \
+    customchart.h \
     mainwindow.h \
     qcustomplot/qcustomplot.h \
     serial/myserial.h \
@@ -31,6 +33,7 @@ HEADERS += \
 
 FORMS += \
     collectcomplete.ui \
+    customchart.ui \
     mainwindow.ui \
     startcommunication.ui
 

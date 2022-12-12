@@ -802,7 +802,7 @@
   <customwidget>
    <class>StartCommunication</class>
    <extends>QWidget</extends>
-   <header>startcommunication.h</header>
+   <header location="global">startcommunication.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
