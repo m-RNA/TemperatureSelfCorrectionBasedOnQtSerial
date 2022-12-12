@@ -27,7 +27,12 @@ public slots:
 private slots:
     void on_btnSerialSwitch_clicked();
     void uiLookUpdata(bool state);
+
     void serialReadyRead_Slot();
+
+    void serialRecvDataAnalyse(QByteArray rxData); // 解析数据
+    void serialRecvTEditUpdata(QByteArray rxData); // 更新TextEdit
+    void serialRecvPlotUpdata(double data);        // 更新波形
 
     void on_btnClearRecvTE_clicked();
 
@@ -37,17 +42,26 @@ private slots:
 
     void on_cbPause_toggled(bool checked);
 
+    void on_cbSendRegular_toggled(bool checked);
+
+    void on_spbxRegularTime_valueChanged(int arg1);
+
 signals:
     void serialStateChange(bool state);
     void serialPauseStateChange(bool state);
-    
+    void serialRecvData(QByteArray data);
+    void RecvDataAnalyseFinsh(double data);  // 更新波形
+
 
 private:
     Ui::StartCommunication *ui;
+
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial;
-    bool serialState = false;    // 串口状态 true为开 false为关
-    bool recvPauseState = false; // 串口暂停接收状态 true为暂停 false为正常
+    QTimer *timerSend;
+    bool serialState = false;      // 串口状态 true为开 false为关
+    bool recvPauseState = false;   // 暂停接收状态 true为暂停 false为正常
+    // bool sendRegularState = false; // 定时发送状态 true为开启 false为关闭
 
     void serialInfoUpdata(void);
 
