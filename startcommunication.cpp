@@ -21,6 +21,13 @@ StartCommunication::StartCommunication(QWidget *parent) :
     // 链接串口接收到信息信号
     connect(serial, &QSerialPort::readyRead, this, &StartCommunication::serialReadyRead_Slot);
 
+    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvTEditUpdata);
+    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvDataAnalyse);
+    connect(this, &StartCommunication::RecvDataAnalyseFinsh, this, &StartCommunication::serialRecvPlotUpdata);
+
+    timerSend = new QTimer;
+    timerSend->setInterval(ui->spbxRegularTime->value());
+    connect(timerSend, &QTimer::timeout, this, &StartCommunication::on_btnSend_clicked);
 
 }
 
@@ -43,15 +50,17 @@ void StartCommunication::setDeviceName(QString s)
     ui->gbxSerialSetting->setTitle(deviceName);
 }
 
-// 扫描更新界面串口信息
+// 扫描更新界面串口端口信息
 void StartCommunication::serialInfoUpdata(void)
 {
     QStringList serialNamePort;
-    // 查询串口信息
+    // 查询串口端口信息
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
         // 将可用串口端口信息放到serialNamePort这里面
-        serialNamePort << info.portName();
+        // 其中空格作为串口初始化的查找索引
+        // 待优化为字符串过长变省略号
+        serialNamePort << info.portName() + " ("  +info.description() + ")"; // + info.manufacturer();
     }
     ui->cbSerial->clear();
     ui->cbSerial->addItems(serialNamePort);
@@ -75,7 +84,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
     qDebug() << deviceName << "点击串口开关";
     if (serialState == false)
     {
-        serial->setPortName(ui->cbSerial->currentText());
+        serial->setPortName(ui->cbSerial->currentText().left(ui->cbSerial->currentText().indexOf(" ")));
         serial->setBaudRate(ui->cbBaudrate->currentText().toInt());
 
         //数据位
@@ -181,56 +190,64 @@ void StartCommunication::serialReadyRead_Slot()
 {
     QByteArray realtimeRxBuf; // 最新接收数据
     realtimeRxBuf = serial->readAll();
+    emit serialRecvData(realtimeRxBuf);
+}
 
+void StartCommunication::serialRecvTEditUpdata(QByteArray rxData)
+{
     // 暂停接收时，读完串口消息就退出不处理
     if(recvPauseState == true) return;
 
-    QString qsBuf = QString(realtimeRxBuf);
-
+    QString qsBuf = QString(rxData);
     ui->teRecv->insertPlainText(qsBuf);       // 将消息附到recvTextEdit(连续)
     ui->teRecv->moveCursor(QTextCursor::End); // 滑动条保持在最低部
+}
 
+void StartCommunication::serialRecvPlotUpdata(double data)
+{
+    //    ui->customPlot->graph(0)->addData(m_xLength, data);// 添加数据
+    //    ui->customPlot->graph(0)->setName("标准 "+QString("%1℃").arg(data));// 设置图例名称
+
+    //    // 曲线能动起来的关键在这里，设定x轴范围为最近80个数据
+    //    ui->customPlot->xAxis->setRange(m_xLength, 80, Qt::AlignRight); // 右对齐
+    //    // 刷新画图
+    //    ui->customPlot->replot();
+
+    //    // 自动缩放（要画完才调用）
+    //    ui->customPlot->graph(0)->rescaleAxes(); // 只会缩小 不会放大
+    //    m_xLength++;
+}
+
+void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
+{
     QByteArray rxFrame;
     static QByteArray staticTemp; // 静态中间变量
     int startIndex = -1;
 
-    staticTemp.append(realtimeRxBuf); // 读取串口，附在 staticTemp 之后
+    staticTemp.append(rxData); // 读取串口，附在 staticTemp 之后
     startIndex = staticTemp.lastIndexOf("\n"); //获取"\n"的下标
 
     if (startIndex >= 0)
     {
-        rxFrame.append(staticTemp.left(startIndex -1)); //带"\n"一起复制进去
-        // this->vSerial->vSerialData->rxByteCnt += rxFrame.length(); // 更新rx计数值
+        rxFrame.append(staticTemp.left(startIndex -1)); // 去除"\r\n"
         staticTemp.remove(0, startIndex + 1); // 移除"\n"之前的内容
     }
 
     if (rxFrame.isEmpty())
         return;
 
-    qDebug() << "RxFrame:" << rxFrame;
+    qDebug() << deviceName << "RxFrame:" << rxFrame;
     // 解析数据
     // {text}23.3
     // printf("filtemp=%f\r\n",rtd);
     int title_index_left;
     title_index_left = rxFrame.indexOf("}");
-    realtimeRxBuf = rxFrame.replace("{", "").left(title_index_left - 1);
-    qDebug() << "Title:" << QString(realtimeRxBuf);
-    int titleLength = realtimeRxBuf.length();
+    rxData = rxFrame.replace("{", "").left(title_index_left - 1);
+    qDebug() << deviceName << "Title:" << QString(rxData);
+    int titleLength = rxData.length();
     double data;
     data = QString(rxFrame.right(rxFrame.length() - 1- titleLength)).toDouble();
-    qDebug() << "Temp:" << data;
-
-//    ui->customPlot->graph(0)->addData(m_xLength, data);// 添加数据
-//    ui->customPlot->graph(0)->setName("标准 "+QString("%1℃").arg(data));// 设置图例名称
-
-//    // 曲线能动起来的关键在这里，设定x轴范围为最近80个数据
-//    ui->customPlot->xAxis->setRange(m_xLength, 80, Qt::AlignRight); // 右对齐
-//    // 刷新画图
-//    ui->customPlot->replot();
-
-//    // 自动缩放（要画完才调用）
-//    ui->customPlot->graph(0)->rescaleAxes(); // 只会缩小 不会放大
-//    m_xLength++;
+    qDebug() << deviceName << "Temp:" << data;
 }
 
 /*   串口接收任务   */
@@ -244,4 +261,20 @@ void StartCommunication::on_cbPause_toggled(bool checked)
     qDebug() << deviceName << "点击暂停combox" << checked;
     recvPauseState = checked;
     emit serialPauseStateChange(recvPauseState);
+}
+
+void StartCommunication::on_cbSendRegular_toggled(bool checked)
+{
+    // sendRegularState = checked;
+    if(checked){
+        timerSend->setInterval(ui->spbxRegularTime->value());
+        timerSend->start();
+    }else{
+        timerSend->stop();
+    }
+}
+
+void StartCommunication::on_spbxRegularTime_valueChanged(int arg1)
+{
+    timerSend->setInterval(arg1);
 }

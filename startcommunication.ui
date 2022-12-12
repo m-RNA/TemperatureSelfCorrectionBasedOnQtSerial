@@ -260,7 +260,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbSerial"/>
+            <widget class="QComboBox" name="cbSerial">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_8">
@@ -676,7 +683,7 @@
         <item row="1" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="cbSendRegular">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -689,7 +696,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="spbxRegularTime">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
