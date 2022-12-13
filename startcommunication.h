@@ -22,6 +22,11 @@ public:
 
     void setDeviceName(QString s);
 
+    bool state()
+    {
+        return serialState;
+    }
+
 public slots:
 
 private slots:
