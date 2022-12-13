@@ -45,7 +45,7 @@ private slots:
 private:
     Ui::CustomChart *ui;
     unsigned int x_default = 0;
-    int xRange = 50;
+    double xRange = 80;
 };
 
 #endif // CUSTOMCHART_H
