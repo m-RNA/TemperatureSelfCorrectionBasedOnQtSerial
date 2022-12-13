@@ -4,7 +4,6 @@
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
-#include "myserial.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,9 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
             ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: red;");
         }
     });
-
-
-
 }
 
 MainWindow::~MainWindow()

@@ -21,14 +21,12 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     qcustomplot/qcustomplot.cpp \
-    serial/myserial.cpp \
     startcommunication.cpp
 
 HEADERS += \
     customchart.h \
     mainwindow.h \
     qcustomplot/qcustomplot.h \
-    serial/myserial.h \
     startcommunication.h
 
 FORMS += \
