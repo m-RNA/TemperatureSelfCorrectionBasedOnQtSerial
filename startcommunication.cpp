@@ -1,6 +1,7 @@
 #include "startcommunication.h"
 #include "ui_startcommunication.h"
 #include <QSerialPortInfo>
+#include "customchart.h"
 
 StartCommunication::StartCommunication(QWidget *parent) :
     QWidget(parent),
@@ -8,7 +9,7 @@ StartCommunication::StartCommunication(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    serialInfoUpdata();
+    serialInfoUpdate();
 
     // 串口显示列表 安装事件过滤
     ui->cbSerial->installEventFilter(this);
@@ -16,14 +17,14 @@ StartCommunication::StartCommunication(QWidget *parent) :
     qDebug() << deviceName << "Start";
     serial = new QSerialPort;
 
-    connect(this, &StartCommunication::serialStateChange, this, &StartCommunication::uiLookUpdata);
+    connect(this, &StartCommunication::serialStateChange, this, &StartCommunication::uiLookUpdate);
 
     // 链接串口接收到信息信号
     connect(serial, &QSerialPort::readyRead, this, &StartCommunication::serialReadyRead_Slot);
 
-    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvTEditUpdata);
+    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvTEditUpdate);
     connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvDataAnalyse);
-    connect(this, &StartCommunication::RecvDataAnalyseFinsh, this, &StartCommunication::serialRecvPlotUpdata);
+    connect(this, &StartCommunication::RecvDataAnalyseFinish, ui->cChart, &CustomChart::addYPoint);
 
     timerSend = new QTimer;
     timerSend->setInterval(ui->spbxRegularTime->value());
@@ -35,10 +36,10 @@ bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) //鼠标点击事件
     {
-        if (obj == ui->cbSerial) // combox
+        if (obj == ui->cbSerial) // cBox
         {
             // 更新界面串口列表信息
-            serialInfoUpdata();
+            serialInfoUpdate();
         }
     }
     return QWidget::eventFilter(obj, event);
@@ -51,7 +52,7 @@ void StartCommunication::setDeviceName(QString s)
 }
 
 // 扫描更新界面串口端口信息
-void StartCommunication::serialInfoUpdata(void)
+void StartCommunication::serialInfoUpdate(void)
 {
     QStringList serialNamePort;
     // 查询串口端口信息
@@ -65,7 +66,6 @@ void StartCommunication::serialInfoUpdata(void)
     ui->cbSerial->clear();
     ui->cbSerial->addItems(serialNamePort);
 }
-
 
 StartCommunication::~StartCommunication()
 {
@@ -153,7 +153,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
     emit serialStateChange(serialState);
 }
 
-void StartCommunication::uiLookUpdata(bool state)
+void StartCommunication::uiLookUpdate(bool state)
 {
     if(state)
     {
@@ -193,7 +193,7 @@ void StartCommunication::serialReadyRead_Slot()
     emit serialRecvData(realtimeRxBuf);
 }
 
-void StartCommunication::serialRecvTEditUpdata(QByteArray rxData)
+void StartCommunication::serialRecvTEditUpdate(QByteArray rxData)
 {
     // 暂停接收时，读完串口消息就退出不处理
     if(recvPauseState == true) return;
@@ -203,7 +203,7 @@ void StartCommunication::serialRecvTEditUpdata(QByteArray rxData)
     ui->teRecv->moveCursor(QTextCursor::End); // 滑动条保持在最低部
 }
 
-void StartCommunication::serialRecvPlotUpdata(double data)
+void StartCommunication::serialRecvPlotUpdate(double data)
 {
     //    ui->customPlot->graph(0)->addData(m_xLength, data);// 添加数据
     //    ui->customPlot->graph(0)->setName("标准 "+QString("%1℃").arg(data));// 设置图例名称
@@ -239,7 +239,7 @@ void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
     qDebug() << deviceName << "RxFrame:" << rxFrame;
     // 解析数据
     // {text}23.3
-    // printf("filtemp=%f\r\n",rtd);
+    // printf("temp=%f\r\n",rtd);
     int title_index_left;
     title_index_left = rxFrame.indexOf("}");
     rxData = rxFrame.replace("{", "").left(title_index_left - 1);
@@ -248,6 +248,8 @@ void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
     double data;
     data = QString(rxFrame.right(rxFrame.length() - 1- titleLength)).toDouble();
     qDebug() << deviceName << "Temp:" << data;
+
+    emit RecvDataAnalyseFinish(data);
 }
 
 /*   串口接收任务   */
@@ -258,7 +260,7 @@ void StartCommunication::on_btnSend_clicked()
 
 void StartCommunication::on_cbPause_toggled(bool checked)
 {
-    qDebug() << deviceName << "点击暂停combox" << checked;
+    qDebug() << deviceName << "点击暂停cBox" << checked;
     recvPauseState = checked;
     emit serialPauseStateChange(recvPauseState);
 }

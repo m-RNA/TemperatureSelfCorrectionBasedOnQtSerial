@@ -26,13 +26,13 @@ public slots:
 
 private slots:
     void on_btnSerialSwitch_clicked();
-    void uiLookUpdata(bool state);
+    void uiLookUpdate(bool state);
 
     void serialReadyRead_Slot();
 
     void serialRecvDataAnalyse(QByteArray rxData); // 解析数据
-    void serialRecvTEditUpdata(QByteArray rxData); // 更新TextEdit
-    void serialRecvPlotUpdata(double data);        // 更新波形
+    void serialRecvTEditUpdate(QByteArray rxData); // 更新TextEdit
+    void serialRecvPlotUpdate(double data);        // 更新波形
 
     void on_btnClearRecvTE_clicked();
 
@@ -50,7 +50,7 @@ signals:
     void serialStateChange(bool state);
     void serialPauseStateChange(bool state);
     void serialRecvData(QByteArray data);
-    void RecvDataAnalyseFinsh(double data);  // 更新波形
+    void RecvDataAnalyseFinish(double data);  // 更新波形
 
 
 private:
@@ -63,9 +63,7 @@ private:
     bool recvPauseState = false;   // 暂停接收状态 true为暂停 false为正常
     // bool sendRegularState = false; // 定时发送状态 true为开启 false为关闭
 
-    void serialInfoUpdata(void);
-
-    void serialInit(QSerialPort sp);
+    void serialInfoUpdate(void);
 
     void printSerialPortInitInfo(QSerialPort *sp)
     {
