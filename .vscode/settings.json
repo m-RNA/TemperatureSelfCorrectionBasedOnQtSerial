@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.tcc": "cpp",
+        "fstream": "cpp",
+        "qserialportinfo": "cpp"
+    },
+    "cSpell.words": [
+        "collectcomplete",
+        "STARTCOMMUNICATION"
+    ]
+}

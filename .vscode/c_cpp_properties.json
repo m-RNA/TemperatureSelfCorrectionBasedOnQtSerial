@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "qt",
+            "includePath": [
+                "d:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/**",
+                "D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets/",
+                "F:/Senior_Part1/GraduationProject/UpperComputer/TemperatureSensorCalibration/",
+                "F:/Senior_Part1/GraduationProject/UpperComputer/buildTemperatureSensorCalibration/",
+                "${workspaceRoot}/**",
+                "${workspaceRoot}/qcustomplot/**"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11"
+        }
+    ],
+    "version": 4
+}
