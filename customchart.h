@@ -19,7 +19,7 @@ public:
 
 public slots:
     void addYPoint(double y);
-    void addPoint(int x, double y);
+    void addPoint(double x, double y);
 
     void addVLine(double x);
     void addHLine(double y);

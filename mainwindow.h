@@ -31,7 +31,7 @@ private:
     int collectTimestamp;    // 采集时间戳（秒 * TIMESTAMP_FACTOR)
     int sampledPointNum = 0; // 已采集点数
     int sampledPointSum = 8; // 需要采集点数
-
+    int pgsbSingleValue = 0; //
     void timerCollectTimeOut();
     QString collectTimestampToHhMmSs(int timestamp);
 };

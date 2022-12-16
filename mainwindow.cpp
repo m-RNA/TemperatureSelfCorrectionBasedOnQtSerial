@@ -8,7 +8,7 @@
 #include <QInputDialog>
 
 #define PGSB_REFRESH_MS 50
-#define TIMESTAMP_FACTOR (1000.0d / PGSB_REFRESH_MS)
+#define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -22,30 +22,30 @@ MainWindow::MainWindow(QWidget *parent)
     ui->start_Dtm->setDeviceName("待定仪器");
     ui->start_Std->setDeviceName("标准仪器");
 
-    connect(ui->start_Std, &StartCommunication::serialStateChange, this, [=](bool state)
-            {
-        if(state){
-            ui->ledText_Std->setText("在线");
-            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
-        }
-        else{
-            ui->ledText_Std->setText("离线");
-            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: red;");
-        } });
+//    connect(ui->start_Std, &StartCommunication::serialStateChange, this, [=](bool state)
+//            {
+//        if(state){
+//            ui->ledText_Std->setText("在线");
+//            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
+//        }
+//        else{
+//            ui->ledText_Std->setText("离线");
+//            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: red;");
+//        } });
 
-    connect(ui->start_Dtm, &StartCommunication::serialStateChange, this, [=](bool state)
-            {
-        if(state){
-            ui->ledText_Dtm->setText("在线");
-            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
-        }
-        else{
-            ui->ledText_Dtm->setText("离线");
-            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: red;");
-        } });
+//    connect(ui->start_Dtm, &StartCommunication::serialStateChange, this, [=](bool state)
+//            {
+//        if(state){
+//            ui->ledText_Dtm->setText("在线");
+//            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
+//        }
+//        else{
+//            ui->ledText_Dtm->setText("离线");
+//            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: red;");
+//        } });
 
-    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
-    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
+//    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
+//    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
     connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
     connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
 }
@@ -61,15 +61,15 @@ QString MainWindow::collectTimestampToHhMmSs(int timestamp)
     return QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60);
 }
 
+
 void MainWindow::timerCollectTimeOut()
 {
-    int singleValue = ui->pgsbSingle->value() + 1; // 进来时间戳++
-    int singleMax = ui->pgsbSingle->maximum();
-    ui->pgsbSingle->setValue(singleValue);
-    ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(singleMax - singleValue));
+    pgsbSingleValue++; // 进来进度条++
+    ui->pgsbSingle->setValue(pgsbSingleValue);
+    ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp - pgsbSingleValue));
 
-    if (singleMax > singleValue) //  时间是否到了
-        return;                  // 没到退出
+    if (collectTimestamp > pgsbSingleValue) // 时间是否到了
+        return;                             // 没到退出
 
     // 时间到了
     timerCollect->stop();
@@ -94,6 +94,7 @@ void MainWindow::timerCollectTimeOut()
         {
             // 重置单点进度
             ui->pgsbSingle->setFormat("等待下个采集点中");
+            pgsbSingleValue = 0;
             ui->pgsbSingle->setValue(0);
             ui->pgsbSingle->setMaximum(0);
         }
@@ -124,18 +125,18 @@ void MainWindow::on_btnCollect_clicked()
 
         // 清空实时波形时间轴变为相对时间戳
         // # 这个放在if (sampledPointNum == 0)里面才对(调试)
-        collectTimestamp = ui->spbxSampleTime->value() * 60 * TIMESTAMP_FACTOR; // 分钟转换时间戳
-        qDebug() << "collectTimestamp" << collectTimestamp;
-
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
-        ui->pgsbSum->setValue(sampledPointNum);
-        ui->pgsbSingle->setMaximum(collectTimestamp);
-        timerCollect->start();
         if (sampledPointNum == 0)
         {
+            collectTimestamp = ui->spbxSampleTime->value() * 60 * TIMESTAMP_FACTOR; // 分钟转换时间戳
+            qDebug() << "collectTimestamp" << collectTimestamp;
             ui->pgsbSum->setMaximum(ui->spbxSamplePointNum->value());
+            ui->pgsbSum->setValue(0);
         }
+        pgsbSingleValue = 0;
+        ui->pgsbSingle->setValue(0);
+        ui->pgsbSingle->setMaximum(collectTimestamp);
+        ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
+        timerCollect->start();
     }
     else // 采集完毕
     {

@@ -78,7 +78,7 @@ void CustomChart::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart pa
 
 void CustomChart::axisXYDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
 {
-	// 通过双击轴来
+	// 通过双击轴来设置轴范围
 	if (part == QCPAxis::spAxis)
 	{
 		bool ok;
@@ -187,7 +187,7 @@ void CustomChart::addYPoint(double y)
 	qDebug() << "addYPoint";
 	// 添加数据
 	ui->customPlot->graph()->addData(x_default, y);
-
+	// rescalseValueAxis
 	ui->customPlot->rescaleAxes();										// 调整显示区域（要画完才调用）只会缩小 不会放大
 	ui->customPlot->xAxis->setRange(x_default, xRange, Qt::AlignRight); // 曲线能动起来的关键在这里，设定x轴范围为最近xRange个数据 右对齐
 	ui->customPlot->replot();											// 刷新画图
@@ -195,8 +195,17 @@ void CustomChart::addYPoint(double y)
 	x_default++;
 }
 
-void CustomChart::addPoint(int x, double y)
+void CustomChart::addPoint(double x, double y)
 {
+	qDebug() << "addPoint";
+	// 添加数据
+	ui->customPlot->graph()->addData(x, y);
+	// rescalseValueAxis
+	ui->customPlot->rescaleAxes();										// 调整显示区域（要画完才调用）只会缩小 不会放大
+	// ui->customPlot->xAxis->setRange(x, xRange, Qt::AlignRight); // 曲线能动起来的关键在这里，设定x轴范围为最近xRange个数据 右对齐
+	ui->customPlot->replot();											// 刷新画图
+
+	x_default++;
 }
 
 void CustomChart::addVLine(double x)

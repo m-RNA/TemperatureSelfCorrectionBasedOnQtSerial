@@ -242,12 +242,12 @@ void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
     int startIndex = -1;
 
     staticTemp.append(rxData);                 // 读取串口，附在 staticTemp 之后
-    startIndex = staticTemp.lastIndexOf("\n"); // 获取"\n"的下标
+    startIndex = staticTemp.lastIndexOf("\n"); // 获取"\n"的索引
 
     if (startIndex >= 0)
     {
         rxFrame.append(staticTemp.left(startIndex - 1)); // 去除"\r\n"
-        staticTemp.remove(0, startIndex + 1);            // 移除"\n"之前的内容
+        staticTemp.remove(0, startIndex + 1);            // 移除"\n"与"\n"之前的内容
     }
 
     if (rxFrame.isEmpty())
@@ -269,7 +269,7 @@ void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
     emit RecvDataAnalyseFinish(data);
 }
 
-/*   串口接收任务   */
+/*   串口发送任务   */
 void StartCommunication::on_btnSend_clicked()
 {
     serial->write(ui->teSend->toPlainText().toLocal8Bit().data());
