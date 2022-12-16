@@ -14,9 +14,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-INCLUDEPATH +=  qcustomplot serial
+INCLUDEPATH +=  qcustomplot D:\eigen-3.3.8
 
 SOURCES += \
+    collectpanel.cpp \
     customchart.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -24,13 +25,14 @@ SOURCES += \
     startcommunication.cpp
 
 HEADERS += \
+    collectpanel.h \
     customchart.h \
     mainwindow.h \
     qcustomplot/qcustomplot.h \
     startcommunication.h
 
 FORMS += \
-    collectcomplete.ui \
+    collectpanel.ui \
     customchart.ui \
     mainwindow.ui \
     startcommunication.ui
