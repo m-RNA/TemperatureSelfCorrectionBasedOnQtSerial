@@ -28,7 +28,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget_5">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_11">
        <attribute name="title">
@@ -56,7 +56,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <widget class="QSplitter" name="splitter_2">
@@ -203,7 +203,7 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <widget class="CustomChart" name="calibrationChart" native="true"/>
+                <widget class="FitChart" name="calibrationChart" native="true"/>
                 <widget class="QTableWidget" name="tableWidget">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -689,12 +689,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustomChart</class>
-   <extends>QWidget</extends>
-   <header location="global">customchart.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>StartCommunication</class>
    <extends>QWidget</extends>
    <header location="global">startcommunication.h</header>
@@ -703,7 +697,13 @@
   <customwidget>
    <class>CollectPanel</class>
    <extends>QWidget</extends>
-   <header>collectpanel.h</header>
+   <header location="global">collectpanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FitChart</class>
+   <extends>QWidget</extends>
+   <header>fitchart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

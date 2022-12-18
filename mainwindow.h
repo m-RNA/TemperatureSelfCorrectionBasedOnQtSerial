@@ -32,7 +32,10 @@ private:
     int sampledPointNum = 0; // 已采集点数
     int sampledPointSum = 8; // 需要采集点数
     int pgsbSingleValue = 0; //
+
     void timerCollectTimeOut();
     QString collectTimestampToHhMmSs(int timestamp);
+    void setDeviceName_Std(QString name);
+    void setDeviceName_Dtm(QString name);
 };
 #endif // MAINWINDOW_H

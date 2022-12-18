@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "startcommunication.h"
-#include "customchart.h"
 #include <QApplication>
 #include <QThread>
 
@@ -19,7 +18,6 @@ int main(int argc, char *argv[])
     // 程序异常退出：检查有无野指针，未初始化变量 参考B站：BV1U14y1K7Po
     MainWindow w;
     // StartCommunication w;
-    // CustomChart w;
     w.show();
 
     //    MainWindow *w = new MainWindow; // 程序异常退出：此方法不推荐，有的任务未处理

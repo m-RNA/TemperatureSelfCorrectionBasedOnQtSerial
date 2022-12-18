@@ -25,3 +25,8 @@ void CollectPanel::slSetState(bool state)
         ui->led->setStyleSheet("border-radius:7px;background-color: red;");
     }
 }
+
+void CollectPanel::setDeviceName(QString name)
+{
+    ui->chart->graph()->setName(name);
+}

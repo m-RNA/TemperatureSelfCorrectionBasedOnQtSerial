@@ -3,8 +3,9 @@
 
 #include <QWidget>
 
-namespace Ui {
-class CollectPanel;
+namespace Ui
+{
+    class CollectPanel;
 }
 
 class CollectPanel : public QWidget
@@ -15,6 +16,7 @@ public:
     explicit CollectPanel(QWidget *parent = nullptr);
     ~CollectPanel();
     void slSetState(bool state);
+    void setDeviceName(QString name);
 
 private:
     Ui::CollectPanel *ui;

@@ -19,23 +19,26 @@ INCLUDEPATH +=  qcustomplot D:\eigen-3.3.8
 SOURCES += \
     bll_serial.cpp \
     collectpanel.cpp \
-    customchart.cpp \
     main.cpp \
     mainwindow.cpp \
+    qcustomplot/charttracer.cpp \
+    qcustomplot/fitchart.cpp \
+    qcustomplot/interactchart.cpp \
     qcustomplot/qcustomplot.cpp \
     startcommunication.cpp
 
 HEADERS += \
     bll_serial.h \
     collectpanel.h \
-    customchart.h \
     mainwindow.h \
+    qcustomplot/charttracer.h \
+    qcustomplot/fitchart.h \
+    qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
     startcommunication.h
 
 FORMS += \
     collectpanel.ui \
-    customchart.ui \
     mainwindow.ui \
     startcommunication.ui
 

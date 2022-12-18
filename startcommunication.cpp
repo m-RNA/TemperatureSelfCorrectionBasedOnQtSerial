@@ -1,8 +1,7 @@
 #include "startcommunication.h"
 #include "ui_startcommunication.h"
+#include "interactchart.h"
 #include <QSerialPortInfo>
-#include "customchart.h"
-#include <QThreadPool>
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::StartCommunication)
@@ -50,6 +49,8 @@ void StartCommunication::setDeviceName(QString s)
 {
     deviceName = s;
     ui->gbxSerialSetting->setTitle(deviceName);
+    ui->chart->setDeviceName(deviceName);
+    ui->chart->replot();
 }
 
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息

@@ -7,9 +7,22 @@
 #include <QSerialPort>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QTimer>
 
 #define PGSB_REFRESH_MS 50
 #define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
+
+void MainWindow::setDeviceName_Std(QString name)
+{
+    ui->start_Std->setDeviceName(name);
+    ui->collectPanel_Std->setDeviceName(name);
+}
+
+void MainWindow::setDeviceName_Dtm(QString name)
+{
+    ui->start_Dtm->setDeviceName(name);
+    ui->collectPanel_Dtm->setDeviceName(name);
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -21,9 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     timerCollect->setInterval(PGSB_REFRESH_MS);   // 每 PGSB_REFRESH_MS ms检查一次
     connect(timerCollect, &QTimer::timeout, this, &MainWindow::timerCollectTimeOut);
 
-    ui->start_Dtm->setDeviceName("待定仪器");
-    ui->start_Std->setDeviceName("标准仪器");
-
+    setDeviceName_Dtm("待定仪器");
+    setDeviceName_Std("标准仪器");
     connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
 

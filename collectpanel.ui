@@ -158,7 +158,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="CustomChart" name="wave" native="true">
+        <widget class="InteractChart" name="chart" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -194,9 +194,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustomChart</class>
+   <class>InteractChart</class>
    <extends>QWidget</extends>
-   <header location="global">customchart.h</header>
+   <header location="global">interactchart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
