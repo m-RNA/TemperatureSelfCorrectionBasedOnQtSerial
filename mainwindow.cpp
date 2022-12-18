@@ -12,18 +12,6 @@
 #define PGSB_REFRESH_MS 50
 #define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
 
-void MainWindow::setDeviceName_Std(QString name)
-{
-    ui->start_Std->setDeviceName(name);
-    ui->collectPanel_Std->setDeviceName(name);
-}
-
-void MainWindow::setDeviceName_Dtm(QString name)
-{
-    ui->start_Dtm->setDeviceName(name);
-    ui->collectPanel_Dtm->setDeviceName(name);
-}
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -48,6 +36,18 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::setDeviceName_Std(QString name)
+{
+    ui->start_Std->setDeviceName(name);
+    ui->collectPanel_Std->setDeviceName(name);
+}
+
+void MainWindow::setDeviceName_Dtm(QString name)
+{
+    ui->start_Dtm->setDeviceName(name);
+    ui->collectPanel_Dtm->setDeviceName(name);
 }
 
 QString MainWindow::collectTimestampToHhMmSs(int timestamp)
