@@ -14,33 +14,39 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-INCLUDEPATH +=  qcustomplot D:\eigen-3.3.8
+INCLUDEPATH +=  \
+    qcustomplot \
+    least_square_method \
+    collect_data \
+    start_serial \
+    D:/eigen-3.3.8 \
+
 
 SOURCES += \
-    bll_serial.cpp \
-    collectpanel.cpp \
+    collect_data/collectpanel.cpp \
+    least_square_method/fitchart.cpp \
     main.cpp \
+    start_serial/bll_serial.cpp \
+    start_serial/startcommunication.cpp\
     mainwindow.cpp \
     qcustomplot/charttracer.cpp \
-    qcustomplot/fitchart.cpp \
     qcustomplot/interactchart.cpp \
     qcustomplot/qcustomplot.cpp \
-    startcommunication.cpp
 
 HEADERS += \
-    bll_serial.h \
-    collectpanel.h \
+    collect_data/collectpanel.h \
+    least_square_method/fitchart.h \
     mainwindow.h \
     qcustomplot/charttracer.h \
-    qcustomplot/fitchart.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
-    startcommunication.h
+    start_serial/bll_serial.h \
+    start_serial/startcommunication.h
 
 FORMS += \
-    collectpanel.ui \
+    collect_data/collectpanel.ui \
     mainwindow.ui \
-    startcommunication.ui
+    start_serial/startcommunication.ui
 
 TRANSLATIONS += \
     TemperatureSensorCalibration_zh_CN.ts

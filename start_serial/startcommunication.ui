@@ -15,16 +15,16 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QGroupBox" name="gbxSerialSetting">
@@ -452,7 +452,7 @@
               <string>打开</string>
              </property>
              <property name="icon">
-              <iconset resource="main.qrc">
+              <iconset resource="../main.qrc">
                <normaloff>:/icon/disconnect.ico</normaloff>:/icon/disconnect.ico</iconset>
              </property>
             </widget>
@@ -537,7 +537,7 @@
               <string>保存</string>
              </property>
              <property name="icon">
-              <iconset resource="main.qrc">
+              <iconset resource="../main.qrc">
                <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
              </property>
              <property name="iconSize">
@@ -609,7 +609,7 @@
               <string>清除</string>
              </property>
              <property name="icon">
-              <iconset resource="main.qrc">
+              <iconset resource="../main.qrc">
                <normaloff>:/icon/clear.ico</normaloff>:/icon/clear.ico</iconset>
              </property>
              <property name="iconSize">
@@ -764,7 +764,7 @@
              <string>清除</string>
             </property>
             <property name="icon">
-             <iconset resource="main.qrc">
+             <iconset resource="../main.qrc">
               <normaloff>:/icon/clear.ico</normaloff>:/icon/clear.ico</iconset>
             </property>
            </widget>
@@ -775,7 +775,7 @@
              <string>发送</string>
             </property>
             <property name="icon">
-             <iconset resource="main.qrc">
+             <iconset resource="../main.qrc">
               <normaloff>:/icon/send.ico</normaloff>:/icon/send.ico</iconset>
             </property>
            </widget>
@@ -811,8 +811,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>189</height>
+             <width>362</width>
+             <height>184</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_7">
@@ -1070,7 +1070,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="main.qrc"/>
+  <include location="../main.qrc"/>
  </resources>
  <connections/>
 </ui>
