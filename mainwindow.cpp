@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     timerCollect = new QTimer(this);
+    timerCollect->setTimerType(Qt::PreciseTimer); // 设置为精准定时器
     timerCollect->setInterval(PGSB_REFRESH_MS); // 每 PGSB_REFRESH_MS ms检查一次
     connect(timerCollect, &QTimer::timeout, this, &MainWindow::timerCollectTimeOut);
 
@@ -46,8 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
 //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
-    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
-    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
+//    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
+//    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
 }
 
 MainWindow::~MainWindow()

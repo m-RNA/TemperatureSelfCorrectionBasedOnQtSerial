@@ -2,34 +2,32 @@
 #include "ui_startcommunication.h"
 #include <QSerialPortInfo>
 #include "customchart.h"
+#include <QThreadPool>
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::StartCommunication)
 {
     ui->setupUi(this);
+    // qDebug() << "主线程ID：" << QThread::currentThread();
 
-    serialInfoUpdate();
+    updateSerialPortInfo();
+    setSerialPortCtrlState(serialPortState);
 
     // 串口显示列表 安装事件过滤
     ui->cbSerial->installEventFilter(this);
 
-    qDebug() << deviceName << "Start";
-    serial = new QSerialPort;
-
-    connect(this, &StartCommunication::serialStateChange, this, &StartCommunication::uiLookUpdate);
-
-    // 链接串口接收到信息信号
-    connect(serial, &QSerialPort::readyRead, this, &StartCommunication::serialReadyRead_Slot);
-
-    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvTEditUpdate);
-    connect(this, &StartCommunication::serialRecvData, this, &StartCommunication::serialRecvDataAnalyse);
-    connect(this, &StartCommunication::RecvDataAnalyseFinish, ui->cChart, &CustomChart::addYPoint);
-
-    timerSend = new QTimer;
-    timerSend->setInterval(ui->spbxRegularTime->value());
-    connect(timerSend, &QTimer::timeout, this, &StartCommunication::on_btnSend_clicked);
+    // qDebug() << deviceName << "Start";
 }
 
+StartCommunication::~StartCommunication()
+{
+    delete ui;
+}
+
+/// @brief 事件过滤器
+/// @param obj
+/// @param event
+/// @return
 bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) // 鼠标点击事件
@@ -39,21 +37,23 @@ bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
             if (ui->cbSerial->isEnabled())
             {
                 // 更新界面串口列表信息
-                serialInfoUpdate();
+                updateSerialPortInfo();
             }
         }
     }
     return QWidget::eventFilter(obj, event);
 }
 
+/// @brief 设置设备名称
+/// @param s 名称
 void StartCommunication::setDeviceName(QString s)
 {
     deviceName = s;
     ui->gbxSerialSetting->setTitle(deviceName);
 }
 
-// 扫描更新界面串口端口信息
-void StartCommunication::serialInfoUpdate(void)
+/// @brief 初始化 串口combo box 扫描更新界面串口端口信息
+void StartCommunication::updateSerialPortInfo()
 {
     QStringList serialNamePort;
     // 查询串口端口信息
@@ -68,125 +68,139 @@ void StartCommunication::serialInfoUpdate(void)
     ui->cbSerial->addItems(serialNamePort);
 }
 
-StartCommunication::~StartCommunication()
+/// @brief 从ui界面获取串口设置参数，并对传入的参数赋值
+/// @param setting
+/// @return 异常返回-1  正常返回0
+int StartCommunication::getSerialPortSetting(Bll_SerialPortSetting &setting)
 {
-    if (serialState) // 退出程序时，关闭使用中的串口
+    QString portName = ui->cbSerial->currentText().left(ui->cbSerial->currentText().indexOf(" "));
+    if (portName.isEmpty())
+        return -1;
+
+    setting.portName = portName;
+    setting.baudRate = ui->cbBaudrate->currentText().toInt();
+
+    // 数据位
+    switch (ui->cbDataBit->currentText().toInt())
     {
-        serial->close(); // 关闭串口
-        serial->deleteLater();
-        qDebug() << deviceName << "关闭串口";
+    case 5:
+        setting.dataBits = QSerialPort::Data5;
+        break;
+    case 6:
+        setting.dataBits = QSerialPort::Data6;
+        break;
+    case 7:
+        setting.dataBits = QSerialPort::Data7;
+        break;
+    case 8:
+        setting.dataBits = QSerialPort::Data8;
+        break;
+    default:
+
+        break;
     }
-    delete ui;
+
+    // 校验位
+    switch (ui->cbCheckBit->currentIndex())
+    {
+    case 0:
+        setting.parity = QSerialPort::NoParity;
+        break;
+    case 1:
+        setting.parity = QSerialPort::OddParity;
+        break;
+    case 2:
+        setting.parity = QSerialPort::EvenParity;
+        break;
+    default:
+        break;
+    }
+
+    // 停止位
+    switch (ui->cbStopBit->currentIndex())
+    {
+    case 0:
+        setting.stopBits = QSerialPort::OneStop;
+        break;
+    case 1:
+        setting.stopBits = QSerialPort::OneAndHalfStop;
+        break;
+    case 2:
+        setting.stopBits = QSerialPort::TwoStop;
+        break;
+    default:
+        break;
+    }
+
+    // 流控
+    switch (ui->cbFlowCtrl->currentIndex())
+    {
+    case 0:
+        setting.flowControl = QSerialPort::NoFlowControl;
+        break;
+    case 1:
+        setting.flowControl = QSerialPort::HardwareControl;
+        break;
+    case 2:
+        setting.flowControl = QSerialPort::SoftwareControl;
+        break;
+    default:
+        break;
+    }
+
+    return 0;
 }
 
-// 串口开关 初始化
+/// @brief  串口开关 初始化并打开串口
 void StartCommunication::on_btnSerialSwitch_clicked()
 {
     qDebug() << deviceName << "点击串口开关";
-    if (serialState == false)
+    if (serialPortState == false) // 关闭-->打开
     {
-        serial->setPortName(ui->cbSerial->currentText().left(ui->cbSerial->currentText().indexOf(" ")));
-        serial->setBaudRate(ui->cbBaudrate->currentText().toInt());
-
-        // 数据位
-        switch (ui->cbDataBit->currentText().toInt())
+        Bll_SerialPortSetting setting;
+        if (getSerialPortSetting(setting) < 0) // 打开异常
         {
-        case 5:
-            serial->setDataBits(QSerialPort::Data5);
-            break;
-        case 6:
-            serial->setDataBits(QSerialPort::Data6);
-            break;
-        case 7:
-            serial->setDataBits(QSerialPort::Data7);
-            break;
-        case 8:
-            serial->setDataBits(QSerialPort::Data8);
-            break;
-        default:
-            break;
+            QMessageBox::critical(this, deviceName, "没有检测到串口\n打开失败!");
+            return;
         }
 
-        // 校验位
-        switch (ui->cbCheckBit->currentIndex())
-        {
-        case 0:
-            serial->setParity(QSerialPort::NoParity);
-            break;
-        case 1:
-            serial->setParity(QSerialPort::OddParity);
-            break;
-        case 2:
-            serial->setParity(QSerialPort::EvenParity);
-            break;
-        default:
-            break;
-        }
+        RES res;
+        bll_SerialPort = new Bll_SerialPort(deviceName, setting, res); // 创建任务对象
 
-        // 停止位
-        switch (ui->cbStopBit->currentIndex())
+        if (res.returnCode < 0) // 串口打开异常
         {
-        case 0:
-            serial->setStopBits(QSerialPort::OneStop);
-            break;
-        case 1:
-            serial->setStopBits(QSerialPort::OneAndHalfStop);
-            break;
-        case 2:
-            serial->setStopBits(QSerialPort::TwoStop);
-            break;
-        default:
-            break;
-        }
-        // 流控
-        switch (ui->cbFlowCtrl->currentIndex())
-        {
-        case 0:
-            serial->setFlowControl(QSerialPort::NoFlowControl);
-            break;
-        case 1:
-            serial->setFlowControl(QSerialPort::HardwareControl);
-            break;
-        case 2:
-            serial->setFlowControl(QSerialPort::SoftwareControl);
-            break;
-        default:
-            break;
-        }
-        printSerialPortInitInfo(serial);
-
-        if (serial->open(QIODevice::ReadWrite) == true)
-        {
-            qDebug() << deviceName << "打开串口";
-
-            serialState = true; // 串口状态 置开
-        }
-        else
-        {
-            qDebug() << deviceName << "串口打开失败！";
-            serialState = false; // 串口状态 置关
-
-            QMessageBox::critical(this, deviceName, "串口打开失败!\n"
-                                                    "请检查:\n\
+            QMessageBox::critical(this, deviceName, "串口" + res.msg + "\n请检查:\n\
 - 线缆是否松动?\n\
 - 串口号是否正确?\n\
 - 串口是否被序占用?\n\
 - 是否有串口读写权限?");
-        }
-    }
-    else
-    {
-        qDebug() << deviceName << "关闭串口";
-        serialState = false; // 串口状态 置开
-        serial->close();     // 关闭串口
-    }
 
-    emit serialStateChange(serialState);
+            bll_SerialPort->deleteLater();
+            return;
+        }
+
+        // 串口正常打开
+        serialPortState = true; // 串口状态 置开
+
+        connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
+        connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
+
+        // # connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::serialRecvDataAnalyse);
+        // # connect(this, &StartCommunication::RecvDataAnalyseFinish, ui->cChart, &CustomChart::addYPoint);
+    }
+    else // 打开-->关闭
+    {
+        serialPortState = false; // 串口状态 置关
+        bll_SerialPort->deleteLater();
+    }
+    setSerialPortCtrlState(serialPortState);
 }
 
-void StartCommunication::uiLookUpdate(bool state)
+/// @brief 设置打开串口按钮的图标、是否可以控制ui上的串口参数；当串口打开或者关闭时，对应ui上的控件进行使能失能
+/// @param state true:串口打开   false:串口关闭
+void StartCommunication::setSerialPortCtrlState(bool state)
 {
-    if (state)
+    if (state == true)
     {
         ui->boxSerialSetting->hide();
         ui->cbSerial->setEnabled(false);
@@ -194,6 +208,8 @@ void StartCommunication::uiLookUpdate(bool state)
         ui->btnSerialSwitch->setText("关闭");
         ui->btnSerialSwitch->setIcon(QIcon(":/icon/connect.ico"));
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
+
+        ui->btnSend->setEnabled(true);
     }
     else
     {
@@ -203,28 +219,25 @@ void StartCommunication::uiLookUpdate(bool state)
         ui->btnSerialSwitch->setText("打开");
         ui->btnSerialSwitch->setIcon(QIcon(":/icon/disconnect.ico"));
         ui->led->setStyleSheet("border-radius:7px;background-color: red;");
+
+        ui->btnSend->setEnabled(false);
     }
 }
 
+/// @brief 清空接收消息框
 void StartCommunication::on_btnClearRecvTE_clicked()
 {
     ui->teRecv->clear();
 }
 
+/// @brief 清空发送数据框
 void StartCommunication::on_btnClearSendTE_clicked()
 {
     ui->teSend->clear();
 }
 
-/*   串口接包任务   */
-void StartCommunication::serialReadyRead_Slot()
-{
-    QByteArray realtimeRxBuf; // 最新接收数据
-    realtimeRxBuf = serial->readAll();
-    emit serialRecvData(realtimeRxBuf);
-}
-
-void StartCommunication::serialRecvTEditUpdate(QByteArray rxData)
+/// @brief 串口接收消息框更新
+void StartCommunication::slSerialPortRecvData(QByteArray rxData)
 {
     // 暂停接收时，读完串口消息就退出不处理
     if (recvPauseState == true)
@@ -235,71 +248,46 @@ void StartCommunication::serialRecvTEditUpdate(QByteArray rxData)
     ui->teRecv->moveCursor(QTextCursor::End); // 滑动条保持在最低部
 }
 
-void StartCommunication::serialRecvDataAnalyse(QByteArray rxData)
-{
-    QByteArray rxFrame;
-    static QByteArray staticTemp; // 静态中间变量
-    int startIndex = -1;
-
-    staticTemp.append(rxData);                 // 读取串口，附在 staticTemp 之后
-    startIndex = staticTemp.lastIndexOf("\n"); // 获取"\n"的索引
-
-    if (startIndex >= 0)
-    {
-        rxFrame.append(staticTemp.left(startIndex - 1)); // 去除"\r\n"
-        staticTemp.remove(0, startIndex + 1);            // 移除"\n"与"\n"之前的内容
-    }
-
-    if (rxFrame.isEmpty())
-        return;
-
-    qDebug() << deviceName << "RxFrame:" << rxFrame;
-    // 解析数据
-    // {text}23.3
-    // printf("temp=%f\r\n",rtd);
-    int title_index_left;
-    title_index_left = rxFrame.indexOf("}");
-    rxData = rxFrame.replace("{", "").left(title_index_left - 1);
-    qDebug() << deviceName << "Title:" << QString(rxData);
-    int titleLength = rxData.length();
-    double data;
-    data = QString(rxFrame.right(rxFrame.length() - 1 - titleLength)).toDouble();
-    qDebug() << deviceName << "Temp:" << data;
-
-    emit RecvDataAnalyseFinish(data);
-}
-
-/*   串口发送任务   */
+/// @brief 串口发送数据
 void StartCommunication::on_btnSend_clicked()
 {
-    serial->write(ui->teSend->toPlainText().toLocal8Bit().data());
+    emit sgSerialPortSendData(ui->teSend->toPlainText());
 }
 
+/// @brief 串口接收 暂停状态
 void StartCommunication::on_cbPause_toggled(bool checked)
 {
-    qDebug() << deviceName << "点击暂停cBox" << checked;
     recvPauseState = checked;
-    emit serialPauseStateChange(recvPauseState);
+    // emit serialPauseStateChange(recvPauseState);
+    qDebug() << deviceName << "点击暂停cBox" << checked;
 }
 
+/// @brief 定时发送 开关
 void StartCommunication::on_cbSendRegular_toggled(bool checked)
 {
-    // sendRegularState = checked;
-    if (checked)
+    if (checked == true) // 开启定时发送
     {
-        timerSend->setInterval(ui->spbxRegularTime->value());
-        timerSend->start();
+        timerSendRegular = new QTimer;
+        timerSendRegular->setTimerType(Qt::PreciseTimer); // 设置为精准定时器
+        timerSendRegular->start(ui->spbxRegularTime->value());
+
+        connect(timerSendRegular, &QTimer::timeout, this, &StartCommunication::on_btnSend_clicked);
         qDebug() << deviceName << "定时器 开启" << checked;
     }
-    else
+    else // 关闭定时发送
     {
-        timerSend->stop();
+        timerSendRegular->stop();
+        timerSendRegular->deleteLater();
+
         qDebug() << deviceName << "定时器 关闭" << checked;
     }
 }
 
+/// @brief 改变定时发送周期
 void StartCommunication::on_spbxRegularTime_valueChanged(int arg1)
 {
-    timerSend->setInterval(arg1);
+    if (ui->cbSendRegular->checkState() != Qt::Checked)
+        return;
+    timerSendRegular->setInterval(arg1);
     qDebug() << deviceName << "定时值改变" << arg1;
 }

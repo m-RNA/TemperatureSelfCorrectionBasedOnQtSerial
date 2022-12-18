@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH +=  qcustomplot D:\eigen-3.3.8
 
 SOURCES += \
+    bll_serial.cpp \
     collectpanel.cpp \
     customchart.cpp \
     main.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
     startcommunication.cpp
 
 HEADERS += \
+    bll_serial.h \
     collectpanel.h \
     customchart.h \
     mainwindow.h \
