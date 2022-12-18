@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "startcommunication.h"
+#include "collectpanel.h"
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -17,38 +18,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     timerCollect = new QTimer(this);
     timerCollect->setTimerType(Qt::PreciseTimer); // 设置为精准定时器
-    timerCollect->setInterval(PGSB_REFRESH_MS); // 每 PGSB_REFRESH_MS ms检查一次
+    timerCollect->setInterval(PGSB_REFRESH_MS);   // 每 PGSB_REFRESH_MS ms检查一次
     connect(timerCollect, &QTimer::timeout, this, &MainWindow::timerCollectTimeOut);
 
     ui->start_Dtm->setDeviceName("待定仪器");
     ui->start_Std->setDeviceName("标准仪器");
 
-//    connect(ui->start_Std, &StartCommunication::serialStateChange, this, [=](bool state)
-//            {
-//        if(state){
-//            ui->ledText_Std->setText("在线");
-//            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
-//        }
-//        else{
-//            ui->ledText_Std->setText("离线");
-//            ui->led2_Std->setStyleSheet("border-radius:7px;background-color: red;");
-//        } });
+    connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
+    connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
 
-//    connect(ui->start_Dtm, &StartCommunication::serialStateChange, this, [=](bool state)
-//            {
-//        if(state){
-//            ui->ledText_Dtm->setText("在线");
-//            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
-//        }
-//        else{
-//            ui->ledText_Dtm->setText("离线");
-//            ui->led2_Dtm->setStyleSheet("border-radius:7px;background-color: red;");
-//        } });
-
-//    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
-//    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
-//    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
-//    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
+    //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
+    //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
+    //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
+    //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
 }
 
 MainWindow::~MainWindow()
@@ -61,7 +43,6 @@ QString MainWindow::collectTimestampToHhMmSs(int timestamp)
     int sec = timestamp / TIMESTAMP_FACTOR;
     return QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60);
 }
-
 
 void MainWindow::timerCollectTimeOut()
 {

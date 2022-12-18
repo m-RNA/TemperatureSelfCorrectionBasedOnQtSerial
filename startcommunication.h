@@ -49,6 +49,7 @@ private slots:
     void on_spbxRegularTime_valueChanged(int arg1);
 
 signals:
+    void serialStateChange(bool);
     void sgSerialPortSendData(QString);
 
 private:

@@ -194,6 +194,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         bll_SerialPort->deleteLater();
     }
     setSerialPortCtrlState(serialPortState);
+    emit serialStateChange(serialPortState);
 }
 
 /// @brief 设置打开串口按钮的图标、是否可以控制ui上的串口参数；当串口打开或者关闭时，对应ui上的控件进行使能失能

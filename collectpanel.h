@@ -14,6 +14,7 @@ class CollectPanel : public QWidget
 public:
     explicit CollectPanel(QWidget *parent = nullptr);
     ~CollectPanel();
+    void slSetState(bool state);
 
 private:
     Ui::CollectPanel *ui;
