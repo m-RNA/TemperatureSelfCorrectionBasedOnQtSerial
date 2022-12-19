@@ -1,9 +1,12 @@
 #include "interactchart.h"
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
+#include <QDateTime>
 
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
 	mxTracer = new ChartTracer(this, this->graph(), TracerType::DataTracer);
+
+	ftime(&t1); // 记录此刻时间
 
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
@@ -298,7 +301,7 @@ void InteractChart::contextMenuRequest(QPoint pos)
 		else
 			menu->addAction("暂停绘制", this, &InteractChart::chartPause);
 
-        if (yAxisAutoZoomState == true)
+		if (yAxisAutoZoomState == true)
 			menu->addAction("关闭Y轴自动缩放", this, &InteractChart::yAxisAutoZoomNo);
 		else
 			menu->addAction("开启Y轴自动缩放", this, &InteractChart::yAxisAutoZoomYes);
@@ -337,13 +340,22 @@ void InteractChart::addYPoint(double y)
 {
 	if (pauseState == true) // 暂停时退出
 		return;
+		
+	xDefault++;
+	this->graph()->addData(xDefault, y); // 添加数据
 
+	ftime(&t2);
+	if ((t2.time - t1.time) * 1000 + (t2.millitm - t1.millitm) < 50) // 50ms 刷新一次
+		return;
+	ftime(&t1);
+	chartRefresh();
+}
+
+void InteractChart::chartRefresh(void)
+{
 	double upper = this->xAxis->range().upper;
 	double lower = this->xAxis->range().lower;
 	double range = upper - lower;
-
-	// qDebug() << "addYPoint";
-	this->graph()->addData(xDefault, y); // 添加数据
 
 	// 曲线能动起来的关键在这里
 	if (yAxisAutoZoomState == true)
@@ -353,5 +365,5 @@ void InteractChart::addYPoint(double y)
 
 	this->replot(); // 刷新画图
 
-	xDefault++;
+	// qDebug() << deviceName << "刷新" << QDateTime::currentDateTime().toString("mm:ss.zzz");
 }
