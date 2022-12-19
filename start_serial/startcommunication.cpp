@@ -212,6 +212,7 @@ void StartCommunication::setSerialPortCtrlState(bool state)
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
 
         ui->btnSend->setEnabled(true);
+        ui->cbSendRegular->setEnabled(true);
     }
     else
     {
@@ -223,6 +224,8 @@ void StartCommunication::setSerialPortCtrlState(bool state)
         ui->led->setStyleSheet("border-radius:7px;background-color: red;");
 
         ui->btnSend->setEnabled(false);
+        ui->cbSendRegular->setEnabled(false);
+        ui->cbSendRegular->setChecked(false);
     }
 }
 
@@ -246,7 +249,8 @@ void StartCommunication::slSerialPortRecvData(QByteArray rxData)
         return;
 
     QString qsBuf = QString(rxData);
-    ui->teRecv->insertPlainText(qsBuf);       // 将消息附到recvTextEdit(连续)
+    ui->teRecv->insertPlainText(qsBuf); // 将消息附到recvTextEdit(连续)
+
     ui->teRecv->moveCursor(QTextCursor::End); // 滑动条保持在最低部
 }
 

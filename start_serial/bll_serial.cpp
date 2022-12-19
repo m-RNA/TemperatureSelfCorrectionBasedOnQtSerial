@@ -1,6 +1,5 @@
 #include "bll_serial.h"
 
-#include <QThreadPool>
 #include <QElapsedTimer>
 
 Bll_SerialPort::Bll_SerialPort(QString name, const Bll_SerialPortSetting &setting, RES &res, QObject *parent) : QObject(parent)
@@ -20,13 +19,15 @@ Bll_SerialPort::Bll_SerialPort(QString name, const Bll_SerialPortSetting &settin
 
 Bll_SerialPort::~Bll_SerialPort()
 {
+    // 任务对象和线程不需要维护，线程池会维护
+    // disconnect(this, &Bll_SerialPort::sgRecvData, bll_SerialRecvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
+    // bll_SerialRecvAnalyse->deleteLater();
+
     if (serial->isOpen()) // 退出程序时，关闭使用中的串口
     {
         serial->close(); // 关闭串口
         qDebug() << deviceName << "关闭串口";
     }
-    serial->deleteLater();
-    bll_SerialRecvAnalyse->deleteLater();
 
     if (thread)
     {
@@ -34,6 +35,9 @@ Bll_SerialPort::~Bll_SerialPort()
         // thread->wait();
         thread->deleteLater();
     }
+
+    serial->deleteLater();
+
     qDebug() << "Bll_SerialPort Destroyed!";
 }
 
@@ -86,7 +90,7 @@ int Bll_SerialPort::init(const Bll_SerialPortSetting setting)
 void Bll_SerialPort::slSendData(QString text)
 {
     serial->write(text.toLocal8Bit().data());
-    // qDebug() << deviceName << "串口发送线程ID" << QThread::currentThread();
+    qDebug() << deviceName << "串口发送线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }
 
@@ -99,8 +103,24 @@ void Bll_SerialPort::slReadyRead()
     bll_SerialRecvAnalyse = new Bll_SerialRecvAnalyse;
     connect(this, &Bll_SerialPort::sgRecvData, bll_SerialRecvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
     QThreadPool::globalInstance()->start(bll_SerialRecvAnalyse);
-    
     emit sgRecvData(rowRxBuf);
+
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }
+
+// Bll_SerialSend::Bll_SerialSend(QObject *parent) : QObject(parent), QRunnable()
+// {
+// }
+
+// Bll_SerialSend::~Bll_SerialSend()
+// {
+//     qDebug() << "Bll_SerialSend Destroyed!";
+// }
+
+// void Bll_SerialSend::run()
+// {
+//     serial->write(data.toLocal8Bit().data());
+//     qDebug() << "串口发送线程ID" << QThread::currentThread();
+//     qDebug() << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
+// }

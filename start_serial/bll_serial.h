@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QThread>
-// #include <QThreadPool>
-// #include <QRunnable>
+#include <QThreadPool>
+#include <QRunnable>
 #include <QSerialPort>
 #include <QDebug>
 #include "bll_serialrecvanalyse.h"
@@ -37,28 +37,44 @@ public:
     int init(const Bll_SerialPortSetting);
 
 public slots:
-
     void slSendData(QString);
 
 private slots:
     void slReadyRead();
 
-    // void slRecvDataAnalyse(QByteArray rxData); // 解析数据
-
 signals:
     void sgRecvData(QByteArray);
-    // void RecvDataAnalyseFinish(double data); // 更新波形
 
 private:
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial = nullptr;
     QThread *thread = nullptr;
     Bll_SerialRecvAnalyse *bll_SerialRecvAnalyse = nullptr;
+    // Bll_SerialSend *bll_SerialSend = nullptr;
 
     void printSerialPortInitInfo(QSerialPort const *sp)
     {
         qDebug() << deviceName << sp->portName() << sp->baudRate() << sp->dataBits() << sp->parity() << sp->stopBits() << sp->flowControl();
     }
 };
+
+// class Bll_SerialSend : public QObject, public QRunnable
+// {
+//     Q_OBJECT
+// public:
+//     explicit Bll_SerialSend(QObject *parent = nullptr);
+//     ~Bll_SerialSend();
+
+//     void run() override;
+
+//     void bll_SetSerialAddr(QSerialPort *serialAddr) { serial = serialAddr; }
+
+// public slots:
+//     void slBll_SendData(QString sendData) { data = sendData; }
+
+// private:
+//     QSerialPort *serial;
+//     QString data;
+// };
 
 #endif // BLL_SERIAL_H
