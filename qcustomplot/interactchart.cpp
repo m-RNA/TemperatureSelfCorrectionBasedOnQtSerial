@@ -23,7 +23,7 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 
 	// addRandomGraph();
 	this->addGraph();
-	this->graph()->setName(QString(deviceName));	   // .arg(this->graphCount()-1) 这个可以添加编号
+	this->graph()->setName(QString(deviceName));   // .arg(this->graphCount()-1) 这个可以添加编号
 	this->graph()->setLineStyle(QCPGraph::lsLine); // 连线
 	this->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 
@@ -270,10 +270,30 @@ void InteractChart::findGraph()
 // 	this->replot(); // 刷新画图
 // }
 
+void InteractChart::addYPoint(double y)
+{
+	double upper = this->xAxis->range().upper;
+	double lower = this->xAxis->range().lower;
+	double range = upper - lower;
+
+	qDebug() << "addYPoint";
+	this->graph()->addData(x_default, y); // 添加数据
+
+	// 曲线能动起来的关键在这里
+	this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
+
+	this->xAxis->setRange(x_default, range, Qt::AlignRight); // 右对齐
+
+	this->replot(); // 刷新画图
+
+	x_default++;
+}
+
 // 清空图线
 void InteractChart::clear()
 {
 	this->graph(0)->data()->clear();
+	x_default = 0;
 	this->replot();
 }
 
@@ -309,7 +329,7 @@ void InteractChart::contextMenuRequest(QPoint pos)
 	{
 		menu->addAction("适应图线范围", this, &InteractChart::findGraph);
 
-		// menu->addAction("清空绘图", this, &InteractChart::clear);
+		menu->addAction("清空绘图", this, &InteractChart::clear);
 
 		// if (this->graph(0)->visible())
 		// 	menu->addAction("隐藏采集数据", this, &InteractChart::hideCollectPlot);

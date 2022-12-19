@@ -27,8 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
 
-    //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
-    //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
+    // connect(ui->start_Std, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
+    // connect(ui->start_Dtm, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
+
     //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
     //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
 }

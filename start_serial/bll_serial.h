@@ -8,6 +8,7 @@
 #include <QSerialPort>
 #include <QDebug>
 #include "bll_serialrecvanalyse.h"
+#include "interactchart.h"
 
 typedef struct _Bll_SerialPortSetting
 {
@@ -34,7 +35,9 @@ public:
 
     // void run() override;
     void setDeviceName(QString name) { deviceName = name; }
+    void setChartAddr(InteractChart *addr) { chartAddr = addr; }
     int init(const Bll_SerialPortSetting);
+
 
 public slots:
     void slSendData(QString);
@@ -49,7 +52,8 @@ private:
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial = nullptr;
     QThread *thread = nullptr;
-    Bll_SerialRecvAnalyse *bll_SerialRecvAnalyse = nullptr;
+    Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
+    InteractChart *chartAddr = nullptr;
     // Bll_SerialSend *bll_SerialSend = nullptr;
 
     void printSerialPortInitInfo(QSerialPort const *sp)

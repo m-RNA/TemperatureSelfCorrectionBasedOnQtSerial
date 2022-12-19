@@ -20,8 +20,8 @@ Bll_SerialPort::Bll_SerialPort(QString name, const Bll_SerialPortSetting &settin
 Bll_SerialPort::~Bll_SerialPort()
 {
     // 任务对象和线程不需要维护，线程池会维护
-    // disconnect(this, &Bll_SerialPort::sgRecvData, bll_SerialRecvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
-    // bll_SerialRecvAnalyse->deleteLater();
+    // disconnect(this, &Bll_SerialPort::sgRecvData, recvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
+    // recvAnalyse->deleteLater();
 
     if (serial->isOpen()) // 退出程序时，关闭使用中的串口
     {
@@ -100,9 +100,11 @@ void Bll_SerialPort::slReadyRead()
     QByteArray rowRxBuf; // 最新接收数据
     rowRxBuf = serial->readAll();
 
-    bll_SerialRecvAnalyse = new Bll_SerialRecvAnalyse;
-    connect(this, &Bll_SerialPort::sgRecvData, bll_SerialRecvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
-    QThreadPool::globalInstance()->start(bll_SerialRecvAnalyse);
+    recvAnalyse = new Bll_SerialRecvAnalyse;
+    connect(this, &Bll_SerialPort::sgRecvData, recvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
+    connect(recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, chartAddr, &InteractChart::addYPoint);
+
+    QThreadPool::globalInstance()->start(recvAnalyse);
     emit sgRecvData(rowRxBuf);
 
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();

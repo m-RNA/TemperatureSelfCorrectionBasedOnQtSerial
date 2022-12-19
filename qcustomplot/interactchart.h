@@ -16,6 +16,7 @@ class InteractChart : public QCustomPlot
 
 public:
     explicit InteractChart(QWidget *parent = nullptr);
+
     ~InteractChart();
 
     void setDeviceName(QString name)
@@ -25,8 +26,9 @@ public:
     }
 
 public slots:
-
     void clear();
+
+    void addYPoint(double y);
 
 protected:
     // 滚轮

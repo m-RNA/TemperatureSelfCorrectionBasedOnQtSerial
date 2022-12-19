@@ -1,6 +1,5 @@
 #include "startcommunication.h"
 #include "ui_startcommunication.h"
-#include "interactchart.h"
 #include <QSerialPortInfo>
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
@@ -182,12 +181,10 @@ void StartCommunication::on_btnSerialSwitch_clicked()
 
         // 串口正常打开
         serialPortState = true; // 串口状态 置开
+        bll_SerialPort->setChartAddr(ui->chart);
 
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
-
-        // # connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::serialRecvDataAnalyse);
-        // # connect(this, &StartCommunication::RecvDataAnalyseFinish, ui->cChart, &CustomChart::addYPoint);
     }
     else // 打开-->关闭
     {
