@@ -43,18 +43,24 @@ private slots:
     void axisXYDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part);
     void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
     void selectionChanged();
-
     void moveLegend();
     void findGraph();
-
     void contextMenuRequest(QPoint pos);
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
+
+    void chartStart() { pauseState = false; } // 开始绘图
+    void chartPause() { pauseState = true; }  // 暂停绘图
+
+    void yAxisAutoZoomYes() { yAxisAutoZoomState = true; } // 开启Y轴自动缩放
+    void yAxisAutoZoomNo() { yAxisAutoZoomState = false; } // 关闭Y轴自动缩放
 
 private:
     ChartTracer *mxTracer = nullptr; // 坐标跟随鼠标.使用时创建
 
-    int x_default = 0;
     QString deviceName = "未知仪器";
+    int xDefault = 0;
+    bool pauseState = false;
+    bool yAxisAutoZoomState = true;
 };
 
 #endif // INTERACTCHART_H

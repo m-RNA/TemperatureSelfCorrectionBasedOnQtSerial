@@ -28,7 +28,7 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 	this->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 
 	QPen pen;
-	pen.setWidth(3);
+	pen.setWidthF(1.5);
 	pen.setColor(Qt ::red);
 	pen.setStyle(Qt::PenStyle::SolidLine); // 实线
 	this->graph()->setPen(pen);
@@ -254,62 +254,24 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 // 寻找曲线
 void InteractChart::findGraph()
 {
-	this->rescaleAxes(true); // 调整显示区域
-	this->replot();			 // 刷新画图
-}
-
-// 更新采集的数据曲线
-// void InteractChart::updateCollectPlot(QVector<double> x, QVector<double> y)
-// {
-// 	qDebug() << "更新采集的数据曲线";
-// 	// 添加数据
-// 	this->graph(0)->setData(x, y);
-// 	// rescalseValueAxis
-// 	this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
-// 	// this->xAxis->setRange(x, xRange, Qt::AlignRight); // 曲线能动起来的关键在这里，设定x轴范围为最近xRange个数据 右对齐
-// 	this->replot(); // 刷新画图
-// }
-
-void InteractChart::addYPoint(double y)
-{
 	double upper = this->xAxis->range().upper;
 	double lower = this->xAxis->range().lower;
 	double range = upper - lower;
 
-	qDebug() << "addYPoint";
-	this->graph()->addData(x_default, y); // 添加数据
+	this->rescaleAxes(true); // 调整显示全部区域（true的意思时仅可见曲线）
 
-	// 曲线能动起来的关键在这里
-	this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
-
-	this->xAxis->setRange(x_default, range, Qt::AlignRight); // 右对齐
+	this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 恢复为原来x范围
 
 	this->replot(); // 刷新画图
-
-	x_default++;
 }
 
 // 清空图线
 void InteractChart::clear()
 {
 	this->graph(0)->data()->clear();
-	x_default = 0;
+	xDefault = 0;
 	this->replot();
 }
-
-// // 隐藏采集的数据曲线
-// void InteractChart::hideCollectPlot()
-// {
-// 	this->graph(0)->setVisible(false);
-// 	this->replot();
-// }
-
-// // 显示采集的数据曲线
-// void InteractChart::showCollectPlot()
-// {
-// 	this->graph(0)->setVisible(true);
-// 	this->replot();
-// }
 
 // 右键菜单
 void InteractChart::contextMenuRequest(QPoint pos)
@@ -331,15 +293,15 @@ void InteractChart::contextMenuRequest(QPoint pos)
 
 		menu->addAction("清空绘图", this, &InteractChart::clear);
 
-		// if (this->graph(0)->visible())
-		// 	menu->addAction("隐藏采集数据", this, &InteractChart::hideCollectPlot);
-		// else
-		// 	menu->addAction("显示采集数据", this, &InteractChart::showCollectPlot);
+		if (pauseState == true)
+			menu->addAction("开始绘制", this, &InteractChart::chartStart);
+		else
+			menu->addAction("暂停绘制", this, &InteractChart::chartPause);
 
-		// if (this->graph(1)->visible())
-		// 	menu->addAction("隐藏拟合曲线", this, &InteractChart::hideFitPlot);
-		// else
-		// 	menu->addAction("显示拟合曲线", this, &InteractChart::showFitPlot);
+        if (yAxisAutoZoomState == true)
+			menu->addAction("关闭Y轴自动缩放", this, &InteractChart::yAxisAutoZoomNo);
+		else
+			menu->addAction("开启Y轴自动缩放", this, &InteractChart::yAxisAutoZoomYes);
 	}
 	menu->popup(this->mapToGlobal(pos));
 }
@@ -369,4 +331,27 @@ void InteractChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	double dataValue = plottable->interface1D()->dataMainValue(dataIndex);
 	QString message = QString("Clicked on graph '%1' at data point #%2 with value %3.").arg(plottable->name()).arg(dataIndex).arg(dataValue);
 	// ui->statusBar->showMessage(message, 2500);
+}
+
+void InteractChart::addYPoint(double y)
+{
+	if (pauseState == true) // 暂停时退出
+		return;
+
+	double upper = this->xAxis->range().upper;
+	double lower = this->xAxis->range().lower;
+	double range = upper - lower;
+
+	// qDebug() << "addYPoint";
+	this->graph()->addData(xDefault, y); // 添加数据
+
+	// 曲线能动起来的关键在这里
+	if (yAxisAutoZoomState == true)
+		this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
+
+	this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 右对齐
+
+	this->replot(); // 刷新画图
+
+	xDefault++;
 }
