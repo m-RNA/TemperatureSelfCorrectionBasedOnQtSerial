@@ -7,6 +7,7 @@
 // #include <QRunnable>
 #include <QSerialPort>
 #include <QDebug>
+#include "bll_serialrecvanalyse.h"
 
 typedef struct _Bll_SerialPortSetting
 {
@@ -52,6 +53,7 @@ private:
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial = nullptr;
     QThread *thread = nullptr;
+    Bll_SerialRecvAnalyse *bll_SerialRecvAnalyse = nullptr;
 
     void printSerialPortInitInfo(QSerialPort const *sp)
     {

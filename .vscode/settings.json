@@ -34,6 +34,7 @@
         "collectcomplete",
         "Eigen",
         "pgsb",
+        "SERIALRECVANALYSE",
         "STARTCOMMUNICATION"
     ]
 }

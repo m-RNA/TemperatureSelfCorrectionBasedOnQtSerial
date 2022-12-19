@@ -1,11 +1,15 @@
 #include "bll_serial.h"
+
+#include <QThreadPool>
 #include <QElapsedTimer>
 
 Bll_SerialPort::Bll_SerialPort(QString name, const Bll_SerialPortSetting &setting, RES &res, QObject *parent) : QObject(parent)
 {
     // setAutoDelete(false); // 关掉:放到线程池后自动析构
     serial = new QSerialPort();
+
     this->setDeviceName(name);
+
     res.returnCode = init(setting);
     if (res.returnCode < 0)
     {
@@ -22,6 +26,7 @@ Bll_SerialPort::~Bll_SerialPort()
         qDebug() << deviceName << "关闭串口";
     }
     serial->deleteLater();
+    bll_SerialRecvAnalyse->deleteLater();
 
     if (thread)
     {
@@ -90,41 +95,12 @@ void Bll_SerialPort::slReadyRead()
 {
     QByteArray rowRxBuf; // 最新接收数据
     rowRxBuf = serial->readAll();
+
+    bll_SerialRecvAnalyse = new Bll_SerialRecvAnalyse;
+    connect(this, &Bll_SerialPort::sgRecvData, bll_SerialRecvAnalyse, &Bll_SerialRecvAnalyse::slBll_GetRowRecvData);
+    QThreadPool::globalInstance()->start(bll_SerialRecvAnalyse);
+    
     emit sgRecvData(rowRxBuf);
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }
-
-// void Bll_SerialPort::serialRecvDataAnalyse(QByteArray rxData)
-// {
-//     QByteArray rxFrame;
-//     static QByteArray staticTemp; // 静态中间变量
-//     int startIndex = -1;
-
-//     staticTemp.append(rxData);                 // 读取串口，附在 staticTemp 之后
-//     startIndex = staticTemp.lastIndexOf("\n"); // 获取"\n"的索引
-
-//     if (startIndex >= 0)
-//     {
-//         rxFrame.append(staticTemp.left(startIndex - 1)); // 去除"\r\n"
-//         staticTemp.remove(0, startIndex + 1);            // 移除"\n"与"\n"之前的内容
-//     }
-
-//     if (rxFrame.isEmpty())
-//         return;
-
-//     qDebug() << deviceName << "RxFrame:" << rxFrame;
-//     // 解析数据
-//     // {text}23.3
-//     // printf("temp=%f\r\n",rtd);
-//     int title_index_left;
-//     title_index_left = rxFrame.indexOf("}");
-//     rxData = rxFrame.replace("{", "").left(title_index_left - 1);
-//     qDebug() << deviceName << "Title:" << QString(rxData);
-//     int titleLength = rxData.length();
-//     double data;
-//     data = QString(rxFrame.right(rxFrame.length() - 1 - titleLength)).toDouble();
-//     qDebug() << deviceName << "Temp:" << data;
-
-//     emit RecvDataAnalyseFinish(data);
-// }

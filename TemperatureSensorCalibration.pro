@@ -27,6 +27,7 @@ SOURCES += \
     least_square_method/fitchart.cpp \
     main.cpp \
     start_serial/bll_serial.cpp \
+    start_serial/bll_serialrecvanalyse.cpp \
     start_serial/startcommunication.cpp\
     mainwindow.cpp \
     qcustomplot/charttracer.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
     start_serial/bll_serial.h \
+    start_serial/bll_serialrecvanalyse.h \
     start_serial/startcommunication.h
 
 FORMS += \
