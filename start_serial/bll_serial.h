@@ -30,6 +30,8 @@ class Bll_SerialPort : public QObject // , public QRunnable
 {
     Q_OBJECT
 public:
+    Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
+
     explicit Bll_SerialPort(QString name, const Bll_SerialPortSetting &setting, RES &res, QObject *parent = nullptr);
     ~Bll_SerialPort();
 
@@ -37,7 +39,6 @@ public:
     void setDeviceName(QString name) { deviceName = name; }
     void setChartAddr(InteractChart *addr) { chartAddr = addr; }
     int init(const Bll_SerialPortSetting);
-
 
 public slots:
     void slSendData(QString);
@@ -51,8 +52,8 @@ signals:
 private:
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial = nullptr;
-    QThread *thread = nullptr;
-    Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
+    QThread *threadSerial = nullptr;
+    QThread *threadAnalyse = nullptr;
     InteractChart *chartAddr = nullptr;
     // Bll_SerialSend *bll_SerialSend = nullptr;
 

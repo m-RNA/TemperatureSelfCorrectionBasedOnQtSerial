@@ -181,10 +181,10 @@ void StartCommunication::on_btnSerialSwitch_clicked()
 
         // 串口正常打开
         serialPortState = true; // 串口状态 置开
-        bll_SerialPort->setChartAddr(ui->chart);
 
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint); 
     }
     else // 打开-->关闭
     {

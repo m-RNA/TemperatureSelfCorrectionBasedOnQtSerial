@@ -28,7 +28,8 @@
         "sstream": "cpp",
         "nonlinearoptimization": "cpp",
         "new": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "qdatetime": "cpp"
     },
     "cSpell.words": [
         "collectcomplete",

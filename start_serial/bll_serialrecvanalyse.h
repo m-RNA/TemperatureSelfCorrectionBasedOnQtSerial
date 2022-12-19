@@ -2,25 +2,26 @@
 #define BLL_SERIALRECVANALYSE_H
 
 #include <QObject>
-#include <QRunnable>
+// #include <QRunnable>
 
-class Bll_SerialRecvAnalyse : public QObject, public QRunnable
+class Bll_SerialRecvAnalyse : public QObject //, public QRunnable
 {
     Q_OBJECT
 public:
     explicit Bll_SerialRecvAnalyse(QObject *parent = nullptr);
     ~Bll_SerialRecvAnalyse();
 
-    void run() override;
+    // void run() override;
+    void working(QByteArray);
 
 public slots:
-    void slBll_GetRowRecvData(QByteArray rxData) { rxRowData = rxData; }
+    // void slBll_GetRowRecvData(QByteArray rxData) { rxRowData = rxData; }
 
 signals:
     void sgBll_AnalyseFinish(double);
 
 private:
-    QByteArray rxRowData;
+    // QByteArray rxRowData;
 };
 
 #endif // BLL_SERIALRECVANALYSE_H
