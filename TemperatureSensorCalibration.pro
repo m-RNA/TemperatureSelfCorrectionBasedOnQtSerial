@@ -24,6 +24,7 @@ INCLUDEPATH +=  \
 
 SOURCES += \
     collect_data/collectpanel.cpp \
+    least_square_method/bll_leastssquare.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
     start_serial/bll_serial.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     collect_data/collectpanel.h \
+    least_square_method/bll_leastssquare.h \
     least_square_method/fitchart.h \
     mainwindow.h \
     qcustomplot/charttracer.h \

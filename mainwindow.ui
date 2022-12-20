@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>960</width>
-    <height>602</height>
+    <width>953</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -203,8 +203,15 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <widget class="FitChart" name="calibrationChart" native="true"/>
-                <widget class="QTableWidget" name="tableWidget">
+                <widget class="FitChart" name="chartFit" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+                <widget class="QTableWidget" name="twAverage">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -213,7 +220,7 @@
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>200</width>
+                   <width>242</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -230,7 +237,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectRows</enum>
+                  <enum>QAbstractItemView::SelectItems</enum>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -422,7 +429,7 @@
                </widget>
               </item>
               <item row="0" column="2">
-               <widget class="QSpinBox" name="spbxSamplePointNum">
+               <widget class="QSpinBox" name="spbxSamplePointSum">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -456,7 +463,7 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="3" column="1">
-               <widget class="QSpinBox" name="spbxSamplePointNum_2">
+               <widget class="QSpinBox" name="spbxOrder">
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
@@ -467,7 +474,7 @@
                  <number>2</number>
                 </property>
                 <property name="maximum">
-                 <number>20</number>
+                 <number>7</number>
                 </property>
                 <property name="value">
                  <number>4</number>
@@ -570,7 +577,7 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QPushButton" name="pushButton_24">
+               <widget class="QPushButton" name="btnFit">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -625,12 +632,15 @@
                <number>0</number>
               </property>
               <item row="0" column="0">
-               <widget class="QTableWidget" name="tableWidget_2">
+               <widget class="QTableWidget" name="twFactor">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="rowCount">
                  <number>5</number>
@@ -680,7 +690,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>960</width>
+     <width>953</width>
      <height>23</height>
     </rect>
    </property>

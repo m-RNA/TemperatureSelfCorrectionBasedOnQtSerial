@@ -2,9 +2,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
-#include <iostream>
-#include <fstream>
-#include <string>
+#include <fstream> // 打开文件
 #include <cmath>
 using namespace Eigen;
 
@@ -25,7 +23,7 @@ void Bll_GenerateData::run()
     eTimer.start();
     qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
-    QVector<double> x, y;
+    vector<double> x, y;
 
     if (left > right)
     {
@@ -35,21 +33,25 @@ void Bll_GenerateData::run()
     }
     x.clear();
     y.clear();
-    int order = factor.length(); // 阶数
+    int order = factor.size(); // 阶数
     double temp;
     for (double i = left; i <= right; i += step)
     {
-        x << i;
+        x.push_back(i);
         temp = factor.at(order - 1);
         for (int j = 1; j < order; j++)
         {
             temp += factor.at(order - 1 - j) * pow(i, j);
         }
-        y << temp;
+        y.push_back(temp);
         // qDebug() << "generate:" << i << "\t" << temp;
     }
     qDebug() << "生成拟合数据花费时间：" << eTimer.elapsed() << "ms";
-    emit generateFitDataFinish(x, y);
+
+    QVector<double> qv_X = QVector<double>(x.begin(), x.end());
+    QVector<double> qv_Y = QVector<double>(y.begin(), y.end());
+
+    emit generateFitDataFinish(qv_X, qv_Y);
 }
 
 Bll_LeastSquareMethod::Bll_LeastSquareMethod(QObject *parent) : QObject(parent), QRunnable()
@@ -74,21 +76,21 @@ void Bll_LeastSquareMethod::run()
     qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
     // 这里默认格式正确，就不检查了
-    // QVector<double> method00(int N, QVector<double> x, QVector<double> y)
+    // vector<double> method00(int N, vector<double> x, vector<double> y)
     //  防御检查
     // if (x.size() != y.size())
     // {
     //     qDebug() << "format error!";
-    //     return QVector<double>();
+    //     return vector<double>();
     // }
 
     // N个点可以确定一个 唯一的 N-1 阶的曲线
-    if (x.length() <= N)
-        N = x.length() - 1;
+    if (x.size() <= N)
+        N = x.size() - 1;
 
     // 创建A矩阵
     MatrixXd A(x.size(), N + 1);
-    for (int i = 0; i < x.size(); ++i) // 遍历所有点
+    for (unsigned long long i = 0; i < x.size(); ++i) // 遍历所有点
     {
         for (int n = N, dex = 0; n >= 1; --n, ++dex) // 遍历N到1阶
         {
@@ -100,7 +102,7 @@ void Bll_LeastSquareMethod::run()
 
     // 创建B矩阵
     MatrixXd B(y.size(), 1);
-    for (int i = 0; i < y.size(); ++i)
+    for (unsigned long long i = 0; i < y.size(); ++i)
     {
         B(i, 0) = y.at(i);
     }
@@ -111,14 +113,14 @@ void Bll_LeastSquareMethod::run()
 
     // 打印W结果
     qDebug() << "Factor:";
-    QVector<double> ans;
-    for (int i = 0; i <= N; i++)
+    vector<double> ans;
+    for (unsigned long long i = 0; i <= N; i++)
     {
         double temp = W(i, 0);
         if (abs(temp) >= 1e-10)
-            ans << temp;
+            ans.push_back(temp);
         else
-            ans << 0;
+            ans.push_back(0);
         qDebug() << temp;
     }
     qDebug() << "生成拟合数据花费时间：" << eTimer.elapsed() << "ms";

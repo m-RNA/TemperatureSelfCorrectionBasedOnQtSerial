@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+least_square_method/fitplot.cpp
+least_square_method/fitplot.h
+least_square_method/fitplot.ui

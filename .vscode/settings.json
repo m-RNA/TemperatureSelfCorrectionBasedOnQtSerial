@@ -29,7 +29,9 @@
         "nonlinearoptimization": "cpp",
         "new": "cpp",
         "thread": "cpp",
-        "qdatetime": "cpp"
+        "qdatetime": "cpp",
+        "vector": "cpp",
+        "qtimer": "cpp"
     },
     "cSpell.words": [
         "collectcomplete",

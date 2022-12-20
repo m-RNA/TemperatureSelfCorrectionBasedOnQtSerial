@@ -23,7 +23,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 	QPen pen;
 	pen.setColor(Qt::darkGreen); // 设置画笔风格
-	pen.setWidth(3);
+	pen.setWidthF(2.5);
 	pen.setStyle(Qt::PenStyle::DotLine); // 虚线
 
 	QCPGraph *curGraph = this->addGraph();
