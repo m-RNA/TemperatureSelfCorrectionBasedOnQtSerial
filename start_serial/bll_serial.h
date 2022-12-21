@@ -32,13 +32,13 @@ class Bll_SerialPort : public QObject // , public QRunnable
 public:
     Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
 
-    explicit Bll_SerialPort(QString name, const Bll_SerialPortSetting &setting, RES &res, QObject *parent = nullptr);
+    explicit Bll_SerialPort(QString name, QObject *parent = nullptr);
     ~Bll_SerialPort();
 
     // void run() override;
     void setDeviceName(QString name) { deviceName = name; }
     void setChartAddr(InteractChart *addr) { chartAddr = addr; }
-    int init(const Bll_SerialPortSetting);
+    void init(const Bll_SerialPortSetting setting, RES &res);
 
 public slots:
     void slSendData(QString);

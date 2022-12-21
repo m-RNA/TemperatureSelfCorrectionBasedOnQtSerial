@@ -21,7 +21,7 @@ void Bll_GenerateData::run()
 {
     QElapsedTimer eTimer;
     eTimer.start();
-    qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
+    // qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
     vector<double> x, y;
 
@@ -73,7 +73,7 @@ void Bll_LeastSquareMethod::run()
 {
     QElapsedTimer eTimer;
     eTimer.start();
-    qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
+    // qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
     // 这里默认格式正确，就不检查了
     // vector<double> method00(int N, vector<double> x, vector<double> y)
@@ -117,10 +117,10 @@ void Bll_LeastSquareMethod::run()
     for (unsigned long long i = 0; i <= N; i++)
     {
         double temp = W(i, 0);
-        if (abs(temp) >= 1e-10)
-            ans.push_back(temp);
-        else
-            ans.push_back(0);
+        //    if (abs(temp) < 1e-16)
+        //        ans.push_back(0);
+        //    else
+        ans.push_back(temp);
         qDebug() << temp;
     }
     qDebug() << "生成拟合数据花费时间：" << eTimer.elapsed() << "ms";

@@ -26,10 +26,11 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
     // BUG显然 待优化？
     startIndex = staticTemp.lastIndexOf("\n"); // 获取"\n"的索引
 
+    // \r\n 和 \n 两种情况 待优化
     if (startIndex >= 0)
     {
-        rxFrame.append(staticTemp.left(startIndex - 1)); // 去除"\r\n"
-        staticTemp.remove(0, startIndex + 1);            // 移除"\n"与"\n"之前的内容
+        rxFrame.append(staticTemp.left(startIndex)); // 去除\n"
+        staticTemp.remove(0, startIndex + 1);        // 移除"\n"与"\n"之前的内容
     }
 
     if (rxFrame.isEmpty())
@@ -46,7 +47,7 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
     int titleLength = rxRowData.length();
     double data;
     data = QString(rxFrame.right(rxFrame.length() - 1 - titleLength)).toDouble();
-    qDebug() << data;
+    qDebug() << "解析" << data;
 
     emit sgBll_AnalyseFinish(data);
 }

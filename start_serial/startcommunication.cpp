@@ -7,6 +7,7 @@ StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
 {
     ui->setupUi(this);
     // qDebug() << "主线程ID：" << QThread::currentThread();
+    // bll_SerialPort = new Bll_SerialPort(deviceName); // , setting, res); // 创建任务对象
 
     updateSerialPortInfo();
     setSerialPortCtrlState(serialPortState);
@@ -19,6 +20,8 @@ StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
 
 StartCommunication::~StartCommunication()
 {
+    if (bll_SerialPort)
+        bll_SerialPort->deleteLater();
     delete ui;
 }
 
@@ -165,17 +168,17 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         }
 
         RES res;
-        bll_SerialPort = new Bll_SerialPort(deviceName, setting, res); // 创建任务对象
-
+        bll_SerialPort = new Bll_SerialPort(deviceName); // 创建任务对象
+        bll_SerialPort->init(setting, res);
         if (res.returnCode < 0) // 串口打开异常
         {
-            QMessageBox::critical(this, deviceName, "串口" + res.msg + "\n请检查:\n\
+            QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
 - 线缆是否松动?\n\
-- 串口号是否正确?\n\
-- 串口是否被序占用?\n\
+- 串口是否被占用?\n\
+- 串口配置是否正确?\n\
 - 是否有串口读写权限?");
 
-            bll_SerialPort->deleteLater();
+            bll_SerialPort->deleteLater(); /// 发生的故事
             return;
         }
 
@@ -184,12 +187,15 @@ void StartCommunication::on_btnSerialSwitch_clicked()
 
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint); 
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint);
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, this, [&](double data)
+                { emit sgStartAnalyseFinish(data); });
     }
     else // 打开-->关闭
     {
         serialPortState = false; // 串口状态 置关
         bll_SerialPort->deleteLater();
+        // bll_SerialPort->close();
     }
     setSerialPortCtrlState(serialPortState);
     emit serialStateChange(serialPortState);
