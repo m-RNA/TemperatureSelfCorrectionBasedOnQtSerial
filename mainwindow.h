@@ -37,6 +37,8 @@ private slots:
 
     void setFitChartData(vector<double> factor);
 
+    void on_actionAbout_triggered();
+
 signals:
     void collectDataXYChanged(QVector<double> x, QVector<double> y);
     void fitDataChanged(vector<double> x, vector<double> y);

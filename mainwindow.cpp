@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "startcommunication.h"
 #include "collectpanel.h"
+#include "fitchart.h"
+#include "about.h"
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -9,7 +11,6 @@
 #include <QInputDialog>
 #include <QTimer>
 #include <QStringList>
-#include "fitchart.h"
 
 #define PGSB_REFRESH_MS 50
 #define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
@@ -80,6 +81,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &MainWindow::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::setLeastSquareMethod);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &MainWindow::setFitChartData);
+
+    connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
+    connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
 }
 
 MainWindow::~MainWindow()
@@ -344,4 +348,10 @@ void MainWindow::on_twAverage_itemChanged(QTableWidgetItem *item)
         qDebug() << "匹配失败";
         item->setText(old_text); // 更换之前的内容
     }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    About about(this);
+    about.exec();
 }

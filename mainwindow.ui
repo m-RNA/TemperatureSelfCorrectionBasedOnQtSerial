@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>953</width>
-    <height>652</height>
+    <width>928</width>
+    <height>642</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -317,7 +317,7 @@
            <item>
             <widget class="QGroupBox" name="groupBox_4">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -458,6 +458,12 @@
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="title">
               <string>最小二乘法</string>
              </property>
@@ -471,7 +477,7 @@
                  <string/>
                 </property>
                 <property name="minimum">
-                 <number>2</number>
+                 <number>1</number>
                 </property>
                 <property name="maximum">
                  <number>7</number>
@@ -538,6 +544,12 @@
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="title">
               <string>操作</string>
              </property>
@@ -610,10 +622,16 @@
            <item>
             <widget class="QGroupBox" name="groupBox_5">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>300</height>
+              </size>
              </property>
              <property name="title">
               <string>拟合结果</string>
@@ -634,10 +652,16 @@
               <item row="0" column="0">
                <widget class="QTableWidget" name="twFactor">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
@@ -668,6 +692,9 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
@@ -690,12 +717,30 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>953</width>
+     <width>928</width>
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>编码格式</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

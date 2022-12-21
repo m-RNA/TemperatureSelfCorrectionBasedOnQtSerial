@@ -23,6 +23,7 @@ INCLUDEPATH +=  \
 
 
 SOURCES += \
+    about.cpp \
     collect_data/collectpanel.cpp \
     least_square_method/bll_leastssquare.cpp \
     least_square_method/fitchart.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
     qcustomplot/qcustomplot.cpp \
 
 HEADERS += \
+    about.h \
     collect_data/collectpanel.h \
     least_square_method/bll_leastssquare.h \
     least_square_method/fitchart.h \
@@ -48,6 +50,7 @@ HEADERS += \
     start_serial/startcommunication.h
 
 FORMS += \
+    about.ui \
     collect_data/collectpanel.ui \
     mainwindow.ui \
     start_serial/startcommunication.ui
