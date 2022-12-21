@@ -73,7 +73,7 @@
      <item>
       <widget class="QLabel" name="ledText">
        <property name="text">
-        <string>离线</string>
+        <string>离线     </string>
        </property>
       </widget>
      </item>
@@ -97,9 +97,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="ledText_Std_6">
+      <widget class="QLabel" name="leastData">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -123,7 +123,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="switchWaveAndData">
        <property name="text">
         <string>显示数据</string>
        </property>

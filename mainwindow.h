@@ -37,6 +37,10 @@ private slots:
 
     void setFitChartData(vector<double> factor);
 
+    void setAverageTableItem_Std(double);
+
+    void setAverageTableItem_Dtm(double);
+
     void on_actionAbout_triggered();
 
 signals:

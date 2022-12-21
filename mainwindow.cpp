@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "startcommunication.h"
 #include "collectpanel.h"
+#include "interactchart.h"
 #include "fitchart.h"
 #include "about.h"
 
@@ -30,8 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
 
-    // connect(ui->start_Std, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->wave_Std, &CustomChart::addYPoint);
-    // connect(ui->start_Dtm, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->wave_Dtm, &CustomChart::addYPoint);
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
+    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slAddYPoint);
+    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slAddYPoint);
 
     //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
     //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
@@ -123,10 +126,12 @@ void MainWindow::timerCollectTimeOut()
     ui->pgsbSingle->setFormat("00:00:00");
 
     // emit
-
     // 计算平均值
-
     // 打点填表
+    ui->collectPanel_Std->collectFinish();
+    ui->collectPanel_Dtm->collectFinish();
+    ui->collectPanel_Std->slSetState(ui->start_Std->state());
+    ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
 
     // 更新整体进度条
     sampledPointNum = ui->pgsbSum->value() + 1;
@@ -167,12 +172,13 @@ void MainWindow::on_btnCollect_clicked()
             QMessageBox::critical(this, "错误", "请同时连接两个仪器");
             // return;
         }
-
+        ui->collectPanel_Std->slSetState(2);
         // 一段时间内标准仪器波动<0.01
 
         // 清空实时波形时间轴变为相对时间戳
+
         // # 这个放在if (sampledPointNum == 0)里面才对(调试)
-        if (sampledPointNum == 0)
+        if (sampledPointNum == 0) // 第一次采集
         {
             collectTimestamp = ui->spbxSampleTime->value() * 60 * TIMESTAMP_FACTOR; // 分钟转换时间戳
             qDebug() << "collectTimestamp" << collectTimestamp;
@@ -184,15 +190,19 @@ void MainWindow::on_btnCollect_clicked()
         ui->pgsbSingle->setMaximum(collectTimestamp);
         ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
         timerCollect->start();
+
+        ui->collectPanel_Dtm->slSetState(2);
+        ui->collectPanel_Std->collectStart();
+        ui->collectPanel_Dtm->collectStart();
     }
-    else // 采集完毕
+    else // 所有点采集完毕
     {
         QMessageBox msgBox(QMessageBox::Warning, "警告", "这将清除这次拟合数据\n是否继续？", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.addButton("No", QMessageBox::RejectRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
         {
-            qDebug() << "确认";
+            // qDebug() << "确认";
             sampledPointNum = 0;
             goto SAMPLE_UNFINISHED;
         }
@@ -354,4 +364,16 @@ void MainWindow::on_actionAbout_triggered()
 {
     About about(this);
     about.exec();
+}
+
+void MainWindow::setAverageTableItem_Std(double data)
+{
+    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::number(data));
+    ui->twAverage->setItem(sampledPointNum, 0, data_Std);
+}
+
+void MainWindow::setAverageTableItem_Dtm(double data)
+{
+    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::number(data));
+    ui->twAverage->setItem(sampledPointNum, 1, data_Dtm);
 }
