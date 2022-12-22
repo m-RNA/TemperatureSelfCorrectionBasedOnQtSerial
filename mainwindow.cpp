@@ -153,11 +153,11 @@ void MainWindow::timerCollectTimeOut()
     }
     else
     {
-        QMessageBox::information(this, "提示", "全部采集完成！\n请在右下角查看拟合结果");
-
         // 各个标定点未采集完成
         // 计算拟合结果
         // ...
+        tryUpdateFitChart(false);
+        QMessageBox::information(this, "提示", "全部采集完成！\n请在右下角查看拟合结果");
     }
 }
 
