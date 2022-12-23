@@ -13,6 +13,14 @@ Bll_SerialRecvAnalyse::~Bll_SerialRecvAnalyse()
     qDebug() << "Bll_SerialRecvAnalyse Destroyed";
 }
 
+bool isNum(QString data)
+{
+    QRegExp reg("(-?[1-9][0-9]+)|(-?[0-9])|(-?[1-9]\\d+\\.\\d+)|(-?[0-9]\\.\\d+)");
+    if (reg.exactMatch(data))
+        return true;
+    return false;
+}
+
 // void Bll_SerialRecvAnalyse::run()
 void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
 {
@@ -39,16 +47,27 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
         if (rxFrame.isEmpty())
             return;
 
-        int title_index_left;
-        title_index_left = rxFrame.indexOf("}");
-        rxRowData = rxFrame.replace("{", "").left(title_index_left - 1);
-        // qDebug() << "Title:" << QString(rxRowData);
-        int titleLength = rxRowData.length();
-        double data;
-        data = QString(rxFrame.right(rxFrame.length() - 1 - titleLength)).toDouble();
-        qDebug() << "解析" << data;
+        if (rxFrame.at(0) == '{')
+        {
+            int titleIndexRight;
+            double data;
 
-        emit sgBll_AnalyseFinish(data);
+            titleIndexRight = rxFrame.indexOf("}");
+            if (titleIndexRight >= 0)
+            {
+                rxRowData = rxFrame.mid(1, titleIndexRight - 1);
+                qDebug() << "Title:" << QString(rxRowData);
+
+                rxFrame.remove(0, titleIndexRight + 1); // 移除"}"与"}"之前的内容
+                if (isNum(rxFrame) == true)
+                {
+                    data = QString(rxFrame).toDouble();
+                    qDebug() << "解析" << data;
+
+                    emit sgBll_AnalyseFinish(data);
+                }
+            }
+        }
         rxFrame.clear();
     }
 }
