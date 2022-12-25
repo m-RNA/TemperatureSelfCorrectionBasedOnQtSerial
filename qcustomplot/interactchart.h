@@ -26,13 +26,18 @@ public:
         this->graph()->setName(QString(deviceName));
     }
 
+    void chartRefresh(void);
+
+    void setXAxisToTimelineState(bool state);
+
 public slots:
     void clear();
 
     void addYPoint(double y);
+    void addYPointBaseOnCurrentTime(double y);
 
 protected:
-    // 滚轮
+    // 鼠标滚轮事件
     void wheelEvent(QWheelEvent *ev);
     // 鼠标点击事件
     void mousePressEvent(QMouseEvent *ev);
@@ -61,9 +66,9 @@ private:
     int xDefault = -1;
     bool pauseState = false;
     bool yAxisAutoZoomState = true;
+    bool timelineState = false;
     timeb t1, t2;
-
-    void chartRefresh(void);
+    int nowTime, oldTime;
 };
 
 #endif // INTERACTCHART_H

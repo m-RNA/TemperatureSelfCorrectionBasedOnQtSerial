@@ -6,16 +6,13 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
 	mxTracer = new ChartTracer(this, this->graph(), TracerType::DataTracer);
 
-	ftime(&t1); // 记录此刻时间
+	setXAxisToTimelineState(false);
 
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
-	this->xAxis->setRange(-8, 8);
 	this->yAxis->setRange(-5, 5);
 	this->axisRect()->setupFullAxesBox();
 
-	this->xAxis->setLabel("x轴");
-	this->yAxis->setLabel("y轴");
 	this->legend->setVisible(true);
 
 	QFont legendFont = font();
@@ -62,6 +59,45 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 InteractChart::~InteractChart()
 {
 	delete mxTracer;
+}
+
+/*
+	时间轴参考：
+	https://blog.csdn.net/qq_35893001/article/details/121340317
+	https://blog.csdn.net/ydyuse/article/details/104519117
+*/
+void InteractChart::setXAxisToTimelineState(bool state)
+{
+	timelineState = state;
+	if (state == true)
+	{
+		// QCPAxisTickerDateTime 时间坐标轴 必须要用智能指针
+		QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+		timeTicker->setTimeFormat("%h:%m:%s.%z"); // 精确到毫秒
+
+		// 设置时间轴 一共几格
+		timeTicker->setTickCount(3);
+
+		// 设置label 旋转35° 横着显示可能显示不全
+		// this->xAxis->setTickLabelRotation(15);
+		timeTicker->setTickStepStrategy(QCPAxisTicker::tssMeetTickCount);
+
+		// 设置坐标轴
+		this->xAxis->setTicker(timeTicker);
+		oldTime = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间
+
+		this->xAxis->setRange(oldTime * 0.001, 10, Qt::AlignRight);
+		this->xAxis->setLabel("");
+		this->yAxis->setLabel("y轴");
+	}
+	else
+	{
+		this->xAxis->setRange(-8, 8);
+		this->xAxis->setLabel("x轴");
+		this->yAxis->setLabel("y轴");
+
+		ftime(&t1); // 记录此刻时间
+	}
 }
 
 // 双击坐标标签
@@ -340,7 +376,7 @@ void InteractChart::addYPoint(double y)
 {
 	if (pauseState == true) // 暂停时退出
 		return;
-		
+
 	xDefault++;
 	this->graph()->addData(xDefault, y); // 添加数据
 
@@ -351,17 +387,35 @@ void InteractChart::addYPoint(double y)
 	chartRefresh();
 }
 
+void InteractChart::addYPointBaseOnCurrentTime(double y)
+{
+	if (pauseState == true) // 暂停时退出
+		return;
+
+	nowTime = QTime::currentTime().msecsSinceStartOfDay();
+
+	this->graph()->addData(nowTime * 0.001, y); // 添加数据
+
+	if (nowTime - oldTime < 50) // 50ms 刷新一次
+		return;
+	oldTime = nowTime;
+	chartRefresh();
+}
+
 void InteractChart::chartRefresh(void)
 {
 	double upper = this->xAxis->range().upper;
 	double lower = this->xAxis->range().lower;
 	double range = upper - lower;
 
-	// 曲线能动起来的关键在这里
 	if (yAxisAutoZoomState == true)
 		this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
 
-	this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 右对齐
+	// 曲线能动起来的关键在这里
+	if (timelineState == true)
+		this->xAxis->setRange(nowTime * 0.001, range, Qt::AlignRight); // 右对齐
+	else
+		this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 右对齐
 
 	this->replot(); // 刷新画图
 

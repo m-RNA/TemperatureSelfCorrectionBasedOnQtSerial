@@ -5,6 +5,7 @@ CollectPanel::CollectPanel(QWidget *parent) : QWidget(parent),
                                               ui(new Ui::CollectPanel)
 {
     ui->setupUi(this);
+    ui->chart->setXAxisToTimelineState(true);
 }
 
 CollectPanel::~CollectPanel()
@@ -23,7 +24,7 @@ void CollectPanel::slSetState(int state)
 
     case 1:
         ui->ledText->setText("在线     ");
-        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);");
+        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);"); // 绿色
         break;
 
     case 2:
@@ -65,6 +66,8 @@ void CollectPanel::slCollectData(double data_t)
 
 void CollectPanel::collectFinish(void)
 {
+    ui->chart->chartRefresh(); // 最新几个数据点可能卡在软件定时器里了，更新一下
+
     collectStop();
     emit sgCollectDataAverage(average(data));
     data.clear();
@@ -72,5 +75,5 @@ void CollectPanel::collectFinish(void)
 
 void CollectPanel::slAddYPoint(double y)
 {
-    ui->chart->addYPoint(y);
+    ui->chart->addYPointBaseOnCurrentTime(y);
 }
