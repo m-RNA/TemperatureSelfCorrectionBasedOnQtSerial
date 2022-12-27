@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->twAverage->item(i, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         }
     }
+    connect(ui->twAverage, &QTableWidget::itemChanged, this, &MainWindow::twAverage_itemChanged);
 
     connect(this, &MainWindow::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
 
@@ -325,33 +326,33 @@ void MainWindow::on_twAverage_itemSelectionChanged()
  * 正则表达式：
  * https://blog.csdn.net/qq_41622002/article/details/107488528
  */
-void MainWindow::on_twAverage_itemChanged(QTableWidgetItem *item)
+void MainWindow::twAverage_itemChanged(QTableWidgetItem *item)
 {
-    // 2、匹配正负整数、正负浮点数
-    QString Pattern("(-?[1-9][0-9]+)|(-?[0-9])|(-?[1-9]\\d+\\.\\d+)|(-?[0-9]\\.\\d+)"); // 正则表达式
+    // 匹配正负整数、正负浮点数
+    const QString Pattern("(-?[1-9][0-9]+)|(-?[0-9])|(-?[1-9]\\d+\\.\\d+)|(-?[0-9]\\.\\d+)"); // 正则表达式
     QRegExp reg(Pattern);
 
-    // 3.获取修改的新的单元格内容
+    // 获取修改的新的单元格内容
     QString str = item->text();
+    if (str == "")
+    {
+        qDebug() << "空字符";
+        goto GO_ON;
+    }
 
     // 完全匹配
     if (reg.exactMatch(str))
     {
         qDebug() << "匹配成功";
-        int row = item->row();
-        // old_text = ""; // 替换为空
-        if (ui->twAverage->item(row, 0)->text().isEmpty() ||
-            ui->twAverage->item(row, 1)->text().isEmpty())
-            return; // 当有一格为空时，退出
 
+    GO_ON:
         updateCollectDataXY();
-        if (collectDataX.size() > 0)
-        {
-            QVector<double> qv_X = QVector<double>(collectDataX.begin(), collectDataX.end());
-            QVector<double> qv_Y = QVector<double>(collectDataY.begin(), collectDataY.end());
 
-            emit collectDataXYChanged(qv_X, qv_Y);
-        }
+        // std::vector 转换为 QVector
+        QVector<double> qv_X = QVector<double>(collectDataX.begin(), collectDataX.end());
+        QVector<double> qv_Y = QVector<double>(collectDataY.begin(), collectDataY.end());
+
+        emit collectDataXYChanged(qv_X, qv_Y);
     }
     else
     {

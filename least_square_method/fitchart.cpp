@@ -270,6 +270,12 @@ void FitChart::findGraph()
 // 更新采集的数据曲线
 void FitChart::updateCollectPlot(QVector<double> x, QVector<double> y)
 {
+	if (x.size() == 0 || y.size() == 0)
+	{
+		clear();
+		return;
+	}
+
 	qDebug() << "更新采集的数据曲线";
 	// 添加数据
 	this->graph(0)->setData(x, y);
@@ -300,6 +306,8 @@ void FitChart::addHLine(double y)
 // 清空图线
 void FitChart::clear()
 {
+	qDebug() << "清空曲线";
+
 	this->graph(0)->data()->clear();
 	this->graph(1)->data()->clear();
 	this->replot();

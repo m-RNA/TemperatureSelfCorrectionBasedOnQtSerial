@@ -33,7 +33,7 @@ private slots:
 
     void on_twAverage_itemSelectionChanged();
 
-    void on_twAverage_itemChanged(QTableWidgetItem *item);
+    void twAverage_itemChanged(QTableWidgetItem *item);
 
     void setFitChartData(vector<double> factor);
 
