@@ -15,7 +15,6 @@ Bll_SerialPort::Bll_SerialPort(QString name, QObject *parent) : QObject(parent)
 
 Bll_SerialPort::~Bll_SerialPort()
 {
-    // 任务对象和线程不需要维护，线程池会维护
     recvAnalyse->deleteLater();
 
     if (serial->isOpen()) // 退出程序时，关闭使用中的串口
@@ -24,23 +23,24 @@ Bll_SerialPort::~Bll_SerialPort()
         qDebug() << deviceName << "关闭串口";
     }
     serial->deleteLater();
-
-    if (threadAnalyse)
-    {
-        threadAnalyse->quit();
-        threadAnalyse->wait();
-        threadAnalyse->deleteLater();
-    }
-
-    if (threadSerial)
-    {
-        threadSerial->quit();
-        // threadSerial->wait();
-        threadSerial->deleteLater();
-    }
-
     qDebug() << "Bll_SerialPort Destroyed!";
+
+    // 任务对象和线程不需要维护，线程池会维护
+    // 自己维护的会导致程序异常退出
+    // if (threadAnalyse)
+    // {
+    //     threadAnalyse->quit();
+    //     threadAnalyse->wait();
+    //     threadAnalyse->deleteLater();
+    // }
+    // if (threadSerial)
+    // {
+    //     threadSerial->quit();
+    //     // threadSerial->wait();
+    //     threadSerial->deleteLater();
+    // }
 }
+
 
 /// @brief 初始化我的串口（任务对象） 开启串口
 /// @param Bll_SerialPortSetting setting
