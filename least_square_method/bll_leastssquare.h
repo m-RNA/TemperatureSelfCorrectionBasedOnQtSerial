@@ -1,5 +1,6 @@
 #ifndef BLL_LEASTSSQUARE_H
 #define BLL_LEASTSSQUARE_H
+#include "config.h"
 
 #include <QRunnable>
 #include <QObject>
@@ -17,8 +18,8 @@ public:
     void run() override;
 
 public slots:
-    void setGenerateFitData(int t_left, int t_right, double t_step,
-                            vector<double> t_factor)
+    void setGenerateFitData(int t_left, int t_right, DECIMAL_TYPE t_step,
+                            vector<DECIMAL_TYPE> t_factor)
     {
         left = t_left;
         right = t_right;
@@ -31,8 +32,8 @@ signals:
 private:
     int left;
     int right;
-    double step;
-    vector<double> factor;
+    DECIMAL_TYPE step;
+    vector<DECIMAL_TYPE> factor;
 };
 
 class Bll_LeastSquareMethod : public QObject, public QRunnable
@@ -44,19 +45,19 @@ public:
     void run() override;
 
 public slots:
-    void setLeastSquareMethod(int t_N, vector<double> t_x, vector<double> t_y)
+    void setLeastSquareMethod(int t_N, vector<DECIMAL_TYPE> t_x, vector<DECIMAL_TYPE> t_y)
     {
         N = t_N;
         x = t_x;
         y = t_y;
     }
 signals:
-    void leastSquareMethodFinish(vector<double> factor); // f
+    void leastSquareMethodFinish(vector<DECIMAL_TYPE> factor); // f
 
 private:
     unsigned long long N;
-    vector<double> x;
-    vector<double> y;
+    vector<DECIMAL_TYPE> x;
+    vector<DECIMAL_TYPE> y;
 };
 
 #endif // BLL_LEASTSSQUARE_H

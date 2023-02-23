@@ -4,11 +4,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
+#关闭编译器对未使用的函数参数和变量的警告
+QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-unused-variable
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -25,6 +29,7 @@ INCLUDEPATH +=  \
 SOURCES += \
     about.cpp \
     collect_data/collectpanel.cpp \
+    config.c \
     least_square_method/bll_leastssquare.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
@@ -37,6 +42,7 @@ SOURCES += \
     qcustomplot/qcustomplot.cpp \
 
 HEADERS += \
+    config.h \
     about.h \
     collect_data/collectpanel.h \
     least_square_method/bll_leastssquare.h \

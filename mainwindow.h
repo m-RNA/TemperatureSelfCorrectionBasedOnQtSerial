@@ -35,11 +35,11 @@ private slots:
 
     void twAverage_itemChanged(QTableWidgetItem *item);
 
-    void setFitChartData(vector<double> factor);
+    void setFitChartData(vector<DECIMAL_TYPE> factor);
 
-    void setAverageTableItem_Std(double);
+    void setAverageTableItem_Std(DECIMAL_TYPE);
 
-    void setAverageTableItem_Dtm(double);
+    void setAverageTableItem_Dtm(DECIMAL_TYPE);
 
     void on_actionAbout_triggered();
 
@@ -47,8 +47,8 @@ signals:
     void collectDataXYChanged(QVector<double> x, QVector<double> y);
     void fitDataChanged(vector<double> x, vector<double> y);
 
-    void startGenerate(int t_left, int t_right, double t_step, vector<double> t_factor);
-    void startLeastSquare(int t_N, vector<double> t_x, vector<double> t_y);
+    void startGenerate(int t_left, int t_right, DECIMAL_TYPE t_step, vector<DECIMAL_TYPE> t_factor);
+    void startLeastSquare(int t_N, vector<DECIMAL_TYPE> t_x, vector<DECIMAL_TYPE> t_y);
 
 private:
     Ui::MainWindow *ui;
@@ -65,9 +65,9 @@ private:
 
     unsigned long long order; // 最小二乘法多项式阶数
     int samplePointSum;       // 标定点数
-    vector<double> collectDataX, collectDataY;
-    double collectDataX_Max, collectDataX_Min;
-    vector<double> fitDataX, fitDataY;
+    vector<DECIMAL_TYPE> collectDataX, collectDataY;
+    DECIMAL_TYPE collectDataX_Max, collectDataX_Min;
+    vector<DECIMAL_TYPE> fitDataX, fitDataY;
     QRegExp rx;
     QString old_text = "";
 

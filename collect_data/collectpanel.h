@@ -1,5 +1,6 @@
 #ifndef COLLECTPANEL_H
 #define COLLECTPANEL_H
+#include "config.h"
 
 #include <QWidget>
 #include <vector>
@@ -29,7 +30,7 @@ public slots:
     void slAddYPoint(double);
 
 signals:
-    void sgCollectDataAverage(double average);
+    void sgCollectDataAverage(DECIMAL_TYPE average);
 
 private slots:
 

@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <QTimer>
 #include <QStringList>
+using LeastSquare = MainWindow;
 
 #define PGSB_REFRESH_MS 50
 #define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
@@ -39,13 +40,15 @@ MainWindow::MainWindow(QWidget *parent)
     //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
     //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
 
-    // -----
+    /*** LeastSquare Begin ***/
+
     // 1. 创建任务类对象
     taskGen = new Bll_GenerateData(this);
     taskLeastSquare = new Bll_LeastSquareMethod(this);
 
-    samplePointSum = ui->spbxSamplePointSum->value();
-    order = ui->spbxOrder->value();
+    samplePointSum = ui->twAverage->rowCount();
+    ui->spbxSamplePointSum->setValue(samplePointSum);
+    order = ui->spbxOrder->text().toInt();
 
     ui->twAverage->horizontalHeader()->setVisible(true);
     ui->twAverage->verticalHeader()->setVisible(true);
@@ -66,7 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     HorizontalHeader << "N-1 阶系数";
     ui->twFactor->setHorizontalHeaderLabels(HorizontalHeader); // 设置表头
 
-    for (int i = 0; i < samplePointSum; i++) // 需要初始化表格Item
+    // 需要初始化表格Item
+    for (int i = 0; i < samplePointSum; i++)
     {
         for (int j = 0; j < 2; j++)
         {
@@ -75,16 +79,18 @@ MainWindow::MainWindow(QWidget *parent)
             ui->twAverage->item(i, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         }
     }
-    connect(ui->twAverage, &QTableWidget::itemChanged, this, &MainWindow::twAverage_itemChanged);
+    connect(ui->twAverage, &QTableWidget::itemChanged, this, &LeastSquare::twAverage_itemChanged);
 
-    connect(this, &MainWindow::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
+    connect(this, &LeastSquare::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
 
     // 2. 链接子线程
-    connect(this, &MainWindow::startGenerate, taskGen, &Bll_GenerateData::setGenerateFitData);
+    connect(this, &LeastSquare::startGenerate, taskGen, &Bll_GenerateData::setGenerateFitData);
     connect(taskGen, &Bll_GenerateData::generateFitDataFinish, ui->chartFit, &FitChart::updateFitPlot);
 
-    connect(this, &MainWindow::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::setLeastSquareMethod);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &MainWindow::setFitChartData);
+    connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::setLeastSquareMethod);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setFitChartData);
+
+    /*** LeastSquare End ***/
 
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
@@ -175,8 +181,11 @@ void MainWindow::on_btnCollect_clicked()
         }
         ui->collectPanel_Std->slSetState(2);
         // 一段时间内标准仪器波动<0.01
-
-        // 清空实时波形时间轴变为相对时间戳
+        // if (ui->collectPanel_Std->isStable() == false)
+        // {
+        //     QMessageBox::critical(this, "错误", "标准仪器波动过大，请重新采集");
+        //     return;
+        // }
 
         // # 这个放在if (sampledPointNum == 0)里面才对(调试)
         if (sampledPointNum == 0) // 第一次采集
@@ -214,20 +223,54 @@ void MainWindow::on_btnCollect_clicked()
     qt中获取容器Vector中的最大值和最小值：
     https://blog.csdn.net/Littlehero_121/article/details/100565527
 */
-double max(vector<double> &data)
+DECIMAL_TYPE max(vector<DECIMAL_TYPE> &data)
 {
     auto max = std::max_element(std::begin(data), std::end(data));
     return *max;
 }
 
-double min(vector<double> &data)
+DECIMAL_TYPE min(vector<DECIMAL_TYPE> &data)
 {
     auto min = std::min_element(std::begin(data), std::end(data));
     return *min;
 }
 
-void MainWindow::updateCollectDataXY(void)
+DECIMAL_TYPE atoDec(const char *str)
 {
+    bool negativeFlag = false;
+    if (str[0] == '-')
+    {
+        negativeFlag = true;
+        str++;
+    }
+    else if (str[0] == '+')
+    {
+        str++;
+    }
+
+    unsigned long long allNum = 0;
+    unsigned long long count = 1;
+    bool dotFlag = false;
+    while (*str)
+    {
+        if (*str == '.')
+        {
+            dotFlag = true;
+            str++;
+            continue;
+        }
+        if (dotFlag == true)
+            count *= 10;
+
+        allNum = allNum * 10 + (*str - '0');
+        str++;
+    }
+    return negativeFlag ? -((DECIMAL_TYPE)allNum / count) : ((DECIMAL_TYPE)allNum / count);
+}
+
+void LeastSquare::updateCollectDataXY(void)
+{
+    DECIMAL_TYPE temp;
     QString qsX, qsY;
     collectDataX.clear(); // 重置x容器
     collectDataY.clear(); // 重置y容器
@@ -239,14 +282,24 @@ void MainWindow::updateCollectDataXY(void)
             continue;
         // qDebug() << "counter" << counter;
 
-        collectDataX.push_back(qsX.toDouble());
-        collectDataY.push_back(qsY.toDouble());
+        temp = atoDec(qsX.toStdString().c_str());
+        collectDataX.push_back(temp);
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "LeastSquare::updateCollectDataXY   atoDec x = %.20LE\n", temp);
+        qDebug() << globalStringBuffer;
+        // printf("LeastSquare::updateCollectDataXY toDouble x = %.20e\n", qsX.toDouble());
+
+        temp = atoDec(qsY.toStdString().c_str());
+        collectDataY.push_back(temp);
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "LeastSquare::updateCollectDataXY   atoDec y = %.20LE\n", temp);
+        qDebug() << globalStringBuffer;
+        // printf("LeastSquare::updateCollectDataXY toDouble y = %.20e\n", qsY.toDouble());
+
         qDebug() << i << ":" << qsX << qsY;
     }
 }
 
 // 人为 true 自动 false
-void MainWindow::tryUpdateFitChart(bool man)
+void LeastSquare::tryUpdateFitChart(bool man)
 {
     updateCollectDataXY();
     if (collectDataX.size() < 2)
@@ -266,7 +319,7 @@ void MainWindow::tryUpdateFitChart(bool man)
     QThreadPool::globalInstance()->start(taskLeastSquare);
 }
 
-void MainWindow::on_spbxSamplePointSum_valueChanged(int arg1)
+void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
 {
     ui->twAverage->setRowCount(arg1);
     if (arg1 > samplePointSum)
@@ -283,7 +336,7 @@ void MainWindow::on_spbxSamplePointSum_valueChanged(int arg1)
     qDebug() << "samplePointSum:" << samplePointSum;
 }
 
-void MainWindow::on_spbxOrder_valueChanged(int arg1)
+void LeastSquare::on_spbxOrder_valueChanged(int arg1)
 {
     order = arg1;
     ui->twFactor->setRowCount(arg1 + 1);
@@ -292,29 +345,32 @@ void MainWindow::on_spbxOrder_valueChanged(int arg1)
     tryUpdateFitChart(false);
 }
 
-void MainWindow::on_btnFit_clicked()
+void LeastSquare::on_btnFit_clicked()
 {
     tryUpdateFitChart(true);
 }
 
-void MainWindow::setFitChartData(vector<double> factor)
+void LeastSquare::setFitChartData(vector<DECIMAL_TYPE> factor)
 {
     for (unsigned long long i = 0; i <= order; i++)
     {
         // 通过setItem来改变条目
-        QTableWidgetItem *temp = new QTableWidgetItem(QString::number(factor.at(order - i)));
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%.8LE", factor.at(order - i));
+        // printf("LeastSquare::setFitChartData %s\r\n", buffer);
+        QTableWidgetItem *temp = new QTableWidgetItem(globalStringBuffer); // QString::fromStdString(globalStringBuffer));
         ui->twFactor->setItem(i, 0, temp);
+        ui->twFactor->item(i, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     }
     collectDataX_Max = max(collectDataX);
     collectDataX_Min = min(collectDataX);
-    double addRange = (collectDataX_Max - collectDataX_Min) / 4.0;
+    DECIMAL_TYPE addRange = (collectDataX_Max - collectDataX_Min) / 2.0f;
 
-    // 启动子线程
-    emit startGenerate(collectDataX_Min - addRange, collectDataX_Max + addRange, 0.25, factor); // fitDataX, fitDataY);
+    // 启动子线程 生成曲线数据
+    emit startGenerate(collectDataX_Min - addRange, collectDataX_Max + addRange, 0.25f, factor); // fitDataX, fitDataY);
     QThreadPool::globalInstance()->start(taskGen);
 }
 
-void MainWindow::on_twAverage_itemSelectionChanged()
+void LeastSquare::on_twAverage_itemSelectionChanged()
 {
     // 1、记录旧的单元格内容
     old_text = ui->twAverage->item(ui->twAverage->currentRow(),
@@ -326,7 +382,7 @@ void MainWindow::on_twAverage_itemSelectionChanged()
  * 正则表达式：
  * https://blog.csdn.net/qq_41622002/article/details/107488528
  */
-void MainWindow::twAverage_itemChanged(QTableWidgetItem *item)
+void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
 {
     // 匹配正负整数、正负浮点数
     const QString Pattern("(-?[1-9][0-9]+)|(-?[0-9])|(-?[1-9]\\d+\\.\\d+)|(-?[0-9]\\.\\d+)"); // 正则表达式
@@ -337,13 +393,33 @@ void MainWindow::twAverage_itemChanged(QTableWidgetItem *item)
     if (str == "")
     {
         qDebug() << "空字符";
+        if (old_text == "")
+            return;
+
         goto GO_ON;
     }
+    qDebug() << "ORIGINAL" << str;
 
+    // 去除字符串结尾的空格、回车、换行
+    while (str[str.length() - 1] == ' ' || str[str.length() - 1] == '\n' || str[str.length() - 1] == '\r')
+    {
+        str = str.left(str.length() - 1);
+        qDebug() << "去除空格";
+        if (str == "")
+            break;
+    }
+    qDebug() << "AFTER" << str;
     // 完全匹配
     if (reg.exactMatch(str))
     {
-        qDebug() << "匹配成功";
+        qDebug() << "正则匹配成功";
+        item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+        // qDebug() << ui->twAverage->currentRow(); // 没选择单元格 值为-1
+        // qDebug() << ui->twAverage->currentColumn(); // 没选择单元格 值为-1
+
+        // 下面这一条代码导致程序奔溃：没选中单元格时，开始采集完成后就奔溃。而且它本来就是多余的
+        // ui->twAverage->item(ui->twAverage->currentRow(), ui->twAverage->currentColumn())->setText(str);
 
     GO_ON:
         updateCollectDataXY();
@@ -356,7 +432,7 @@ void MainWindow::twAverage_itemChanged(QTableWidgetItem *item)
     }
     else
     {
-        qDebug() << "匹配失败";
+        qDebug() << "正则匹配失败";
         item->setText(old_text); // 更换之前的内容
     }
 }
@@ -367,14 +443,14 @@ void MainWindow::on_actionAbout_triggered()
     about.exec();
 }
 
-void MainWindow::setAverageTableItem_Std(double data)
+void MainWindow::setAverageTableItem_Std(DECIMAL_TYPE data)
 {
-    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::number(data));
+    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
     ui->twAverage->setItem(sampledPointNum, 0, data_Std);
 }
 
-void MainWindow::setAverageTableItem_Dtm(double data)
+void MainWindow::setAverageTableItem_Dtm(DECIMAL_TYPE data)
 {
-    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::number(data));
+    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
     ui->twAverage->setItem(sampledPointNum, 1, data_Dtm);
 }

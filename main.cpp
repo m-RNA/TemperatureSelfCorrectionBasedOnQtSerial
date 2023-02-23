@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<QVector<double>>("QVector<double>"); // 添加不支持的类型
     qRegisterMetaType<vector<double>>("vector<double>"); // 添加不支持的类型
+    qRegisterMetaType<QVector<long double>>("QVector<long double>"); // 添加不支持的类型
+    qRegisterMetaType<vector<long double>>("vector<long double>");   // 添加不支持的类型
 
     qDebug() << "主线程ID：" << QThread::currentThread();
 
