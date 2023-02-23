@@ -5,7 +5,8 @@
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
 	mxTracer = new ChartTracer(this, this->graph(), TracerType::DataTracer);
-
+    setOpenGl(true);
+    qDebug()<<"InteractChart opengle="<<openGl();
 	setXAxisToTimelineState(false);
 
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |

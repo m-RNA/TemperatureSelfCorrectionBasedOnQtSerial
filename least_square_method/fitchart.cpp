@@ -4,6 +4,8 @@
 FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 {
 	mxTracer = new ChartTracer(this, this->graph(), TracerType::DataTracer);
+    setOpenGl(true);
+    qDebug()<<"FitChart opengle="<<openGl();
 
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
