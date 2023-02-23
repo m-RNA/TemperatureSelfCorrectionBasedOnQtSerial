@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
-#include "charttracer.h"
 
 namespace Ui
 {
@@ -52,7 +51,7 @@ private slots:
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
 private:
-    ChartTracer *mxTracer = nullptr; // 坐标跟随鼠标.使用时创建
+    QCPItemTracer *tracer = nullptr; // 坐标跟随鼠标.使用时创建
 
     int x_default = 0;
 };

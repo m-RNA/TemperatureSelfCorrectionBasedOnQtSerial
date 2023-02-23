@@ -37,7 +37,9 @@
         "collectcomplete",
         "COLLECTPANEL",
         "Eigen",
+        "fitchart",
         "INTERACTCHART",
+        "leastssquare",
         "pgsb",
         "SERIALRECVANALYSE",
         "STARTCOMMUNICATION"

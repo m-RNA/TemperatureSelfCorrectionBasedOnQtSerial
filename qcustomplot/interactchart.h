@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
-#include "charttracer.h"
 #include <sys/timeb.h>
 
 namespace Ui
@@ -61,7 +60,8 @@ private slots:
     void yAxisAutoZoomNo() { yAxisAutoZoomState = false; } // 关闭Y轴自动缩放
 
 private:
-    ChartTracer *mxTracer = nullptr; // 坐标跟随鼠标.使用时创建
+    QCPItemTracer *tracer = nullptr; // 坐标跟随鼠标.使用时创建
+
     QString deviceName = "未知仪器";
     int xDefault = -1;
     bool pauseState = false;
