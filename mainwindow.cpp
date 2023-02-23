@@ -398,7 +398,6 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
 
         goto GO_ON;
     }
-    qDebug() << "ORIGINAL" << str;
 
     // 去除字符串结尾的空格、回车、换行
     while (str[str.length() - 1] == ' ' || str[str.length() - 1] == '\n' || str[str.length() - 1] == '\r')
@@ -408,7 +407,7 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
         if (str == "")
             break;
     }
-    qDebug() << "AFTER" << str;
+
     // 完全匹配
     if (reg.exactMatch(str))
     {
