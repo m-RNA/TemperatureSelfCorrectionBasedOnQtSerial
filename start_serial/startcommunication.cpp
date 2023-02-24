@@ -178,7 +178,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
 - 串口配置是否正确?\n\
 - 是否有串口读写权限?");
 
-            bll_SerialPort->deleteLater(); /// 发生的故事
+            bll_SerialPort->deleteLater();
             return;
         }
 
@@ -252,9 +252,11 @@ void StartCommunication::slSerialPortRecvData(QByteArray rxData)
         return;
 
     QString qsBuf = QString(rxData);
-    ui->teRecv->insertPlainText(qsBuf); // 将消息附到recvTextEdit(连续)
 
-    ui->teRecv->moveCursor(QTextCursor::End); // 滑动条保持在最低部
+    // 光标移动到在最未尾
+    ui->teRecv->moveCursor(QTextCursor::End);
+    // 将消息附到recvTextEdit(连续)
+    ui->teRecv->insertPlainText(qsBuf);
 }
 
 /// @brief 串口发送数据
