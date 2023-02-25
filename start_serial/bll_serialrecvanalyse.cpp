@@ -45,26 +45,33 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
         if (rxFrame.isEmpty())
             return;
 
-        if (rxFrame.at(0) == '{')
+        // if (rxFrame.at(0) == '{')
+        // {
+        //     int titleIndexRight;
+
+        //     titleIndexRight = rxFrame.indexOf("}");
+        //     if (titleIndexRight >= 0)
+        //     {
+        //         rxRowData = rxFrame.mid(1, titleIndexRight - 1);
+        //         qDebug() << "Title:" << QString(rxRowData);
+
+        //         rxFrame.remove(0, titleIndexRight + 1); // 移除"}"与"}"之前的内容
+        //         if (isNum(rxFrame) == true)
+        //         {
+        // double data;
+        // data = QString(rxFrame).toDouble();
+        //             qDebug() << "解析" << data;
+
+        //             emit sgBll_AnalyseFinish(data);
+        //         }
+        //     }
+        // }
+        if (isNum(rxFrame) == true)
         {
-            int titleIndexRight;
-
-            titleIndexRight = rxFrame.indexOf("}");
-            if (titleIndexRight >= 0)
-            {
-                rxRowData = rxFrame.mid(1, titleIndexRight - 1);
-                qDebug() << "Title:" << QString(rxRowData);
-
-                rxFrame.remove(0, titleIndexRight + 1); // 移除"}"与"}"之前的内容
-                if (isNum(rxFrame) == true)
-                {
-                    double data;
-                    data = QString(rxFrame).toDouble();
-                    qDebug() << "解析" << data;
-
-                    emit sgBll_AnalyseFinish(data);
-                }
-            }
+            double data;
+            data = QString(rxFrame).toDouble();
+            qDebug() << "解析" << data;
+            emit sgBll_AnalyseFinish(data);
         }
         rxFrame.clear();
     }
