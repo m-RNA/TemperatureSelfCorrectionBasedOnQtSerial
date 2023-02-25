@@ -20,7 +20,7 @@
    <string>温度自校准</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="main.qrc">
+   <iconset>
     <normaloff>:/icon/svg/app.svg</normaloff>:/icon/svg/app.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -276,12 +276,12 @@
                  <row/>
                  <column>
                   <property name="text">
-                   <string>X:标准平均</string>
+                   <string>Y:采集平均</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>Y采集平均</string>
+                   <string>X:标准平均</string>
                   </property>
                  </column>
                 </widget>
@@ -372,7 +372,7 @@
                  <double>0.100000000000000</double>
                 </property>
                 <property name="value">
-                 <double>0.050000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -566,7 +566,7 @@
                  <string>检验</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
                 </property>
                </widget>
@@ -583,7 +583,7 @@
                  <string>采集</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -600,7 +600,7 @@
                  <string>拟合</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/fit.ico</normaloff>:/icon/fit.ico</iconset>
                 </property>
                </widget>
@@ -611,7 +611,7 @@
                  <string>保存</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
@@ -721,16 +721,23 @@
      <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>编码格式</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>帮助</string>
     </property>
     <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="action"/>
+    <addaction name="action_2"/>
+    <addaction name="action_3"/>
+    <addaction name="separator"/>
+    <addaction name="action_5"/>
+    <addaction name="separator"/>
+    <addaction name="action_4"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuAbout"/>
@@ -739,6 +746,31 @@
   <action name="actionAbout">
    <property name="text">
     <string>关于</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>新建校准任务</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>打开校准任务</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>最近校准任务</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>关闭校准任务</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>退出</string>
    </property>
   </action>
  </widget>
@@ -762,8 +794,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="main.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
