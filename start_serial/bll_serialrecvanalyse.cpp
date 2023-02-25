@@ -2,8 +2,6 @@
 #include <QThread>
 #include <QDebug>
 
-static QByteArray staticTemp; // 静态中间变量
-
 Bll_SerialRecvAnalyse::Bll_SerialRecvAnalyse(QObject *parent) : QObject(parent) // , QRunnable()
 {
 }
@@ -29,19 +27,19 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
     QByteArray rxFrame;
     int endIndex;
 
-    staticTemp.append(rxRowData); // 读取串口，附在 staticTemp 之后
+    buffer.append(rxRowData); // 读取串口，附在 buffer 之后
     while (1)
     {
-        endIndex = staticTemp.indexOf("\n"); // 获取"\n"的索引
+        endIndex = buffer.indexOf("\n"); // 获取"\n"的索引
 
         // \r\n 和 \n 两种情况
         if (endIndex >= 0)
         {
-            if (staticTemp.at(endIndex - 1) == '\r')
-                rxFrame.append(staticTemp.left(endIndex - 1)); // 去除\n"
+            if (buffer.at(endIndex - 1) == '\r')
+                rxFrame.append(buffer.left(endIndex - 1)); // 去除\n
             else
-                rxFrame.append(staticTemp.left(endIndex)); // 去除\n"
-            staticTemp.remove(0, endIndex + 1);            // 移除"\n"与"\n"之前的内容
+                rxFrame.append(buffer.left(endIndex)); // 去除\n
+            buffer.remove(0, endIndex + 1);            // 移除"\n"与"\n"之前的内容
         }
 
         if (rxFrame.isEmpty())
@@ -50,7 +48,6 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
         if (rxFrame.at(0) == '{')
         {
             int titleIndexRight;
-            double data;
 
             titleIndexRight = rxFrame.indexOf("}");
             if (titleIndexRight >= 0)
@@ -61,6 +58,7 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
                 rxFrame.remove(0, titleIndexRight + 1); // 移除"}"与"}"之前的内容
                 if (isNum(rxFrame) == true)
                 {
+                    double data;
                     data = QString(rxFrame).toDouble();
                     qDebug() << "解析" << data;
 

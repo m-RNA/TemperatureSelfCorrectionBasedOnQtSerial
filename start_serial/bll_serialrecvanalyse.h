@@ -22,6 +22,8 @@ signals:
 
 private:
     // QByteArray rxRowData;
+    QByteArray buffer;
+
 };
 
 #endif // BLL_SERIALRECVANALYSE_H
