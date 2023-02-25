@@ -11,7 +11,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	tracer->setStyle(QCPItemTracer::tsCircle);
 	tracer->setPen(QPen(Qt::red));
 	tracer->setBrush(Qt::red);
-	tracer->setSize(6);
+	tracer->setSize(10);
 
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
@@ -46,7 +46,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	this->graph()->setName(QString("拟合"));	   // .arg(this->graphCount()-1) 这个可以添加编号
 	this->graph()->setLineStyle(QCPGraph::lsLine); // 连线
 	this->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
-	pen.setColor(Qt ::red);
+	pen.setColor(Qt ::gray);
 	pen.setStyle(Qt::PenStyle::SolidLine); // 实线
 
 	this->graph()->setPen(pen);
