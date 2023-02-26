@@ -418,8 +418,9 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
         // qDebug() << ui->twAverage->currentRow(); // 没选择单元格 值为-1
         // qDebug() << ui->twAverage->currentColumn(); // 没选择单元格 值为-1
 
-        // 下面这一条代码导致程序奔溃：没选中单元格时，开始采集完成后就奔溃。而且它本来就是多余的
+        // 下面这一条代码导致程序奔溃：没选中单元格时，开始采集完成后就奔溃。
         // ui->twAverage->item(ui->twAverage->currentRow(), ui->twAverage->currentColumn())->setText(str);
+        item->setText(str);
 
     GO_ON:
         updateCollectDataXY();
