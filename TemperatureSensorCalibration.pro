@@ -33,6 +33,7 @@ SOURCES += \
     collect_data/collectpanel.cpp \
     config.c \
     least_square_method/bll_leastssquare.cpp \
+    least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
     start_serial/bll_serial.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     about.h \
     collect_data/collectpanel.h \
     least_square_method/bll_leastssquare.h \
+    least_square_method/cv_table.h \
     least_square_method/fitchart.h \
     mainwindow.h \
     qcustomplot/interactchart.h \

@@ -31,7 +31,10 @@
         "thread": "cpp",
         "qdatetime": "cpp",
         "vector": "cpp",
-        "qtimer": "cpp"
+        "qtimer": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "alignedvector3": "cpp"
     },
     "cSpell.words": [
         "collectcomplete",

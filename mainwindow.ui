@@ -20,7 +20,7 @@
    <string>温度自校准</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="main.qrc">
     <normaloff>:/icon/svg/app.svg</normaloff>:/icon/svg/app.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -211,7 +211,7 @@
                   </sizepolicy>
                  </property>
                 </widget>
-                <widget class="QTableWidget" name="twAverage">
+                <widget class="CVTable" name="twAverage">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -372,7 +372,7 @@
                  <double>0.100000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.050000000000000</double>
                 </property>
                </widget>
               </item>
@@ -483,7 +483,7 @@
                  <number>7</number>
                 </property>
                 <property name="value">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                </widget>
               </item>
@@ -566,7 +566,7 @@
                  <string>检验</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
                 </property>
                </widget>
@@ -583,7 +583,7 @@
                  <string>采集</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -600,7 +600,7 @@
                  <string>拟合</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/fit.ico</normaloff>:/icon/fit.ico</iconset>
                 </property>
                </widget>
@@ -611,7 +611,7 @@
                  <string>保存</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
@@ -650,7 +650,7 @@
                <number>0</number>
               </property>
               <item row="0" column="0">
-               <widget class="QTableWidget" name="twFactor">
+               <widget class="CVTable" name="twFactor">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -776,6 +776,17 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>FitChart</class>
+   <extends>QWidget</extends>
+   <header>fitchart.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CVTable</class>
+   <extends>QTableWidget</extends>
+   <header>cv_table.h</header>
+  </customwidget>
+  <customwidget>
    <class>StartCommunication</class>
    <extends>QWidget</extends>
    <header location="global">startcommunication.h</header>
@@ -787,13 +798,9 @@
    <header location="global">collectpanel.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>FitChart</class>
-   <extends>QWidget</extends>
-   <header>fitchart.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
  <connections/>
 </ui>
