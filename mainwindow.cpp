@@ -61,8 +61,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->twFactor->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);     // 不可调整
 
     QStringList HorizontalHeader;
-    HorizontalHeader << "X:标准平均";
-    HorizontalHeader << "Y:待定平均";
+    // 插入循序即为表头显示顺序
+    HorizontalHeader << "Y:标准平均";
+    HorizontalHeader << "X:待定平均";
     ui->twAverage->setHorizontalHeaderLabels(HorizontalHeader); // 设置表头
 
     HorizontalHeader.clear();
@@ -271,13 +272,13 @@ DECIMAL_TYPE atoDec(const char *str)
 void LeastSquare::updateCollectDataXY(void)
 {
     DECIMAL_TYPE temp;
-    QString qsX, qsY;
     collectDataX.clear(); // 重置x容器
     collectDataY.clear(); // 重置y容器
     for (int i = 0; i < samplePointSum; i++)
     {
-        qsX = ui->twAverage->item(i, 0)->text();
-        qsY = ui->twAverage->item(i, 1)->text();
+        QString qsX, qsY;
+        qsY = ui->twAverage->item(i, 0)->text();
+        qsX = ui->twAverage->item(i, 1)->text();
         if (qsX.isEmpty() || qsY.isEmpty())
             continue;
         // qDebug() << "counter" << counter;

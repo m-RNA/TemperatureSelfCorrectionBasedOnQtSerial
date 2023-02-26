@@ -276,12 +276,12 @@
                  <row/>
                  <column>
                   <property name="text">
-                   <string>Y:采集平均</string>
+                   <string>Y:标准平均</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>X:标准平均</string>
+                   <string>X:采集平均</string>
                   </property>
                  </column>
                 </widget>
