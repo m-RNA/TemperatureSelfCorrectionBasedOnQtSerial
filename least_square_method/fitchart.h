@@ -21,18 +21,15 @@ public slots:
     void updateCollectPlot(QVector<double> x, QVector<double> y); // 更新散点图
     void updateFitPlot(QVector<double> x, QVector<double> y);     // 更新折线图
 
-    void addVLine(double x);
-    void addHLine(double y);
-
     void clear();
 
 protected:
-    // 滚轮
-    void wheelEvent(QWheelEvent *ev);
+    // 鼠标滚轮事件
+    virtual void wheelEvent(QWheelEvent *ev);
     // 鼠标点击事件
-    void mousePressEvent(QMouseEvent *ev);
+    virtual void mousePressEvent(QMouseEvent *ev);
     // 鼠标移动事件
-    void mouseMoveEvent(QMouseEvent *ev);
+    virtual void mouseMoveEvent(QMouseEvent *ev);
 
 private slots:
     void axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part);

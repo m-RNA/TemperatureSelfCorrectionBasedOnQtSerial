@@ -17,5 +17,14 @@
         <file>icon/cut.ico</file>
         <file>icon/copy.ico</file>
         <file>icon/paste.ico</file>
+        <file>icon/hide.ico</file>
+        <file>icon/show.ico</file>
+        <file>icon/narrow.ico</file>
+        <file>icon/full.ico</file>
+        <file>icon/bottomleft.ico</file>
+        <file>icon/bottomright.ico</file>
+        <file>icon/topcenter.ico</file>
+        <file>icon/topleft.ico</file>
+        <file>icon/topright.ico</file>
     </qresource>
 </RCC>

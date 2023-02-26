@@ -13,19 +13,21 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	tracer->setBrush(Qt::red);
 	tracer->setSize(10);
 
+	// 设置交互方式
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
 
 	this->xAxis->setRange(-8, 8);
 	this->yAxis->setRange(-5, 5);
-	this->axisRect()->setupFullAxesBox();
-
 	this->xAxis->setLabel("x轴");
 	this->yAxis->setLabel("y轴");
-	this->legend->setVisible(true);
+
+	this->axisRect()->setupFullAxesBox();
+	this->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft | Qt::AlignTop); // 设置图例位置为左上角
 
 	QFont legendFont = font();
 	legendFont.setPointSize(10);
+	this->legend->setVisible(true);
 	this->legend->setFont(legendFont);
 	this->legend->setSelectedFont(legendFont);
 	this->legend->setSelectableParts(QCPLegend::spItems); // 图例框不能选择，只能选择图例项
@@ -291,13 +293,6 @@ void FitChart::updateFitPlot(QVector<double> x, QVector<double> y)
 	this->replot(); // 刷新画图
 }
 
-void FitChart::addVLine(double x)
-{
-}
-
-void FitChart::addHLine(double y)
-{
-}
 // 清空图线
 void FitChart::clear()
 {
@@ -344,25 +339,25 @@ void FitChart::contextMenuRequest(QPoint pos)
 
 	if (this->legend->selectTest(pos, false) >= 0) // 请求曲线标签上的右键菜单
 	{
-		menu->addAction("移到左上角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignLeft));
-		menu->addAction("移到正上方", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignHCenter));
-		menu->addAction("移到右上角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignRight));
-		menu->addAction("移到右下角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom | Qt::AlignRight));
-		menu->addAction("移到左下角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom | Qt::AlignLeft));
+		menu->addAction(QIcon("://icon/topleft.ico"), "移到左上角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignLeft));
+		menu->addAction(QIcon("://icon/bottomleft.ico"), "移到左下角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom | Qt::AlignLeft));
+		menu->addAction(QIcon("://icon/topcenter.ico"), "移到正上方", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignHCenter));
+		menu->addAction(QIcon("://icon/topright.ico"), "移到右上角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop | Qt::AlignRight));
+		menu->addAction(QIcon("://icon/bottomright.ico"), "移到右下角", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom | Qt::AlignRight));
 	}
 	else // 请求的图形上的通用右键菜单
 	{
-		menu->addAction("适应图线范围", this, &FitChart::findGraph);
+		menu->addAction(QIcon("://icon/full.ico"), "适应图线范围", this, &FitChart::findGraph);
 		// menu->addAction("清空绘图", this, &FitChart::clear);
 		if (this->graph(0)->visible())
-			menu->addAction("隐藏采集数据", this, &FitChart::hideCollectPlot);
+			menu->addAction(QIcon("://icon/hide.ico"), "隐藏采集数据", this, &FitChart::hideCollectPlot);
 		else
-			menu->addAction("显示采集数据", this, &FitChart::showCollectPlot);
+			menu->addAction(QIcon("://icon/show.ico"), "显示采集数据", this, &FitChart::showCollectPlot);
 
 		if (this->graph(1)->visible())
-			menu->addAction("隐藏拟合曲线", this, &FitChart::hideFitPlot);
+			menu->addAction(QIcon("://icon/hide.ico"), "隐藏拟合曲线", this, &FitChart::hideFitPlot);
 		else
-			menu->addAction("显示拟合曲线", this, &FitChart::showFitPlot);
+			menu->addAction(QIcon("://icon/show.ico"), "显示拟合曲线", this, &FitChart::showFitPlot);
 	}
 	menu->popup(this->mapToGlobal(pos));
 }
