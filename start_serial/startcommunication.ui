@@ -271,7 +271,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbDecode">
+          <widget class="QComboBox" name="cbAnalyse">
            <property name="minimumSize">
             <size>
              <width>84</width>

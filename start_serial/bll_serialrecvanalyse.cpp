@@ -20,31 +20,31 @@ Bll_SerialRecvAnalyse::~Bll_SerialRecvAnalyse()
 void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
 {
     // 防御性编程，防止解码函数为空
-    if (decodeBuffer == nullptr)
+    if (analyseBuffer == nullptr)
         return;
 
     // 将发来的数据附在 buffer 之后
     buffer.append(rxRowData);
 
     // 解析数据
-    (this->*decodeBuffer)();
+    (this->*analyseBuffer)();
 }
 
 // 设置解码模式
-void Bll_SerialRecvAnalyse::setDecodeMode(unsigned int type)
+void Bll_SerialRecvAnalyse::setAnalyseMode(unsigned int type)
 {
     switch (type)
     {
     case 1:
-        decodeBuffer = &Bll_SerialRecvAnalyse::decodeNum;
+        analyseBuffer = &Bll_SerialRecvAnalyse::analyseNum;
         break;
 
     case 2:
-        decodeBuffer = &Bll_SerialRecvAnalyse::decodeDaoWanTech;
+        analyseBuffer = &Bll_SerialRecvAnalyse::analyseDaoWanTech;
         break;
 
     default:
-        decodeBuffer = nullptr;
+        analyseBuffer = nullptr;
         break;
     }
 }
@@ -60,7 +60,7 @@ bool Bll_SerialRecvAnalyse::canIntoNum(const QString data)
 
 // 数据格式
 // 12.3456
-void Bll_SerialRecvAnalyse::decodeNum()
+void Bll_SerialRecvAnalyse::analyseNum()
 {
     serialAnalyseData ans;
 
@@ -93,7 +93,7 @@ void Bll_SerialRecvAnalyse::decodeNum()
 
 // 数据格式
 // $T=019.1263 ;
-void Bll_SerialRecvAnalyse::decodeDaoWanTech()
+void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 {
     serialAnalyseData ans;
     qDebug() << id << "buffer:" << buffer;

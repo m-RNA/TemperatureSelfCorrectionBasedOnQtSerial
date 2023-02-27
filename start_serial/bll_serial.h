@@ -20,7 +20,7 @@ typedef struct _Bll_SerialPortSetting
     QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
 
     unsigned int encodeMode = 0;
-    unsigned int decodeMode = 0;
+    unsigned int analyseMode = 0;
 } Bll_SerialPortSetting;
 
 typedef struct _resStruct
@@ -64,7 +64,7 @@ private:
     {
         qDebug() << deviceName << sp->portName() << sp->baudRate();
         qDebug() << sp->dataBits() << sp->parity() << sp->stopBits() << sp->flowControl();
-        // qDebug() << "Encode Mode:" << setting.encodeMode << "Decode Mode:" << setting.decodeMode;
+        // qDebug() << "Encode Mode:" << setting.encodeMode << "Analyse Mode:" << setting.analyseMode;
     }
 };
 

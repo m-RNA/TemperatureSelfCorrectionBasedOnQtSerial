@@ -72,8 +72,8 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
     threadSerial->start();
 
     // 设置解码模式
-    recvAnalyse->setDecodeMode(setting.decodeMode);
-    if (setting.decodeMode != 0)
+    recvAnalyse->setAnalyseMode(setting.analyseMode);
+    if (setting.analyseMode != 0)
     {
         // 创建串口接收数据分析线程
         threadAnalyse = new QThread();
