@@ -36,6 +36,7 @@ SOURCES += \
     least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
+    start_serial/bll_codeconverter.cpp \
     start_serial/bll_serial.cpp \
     start_serial/bll_serialrecvanalyse.cpp \
     start_serial/startcommunication.cpp\
@@ -53,6 +54,7 @@ HEADERS += \
     mainwindow.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
+    start_serial/bll_codeconverter.h \
     start_serial/bll_serial.h \
     start_serial/bll_serialrecvanalyse.h \
     start_serial/startcommunication.h

@@ -27,18 +27,6 @@ Bll_SerialPort::~Bll_SerialPort()
 
     // 任务对象和线程不需要维护，线程池会维护
     // 自己维护的会导致程序异常退出
-    // if (threadAnalyse)
-    // {
-    //     threadAnalyse->quit();
-    //     threadAnalyse->wait();
-    //     threadAnalyse->deleteLater();
-    // }
-    // if (threadSerial)
-    // {
-    //     threadSerial->quit();
-    //     // threadSerial->wait();
-    //     threadSerial->deleteLater();
-    // }
 }
 
 /// @brief 初始化我的串口（任务对象） 开启串口
@@ -84,9 +72,9 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
     res.returnCode = 0;
 }
 
-void Bll_SerialPort::slSendData(QString text)
+void Bll_SerialPort::slSendData(QByteArray data)
 {
-    serial->write(text.toLocal8Bit().data());
+    serial->write(data);
 
     // qDebug() << deviceName << "串口发送线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
@@ -104,19 +92,3 @@ void Bll_SerialPort::slReadyRead()
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }
-
-// Bll_SerialSend::Bll_SerialSend(QObject *parent) : QObject(parent), QRunnable()
-// {
-// }
-
-// Bll_SerialSend::~Bll_SerialSend()
-// {
-//     qDebug() << "Bll_SerialSend Destroyed!";
-// }
-
-// void Bll_SerialSend::run()
-// {
-//     serial->write(data.toLocal8Bit().data());
-//     qDebug() << "串口发送线程ID" << QThread::currentThread();
-//     qDebug() << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
-// }

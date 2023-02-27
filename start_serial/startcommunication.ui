@@ -241,6 +241,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="currentIndex">
+            <number>3</number>
+           </property>
            <item>
             <property name="text">
              <string>无</string>
@@ -253,12 +256,22 @@
            </item>
            <item>
             <property name="text">
+             <string>Big5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>UTF8</string>
             </property>
            </item>
            <item>
             <property name="text">
              <string>UTF16</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ISO8859</string>
             </property>
            </item>
           </widget>

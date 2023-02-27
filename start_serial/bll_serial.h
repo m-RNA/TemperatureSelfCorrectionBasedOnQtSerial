@@ -9,6 +9,7 @@
 #include <QDebug>
 #include "bll_serialrecvanalyse.h"
 #include "interactchart.h"
+#include "bll_codeconverter.h"
 
 typedef struct _Bll_SerialPortSetting
 {
@@ -41,10 +42,11 @@ public:
     // void run() override;
     void setDeviceName(QString name) { deviceName = name; }
     void setChartAddr(InteractChart *addr) { chartAddr = addr; }
+
     void init(const Bll_SerialPortSetting setting, RES &res);
 
 public slots:
-    void slSendData(QString);
+    void slSendData(QByteArray);
 
 private slots:
     void slReadyRead();
@@ -58,11 +60,7 @@ private:
     QThread *threadSerial = nullptr;
     QThread *threadAnalyse = nullptr;
     InteractChart *chartAddr = nullptr;
-
-    QByteArray (*encode)(QByteArray const &qByteArray) = nullptr;
-    QByteArray (*decode)(QByteArray const &qByteArray) = nullptr;
-
-
+    
     void printSerialPortInitInfo(QSerialPort const *sp)
     {
         qDebug() << deviceName << sp->portName() << sp->baudRate();

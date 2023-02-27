@@ -55,6 +55,42 @@ void StartCommunication::setDeviceName(QString s)
     ui->chart->replot();
 }
 
+// 设置编码格式
+void StartCommunication::setEncodeMode(EncodingFormat encodeMode)
+{
+    switch (encodeMode)
+    {
+    case Null:
+        decode = noDecoding;
+        encode = noEncoding;
+        break;
+    case UTF8:
+        decode = utf8Decoding;
+        encode = utf8Encoding;
+        break;
+    case UTF16:
+        decode = utf16Decoding;
+        encode = utf16Encoding;
+        break;
+    case Big5:
+        decode = big5Decoding;
+        encode = big5Encoding;
+        break;
+    case GB18030:
+        decode = gb18030Decoding;
+        encode = gb18030Encoding;
+        break;
+    case ISO8859:
+        decode = iso8859Decoding;
+        encode = iso8859Encoding;
+        break;
+    default:
+        decode = noDecoding;
+        encode = noEncoding;
+        break;
+    }
+}
+
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息
 void StartCommunication::updateSerialPortInfo()
 {
@@ -189,7 +225,10 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         }
 
         // 串口正常打开
-        serialPortState = true; // 串口状态 置开
+        serialPortState = true;
+
+        // 设置编码格式
+        setEncodeMode((EncodingFormat)setting.encodeMode);
 
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
@@ -257,18 +296,17 @@ void StartCommunication::slSerialPortRecvData(QByteArray rxData)
     if (recvPauseState == true)
         return;
 
-    QString qsBuf = QString(rxData);
-
     // 光标移动到在最未尾
     ui->teRecv->moveCursor(QTextCursor::End);
     // 将消息附到recvTextEdit(连续)
-    ui->teRecv->insertPlainText(qsBuf);
+    ui->teRecv->insertPlainText(decode(rxData));
 }
 
 /// @brief 串口发送数据
 void StartCommunication::on_btnSend_clicked()
 {
-    emit sgSerialPortSendData(ui->teSend->toPlainText());
+    emit sgSerialPortSendData(ui->teSend->toPlainText().toLocal8Bit());
+    // emit sgSerialPortSendData(encode(ui->teSend->toPlainText().toLocal8Bit()));
 }
 
 /// @brief 串口接收 暂停状态
