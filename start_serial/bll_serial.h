@@ -19,8 +19,8 @@ typedef struct _Bll_SerialPortSetting
     QSerialPort::StopBits stopBits;
     QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
 
-    unsigned int encodeMode = 0;
-    unsigned int analyseMode = 0;
+    int encodeMode = 0;
+    int analyseMode = 0;
 } Bll_SerialPortSetting;
 
 typedef struct _resStruct
@@ -58,7 +58,10 @@ private:
     QThread *threadSerial = nullptr;
     QThread *threadAnalyse = nullptr;
     InteractChart *chartAddr = nullptr;
-    // Bll_SerialSend *bll_SerialSend = nullptr;
+
+    QByteArray (*encode)(QByteArray const &qByteArray) = nullptr;
+    QByteArray (*decode)(QByteArray const &qByteArray) = nullptr;
+
 
     void printSerialPortInitInfo(QSerialPort const *sp)
     {
@@ -67,24 +70,5 @@ private:
         // qDebug() << "Encode Mode:" << setting.encodeMode << "Analyse Mode:" << setting.analyseMode;
     }
 };
-
-// class Bll_SerialSend : public QObject, public QRunnable
-// {
-//     Q_OBJECT
-// public:
-//     explicit Bll_SerialSend(QObject *parent = nullptr);
-//     ~Bll_SerialSend();
-
-//     void run() override;
-
-//     void bll_SetSerialAddr(QSerialPort *serialAddr) { serial = serialAddr; }
-
-// public slots:
-//     void slBll_SendData(QString sendData) { data = sendData; }
-
-// private:
-//     QSerialPort *serial;
-//     QString data;
-// };
 
 #endif // BLL_SERIAL_H

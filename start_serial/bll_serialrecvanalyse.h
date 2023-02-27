@@ -18,7 +18,7 @@ public:
     ~Bll_SerialRecvAnalyse();
 
     bool canIntoNum(const QString data);
-    void setAnalyseMode(unsigned int type);
+    void setAnalyseMode(int type);
 
     // void run() override;
     void working(QByteArray);
@@ -32,7 +32,7 @@ signals:
 private:
     // QByteArray rxRowData;
     QByteArray buffer = "";
-    unsigned id = 0;
+    unsigned int id = 0;
 
     void analyseNum();
     void analyseDaoWanTech();

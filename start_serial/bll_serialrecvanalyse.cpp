@@ -31,7 +31,7 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
 }
 
 // 设置解码模式
-void Bll_SerialRecvAnalyse::setAnalyseMode(unsigned int type)
+void Bll_SerialRecvAnalyse::setAnalyseMode(int type)
 {
     switch (type)
     {
