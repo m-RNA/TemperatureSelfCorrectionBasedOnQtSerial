@@ -11,7 +11,7 @@
 #include "interactchart.h"
 #include "bll_codeconverter.h"
 
-typedef struct _Bll_SerialPortSetting
+typedef struct
 {
     QString portName;
     int baudRate;
@@ -24,7 +24,7 @@ typedef struct _Bll_SerialPortSetting
     int analyseMode = 0;
 } Bll_SerialPortSetting;
 
-typedef struct _resStruct
+typedef struct
 {
     int returnCode = 0;
     QString msg = "";
@@ -43,10 +43,10 @@ public:
     void setDeviceName(QString name) { deviceName = name; }
     void setChartAddr(InteractChart *addr) { chartAddr = addr; }
 
-    void init(const Bll_SerialPortSetting setting, RES &res);
+    void init(const Bll_SerialPortSetting &setting, RES &res);
 
 public slots:
-    void slSendData(QByteArray);
+    void slSendData(const QByteArray&);
 
 private slots:
     void slReadyRead();

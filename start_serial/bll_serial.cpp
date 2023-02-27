@@ -26,13 +26,13 @@ Bll_SerialPort::~Bll_SerialPort()
     qDebug() << "Bll_SerialPort Destroyed!";
 
     // 任务对象和线程不需要维护，线程池会维护
-    // 自己维护的会导致程序异常退出
+    // ??? 为什么自己维护的会导致程序异常退出，这里明明没有使用线程池吧
 }
 
 /// @brief 初始化我的串口（任务对象） 开启串口
 /// @param Bll_SerialPortSetting setting
 /// @return 异常返回-1 正常返回0
-void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
+void Bll_SerialPort::init(const Bll_SerialPortSetting &setting, RES &res)
 {
     serial->setPortName(setting.portName);
     serial->setBaudRate(setting.baudRate);
@@ -72,7 +72,7 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
     res.returnCode = 0;
 }
 
-void Bll_SerialPort::slSendData(QByteArray data)
+void Bll_SerialPort::slSendData(const QByteArray& data)
 {
     serial->write(data);
 
