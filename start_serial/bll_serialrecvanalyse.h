@@ -4,12 +4,21 @@
 #include <QObject>
 // #include <QRunnable>
 
+typedef struct
+{
+    double date;  // 日期
+    double value; // 数据
+} serialAnalyseData;
+
 class Bll_SerialRecvAnalyse : public QObject //, public QRunnable
 {
     Q_OBJECT
 public:
     explicit Bll_SerialRecvAnalyse(QObject *parent = nullptr);
     ~Bll_SerialRecvAnalyse();
+
+    bool canIntoNum(const QString data);
+    void setDecodeMode(unsigned int type);
 
     // void run() override;
     void working(QByteArray);
@@ -22,8 +31,13 @@ signals:
 
 private:
     // QByteArray rxRowData;
-    QByteArray buffer;
+    QByteArray buffer = "";
+    unsigned id = 0;
 
+    void decodeNum();
+    void decodeDaoWanTech();
+
+    void (Bll_SerialRecvAnalyse::*decodeBuffer)() = nullptr;
 };
 
 #endif // BLL_SERIALRECVANALYSE_H

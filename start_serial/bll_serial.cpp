@@ -41,7 +41,6 @@ Bll_SerialPort::~Bll_SerialPort()
     // }
 }
 
-
 /// @brief 初始化我的串口（任务对象） 开启串口
 /// @param Bll_SerialPortSetting setting
 /// @return 异常返回-1 正常返回0
@@ -66,16 +65,21 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
     // 正常打开
     qDebug() << deviceName << "打开串口";
 
-    // 创建线程
+    // 创建串口接收线程
     threadSerial = new QThread();
-    threadAnalyse = new QThread();
-
     this->moveToThread(threadSerial);
     serial->moveToThread(threadSerial);
-    recvAnalyse->moveToThread(threadAnalyse);
-
     threadSerial->start();
-    threadAnalyse->start();
+
+    // 设置解码模式
+    recvAnalyse->setDecodeMode(setting.decodeMode);
+    if (setting.decodeMode != 0)
+    {
+        // 创建串口接收数据分析线程
+        threadAnalyse = new QThread();
+        recvAnalyse->moveToThread(threadAnalyse);
+        threadAnalyse->start();
+    }
 
     res.returnCode = 0;
 }
@@ -83,6 +87,7 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting setting, RES &res)
 void Bll_SerialPort::slSendData(QString text)
 {
     serial->write(text.toLocal8Bit().data());
+
     // qDebug() << deviceName << "串口发送线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }
@@ -90,13 +95,12 @@ void Bll_SerialPort::slSendData(QString text)
 //   串口接收任务
 void Bll_SerialPort::slReadyRead()
 {
-    // qDebug() << "slReadyRead 线程ID：" << QThread::currentThread();
-
     QByteArray rowRxBuf; // 最新接收数据
     rowRxBuf = serial->readAll();
 
     emit sgRecvData(rowRxBuf);
 
+    // qDebug() << "slReadyRead 线程ID：" << QThread::currentThread();
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();
     // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
 }

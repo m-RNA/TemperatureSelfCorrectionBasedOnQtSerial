@@ -151,6 +151,12 @@ int StartCommunication::getSerialPortSetting(Bll_SerialPortSetting &setting)
         break;
     }
 
+    // 编码格式
+    setting.encodeMode = ui->cbEncode->currentIndex();
+
+    // 解码格式
+    setting.decodeMode = ui->cbDecode->currentIndex();
+
     return 0;
 }
 
