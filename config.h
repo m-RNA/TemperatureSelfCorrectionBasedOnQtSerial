@@ -1,5 +1,10 @@
 #define DECIMAL_TYPE long double
 
+/* 全局线程池--最大线程数 */
+// 拟合数据和生成拟合曲线坐标数据 
+// xlsx文件的读写
+#define MAX_THREAD_COUNT 3
+
 extern char globalStringBuffer[200];
 
 //当在同一个界面中绘制多个QCustomPlot图形时，此时如果开启了OpenGL功能，则会提示QOpenGLFramebufferObject::bind() called from incompatible context的警告，界面图形渲染时会出现错乱，可以通过在qcustomplot.cpp的QCPPaintBufferGlFbo::draw()函数中添加以下红色的代码即可。
