@@ -27,7 +27,6 @@ public:
 
 public slots:
     void slCollectData(double);
-    void slAddYPoint(double);
 
 signals:
     void sgCollectDataAverage(DECIMAL_TYPE average);

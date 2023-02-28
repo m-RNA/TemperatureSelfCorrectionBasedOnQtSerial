@@ -59,7 +59,13 @@ double average(vector<double> data)
 
 void CollectPanel::slCollectData(double data_t)
 {
+    // 更新最后示数
     ui->leastData->setText(QString::number(data_t));
+
+    // 将Y轴数据添加到曲线图上
+    ui->chart->addYPointBaseOnCurrentTime(data_t);
+
+    // 如果是采集状态，将数据添加到data中
     if (collectState == true)
         data.push_back(data_t);
 }
@@ -71,9 +77,4 @@ void CollectPanel::collectFinish(void)
     collectStop();
     emit sgCollectDataAverage(average(data));
     data.clear();
-}
-
-void CollectPanel::slAddYPoint(double y)
-{
-    ui->chart->addYPointBaseOnCurrentTime(y);
 }
