@@ -47,7 +47,7 @@ signals:
     void collectDataXYChanged(QVector<double> x, QVector<double> y);
     void fitDataChanged(vector<double> x, vector<double> y);
 
-    void startGenerate(int t_left, int t_right, DECIMAL_TYPE t_step, vector<DECIMAL_TYPE> t_factor);
+    void startGenerate(DECIMAL_TYPE t_left, DECIMAL_TYPE t_right, DECIMAL_TYPE t_step, vector<DECIMAL_TYPE> t_factor);
     void startLeastSquare(int t_N, vector<DECIMAL_TYPE> t_x, vector<DECIMAL_TYPE> t_y);
 
 private:

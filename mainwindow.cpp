@@ -364,10 +364,12 @@ void LeastSquare::setFitChartData(vector<DECIMAL_TYPE> factor)
     }
     collectDataX_Max = max(collectDataX);
     collectDataX_Min = min(collectDataX);
-    DECIMAL_TYPE addRange = (collectDataX_Max - collectDataX_Min) / 2.0f;
+    DECIMAL_TYPE addRange = (collectDataX_Max - collectDataX_Min) / 1.0f;
 
     // 启动子线程 生成曲线数据
-    emit startGenerate(collectDataX_Min - addRange, collectDataX_Max + addRange, 0.25f, factor); // fitDataX, fitDataY);
+    emit startGenerate(collectDataX_Min - addRange, collectDataX_Max + addRange,
+                       (collectDataX_Max - collectDataX_Min) / (DECIMAL_TYPE)samplePointSum / 5000.0f,
+                       factor); // fitDataX, fitDataY);
     QThreadPool::globalInstance()->start(taskGen);
 }
 

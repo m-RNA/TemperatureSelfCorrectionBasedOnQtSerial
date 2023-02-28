@@ -18,7 +18,7 @@ public:
     void run() override;
 
 public slots:
-    void setGenerateFitData(int t_left, int t_right, DECIMAL_TYPE t_step,
+    void setGenerateFitData(DECIMAL_TYPE t_left, DECIMAL_TYPE t_right, DECIMAL_TYPE t_step,
                             vector<DECIMAL_TYPE> t_factor)
     {
         left = t_left;
@@ -30,8 +30,8 @@ signals:
     void generateFitDataFinish(QVector<double> x, QVector<double> y); // f
 
 private:
-    int left;
-    int right;
+    DECIMAL_TYPE left;
+    DECIMAL_TYPE right;
     DECIMAL_TYPE step;
     vector<DECIMAL_TYPE> factor;
 };
