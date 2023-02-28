@@ -343,7 +343,7 @@ void LeastSquare::on_spbxOrder_valueChanged(int arg1)
     ui->twFactor->setRowCount(arg1 + 1);
     qDebug() << "order:" << order;
 
-    tryUpdateFitChart(false);
+    // tryUpdateFitChart(false);
 }
 
 void LeastSquare::on_btnFit_clicked()
