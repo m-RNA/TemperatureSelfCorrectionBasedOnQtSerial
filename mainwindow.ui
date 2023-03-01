@@ -554,8 +554,25 @@
               <string>操作</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="3" column="0">
+              <item row="9" column="1" colspan="2">
+               <widget class="QPushButton" name="pushButton_26">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>保存数据</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1" colspan="2">
                <widget class="QPushButton" name="pushButton_25">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -563,7 +580,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>检验</string>
+                 <string>检验结果</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
@@ -571,7 +588,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="0">
+              <item row="1" column="1" colspan="2">
                <widget class="QPushButton" name="btnCollect">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -580,7 +597,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>采集</string>
+                 <string>开始采集</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
@@ -588,7 +605,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="4" column="1" colspan="2">
                <widget class="QPushButton" name="btnFit">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -597,7 +614,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>拟合</string>
+                 <string>拟合数据</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
@@ -605,14 +622,30 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="pushButton_26">
+              <item row="2" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollectStop">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
-                 <string>保存</string>
+                 <string>停止采集</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
-                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1" colspan="2">
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
@@ -667,12 +700,11 @@
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="rowCount">
-                 <number>5</number>
+                 <number>4</number>
                 </property>
                 <property name="columnCount">
                  <number>1</number>
                 </property>
-                <row/>
                 <row/>
                 <row/>
                 <row/>

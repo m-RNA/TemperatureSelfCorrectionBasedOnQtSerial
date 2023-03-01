@@ -33,7 +33,7 @@ void CollectPanel::slSetState(int state)
         break;
 
     case 3:
-        ui->ledText->setText("波动     ");
+        ui->ledText->setText("数据波动 ");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(197, 186, 10);"); // 黄色
         break;
     }
@@ -70,11 +70,65 @@ void CollectPanel::slCollectData(double data_t)
         data.push_back(data_t);
 }
 
+void CollectPanel::collectStart(void)
+{
+    collectState = true;
+    data.clear();
+}
+void CollectPanel::collectStop(void)
+{
+    collectState = false;
+}
 void CollectPanel::collectFinish(void)
 {
     ui->chart->chartRefresh(); // 最新几个数据点可能卡在软件定时器里了，更新一下
-
-    collectStop();
     emit sgCollectDataAverage(average(data));
-    data.clear();
+    collectStop();
+}
+
+// 检查输入数据波动是否超过阈值
+bool checkDataFluctuation(bool reset = false, double data = 0)
+{
+    static double maxData = 0;
+    static double minData = 0;
+    static unsigned count = 0;
+    bool stateFlag = false;
+    static bool lastStateFlag = stateFlag;
+
+    // 重置变量
+    if (reset == true)
+    {
+        maxData = data;
+        minData = data;
+        count = 0;
+        return true;
+    }
+
+    // 记录最大值和最小值
+    if (data > maxData)
+        maxData = data;
+    if (data < minData)
+        minData = data;
+
+    // 当数据量大于10时，检查最大值和最小值的差值是否超过阈值
+    if (count > 10)
+    {
+        stateFlag = (maxData - minData) > 0.5 ? false : true;
+    }
+
+    // 检查状态是否发生变化 有变化就打印
+    if (stateFlag ^ lastStateFlag)
+    {
+        qDebug() << "maxData:" << maxData;
+        qDebug() << "minData:" << minData;
+
+        if (stateFlag == false)
+            qDebug() << "数据波动超过阈值";
+        else
+            qDebug() << "数据波动正常";
+    }
+
+    lastStateFlag = stateFlag;
+    count++;
+    return true;
 }

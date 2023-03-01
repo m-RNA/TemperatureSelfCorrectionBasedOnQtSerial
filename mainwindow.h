@@ -24,6 +24,8 @@ public:
 private slots:
 
     void on_btnCollect_clicked();
+    
+    void on_btnCollectStop_clicked();
 
     void on_spbxSamplePointSum_valueChanged(int arg1);
 

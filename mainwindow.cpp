@@ -146,12 +146,15 @@ void MainWindow::timerCollectTimeOut()
     if (ui->pgsbSum->maximum() > sampledPointNum) // 各个标定点是否采集完成
     {
         // 各个标定点采集未完成
+        ui->btnCollect->setText("采集下点");
+        ui->btnCollectStop->setEnabled(false);
+        
         QMessageBox msgBox(QMessageBox::Information, "提示", "此点采集完成\n请准备下一点采集", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
         {
             // 重置单点进度
-            ui->pgsbSingle->setFormat("等待下个采集点中");
+            // ui->pgsbSingle->setFormat("等待下个采集点中");
             pgsbSingleValue = 0;
             ui->pgsbSingle->setValue(0);
             ui->pgsbSingle->setMaximum(0);
@@ -186,6 +189,9 @@ void MainWindow::on_btnCollect_clicked()
         //     return;
         // }
 
+        ui->btnCollect->setText("重采该点");
+        ui->btnCollectStop->setEnabled(true);
+
         // # 这个放在if (sampledPointNum == 0)里面才对(调试)
         if (sampledPointNum == 0) // 第一次采集
         {
@@ -216,6 +222,24 @@ void MainWindow::on_btnCollect_clicked()
             goto SAMPLE_UNFINISHED;
         }
     }
+}
+
+// 停止采集
+void MainWindow::on_btnCollectStop_clicked()
+{
+    ui->btnCollectStop->setEnabled(false);
+    if (timerCollect->isActive())
+        timerCollect->stop();
+
+    // 重置单点进度
+    pgsbSingleValue = 0;
+    ui->pgsbSingle->setValue(0);
+    ui->pgsbSingle->setMaximum(0);
+
+    ui->collectPanel_Std->collectStop();
+    ui->collectPanel_Dtm->collectStop();
+    ui->collectPanel_Std->slSetState(ui->start_Std->state());
+    ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
 }
 
 /*

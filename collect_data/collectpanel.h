@@ -21,8 +21,8 @@ public:
     void slSetState(int state);
     void setDeviceName(QString name);
 
-    void collectStart(void) { collectState = true; }
-    void collectStop(void) { collectState = false; }
+    void collectStart(void);
+    void collectStop(void);
     void collectFinish(void);
 
 public slots:
