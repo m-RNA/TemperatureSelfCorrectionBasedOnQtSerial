@@ -148,7 +148,7 @@ void MainWindow::timerCollectTimeOut()
         // 各个标定点采集未完成
         ui->btnCollect->setText("采集下点");
         ui->btnCollectStop->setEnabled(false);
-        
+
         QMessageBox msgBox(QMessageBox::Information, "提示", "此点采集完成\n请准备下一点采集", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
@@ -172,14 +172,14 @@ void MainWindow::timerCollectTimeOut()
 
 void MainWindow::on_btnCollect_clicked()
 {
-    if (sampledPointSum > sampledPointNum)
+    if (samplePointSum > sampledPointNum)
     {
     SAMPLE_UNFINISHED: // 采集未完成
         // 两个串口是否同时打开
         if (!(ui->start_Dtm->state() && ui->start_Std->state()))
         {
             QMessageBox::critical(this, "错误", "请同时连接两个仪器");
-            // return;
+            return;
         }
         ui->collectPanel_Std->slSetState(2);
         // 一段时间内标准仪器波动<0.01

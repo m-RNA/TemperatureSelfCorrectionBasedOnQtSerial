@@ -57,7 +57,7 @@ private:
     QTimer *timerCollect;
     int collectTimestamp;    // 采集时间戳（秒 * TIMESTAMP_FACTOR)
     int sampledPointNum = 0; // 已采集点数
-    int sampledPointSum = 8; // 需要采集点数
+    int samplePointSum = 8; // 需要采集点数
     int pgsbSingleValue = 0; //
 
     void timerCollectTimeOut();
@@ -66,7 +66,6 @@ private:
     void setDeviceName_Dtm(QString name);
 
     unsigned long long order; // 最小二乘法多项式阶数
-    int samplePointSum;       // 标定点数
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
     DECIMAL_TYPE collectDataX_Max, collectDataX_Min;
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
