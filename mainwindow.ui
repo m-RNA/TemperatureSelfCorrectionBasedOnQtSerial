@@ -554,20 +554,6 @@
               <string>操作</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="9" column="1" colspan="2">
-               <widget class="QPushButton" name="pushButton_26">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>保存数据</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
-                </property>
-               </widget>
-              </item>
               <item row="8" column="1" colspan="2">
                <widget class="QPushButton" name="pushButton_25">
                 <property name="enabled">
@@ -585,6 +571,26 @@
                 <property name="icon">
                  <iconset resource="main.qrc">
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollectStop">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>停止采集</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
               </item>
@@ -622,30 +628,24 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollectStop">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>停止采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="1" colspan="2">
                <widget class="Line" name="line">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1" colspan="2">
+               <widget class="QPushButton" name="pushButton_26">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>保存数据</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
               </item>

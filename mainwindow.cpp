@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     taskGen = new Bll_GenerateData(this);
     taskLeastSquare = new Bll_LeastSquareMethod(this);
 
+    // 这里是根据表格的行数来设置采集点数的
     samplePointSum = ui->twAverage->rowCount();
     ui->spbxSamplePointSum->setValue(samplePointSum);
     order = ui->spbxOrder->text().toInt();
@@ -90,6 +91,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setFitChartData);
 
     /*** LeastSquare End ***/
+
+    // 单点进度条
+    int sec = ui->spbxSampleTime->value() * 60;
+    ui->pgsbSingle->setFormat(QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60));
+    // 整体进度条
+    ui->pgsbSum->setMaximum(samplePointSum);
 
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
@@ -157,16 +164,22 @@ void MainWindow::timerCollectTimeOut()
             // ui->pgsbSingle->setFormat("等待下个采集点中");
             pgsbSingleValue = 0;
             ui->pgsbSingle->setValue(0);
-            ui->pgsbSingle->setMaximum(0);
+            ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
+            // ui->pgsbSingle->setMaximum(0);
         }
     }
     else
     {
         // 各个标定点未采集完成
+
         // 计算拟合结果
         // ...
         tryUpdateFitChart(false);
-        QMessageBox::information(this, "提示", "全部采集完成！\n请在右下角查看拟合结果");
+        ui->btnCollectStop->setEnabled(false);
+        QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
+        msgBox.addButton("Yes", QMessageBox::AcceptRole);
+        msgBox.exec();
+        ui->btnCollect->setText("全部重采");
     }
 }
 
@@ -174,13 +187,15 @@ void MainWindow::on_btnCollect_clicked()
 {
     if (samplePointSum > sampledPointNum)
     {
-    SAMPLE_UNFINISHED: // 采集未完成
+        // SAMPLE_UNFINISHED: // 采集未完成
         // 两个串口是否同时打开
         if (!(ui->start_Dtm->state() && ui->start_Std->state()))
         {
             QMessageBox::critical(this, "错误", "请同时连接两个仪器");
             return;
         }
+        ui->spbxSamplePointSum->setEnabled(false);
+        ui->spbxSampleTime->setEnabled(false);
         ui->collectPanel_Std->slSetState(2);
         // 一段时间内标准仪器波动<0.01
         // if (ui->collectPanel_Std->isStable() == false)
@@ -212,14 +227,28 @@ void MainWindow::on_btnCollect_clicked()
     }
     else // 所有点采集完毕
     {
-        QMessageBox msgBox(QMessageBox::Warning, "警告", "这将清除这次拟合数据\n是否继续？", 0, this);
+        QMessageBox msgBox(QMessageBox::Warning, "警告", "这将清除全部数据\n是否继续？", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.addButton("No", QMessageBox::RejectRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
         {
             // qDebug() << "确认";
+            ui->spbxSamplePointSum->setEnabled(true);
+            ui->spbxSampleTime->setEnabled(true);
             sampledPointNum = 0;
-            goto SAMPLE_UNFINISHED;
+            ui->pgsbSum->setValue(0);
+            ui->pgsbSingle->setValue(0);
+            ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
+
+            // 需要清空表格数据
+            ui->twAverage->clearContents();
+            ui->twFactor->clearContents();
+
+            // 清空拟合图形
+            ui->chartFit->clear();
+
+            ui->btnCollect->setText("开始采集");
+            // goto SAMPLE_UNFINISHED;
         }
     }
 }
@@ -234,12 +263,43 @@ void MainWindow::on_btnCollectStop_clicked()
     // 重置单点进度
     pgsbSingleValue = 0;
     ui->pgsbSingle->setValue(0);
-    ui->pgsbSingle->setMaximum(0);
+    ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
 
     ui->collectPanel_Std->collectStop();
     ui->collectPanel_Dtm->collectStop();
     ui->collectPanel_Std->slSetState(ui->start_Std->state());
     ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
+}
+
+// 更新单点进度条显示时间
+void MainWindow::on_spbxSampleTime_valueChanged(double arg1)
+{
+    int sec = arg1 * 60;
+    ui->pgsbSingle->setFormat(QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60));
+}
+
+void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
+{
+    // 设置整体进度条最大值
+    ui->pgsbSum->setMaximum(arg1);
+
+    // 设置平均值表格行数
+    ui->twAverage->setRowCount(arg1);
+    if (arg1 > samplePointSum)
+    {
+        // 需要初始化表格Item
+        for (int j = 0; j < 2; j++)
+        {
+            QTableWidgetItem *temp = new QTableWidgetItem();
+            int row = arg1 - 1;
+            ui->twAverage->setItem(row, j, temp);
+            ui->twAverage->item(row, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        }
+    }
+
+    // 设置采集点数
+    samplePointSum = arg1;
+    qDebug() << "samplePointSum:" << samplePointSum;
 }
 
 /*
@@ -340,23 +400,6 @@ void LeastSquare::tryUpdateFitChart(bool man)
     // 启动子线程
     emit startLeastSquare(order, collectDataX, collectDataY);
     QThreadPool::globalInstance()->start(taskLeastSquare);
-}
-
-void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
-{
-    ui->twAverage->setRowCount(arg1);
-    if (arg1 > samplePointSum)
-    {
-        for (int j = 0; j < 2; j++) // 需要初始化表格Item
-        {
-            QTableWidgetItem *temp = new QTableWidgetItem();
-            int row = arg1 - 1;
-            ui->twAverage->setItem(row, j, temp);
-            ui->twAverage->item(row, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        }
-    }
-    samplePointSum = arg1;
-    qDebug() << "samplePointSum:" << samplePointSum;
 }
 
 void LeastSquare::on_spbxOrder_valueChanged(int arg1)

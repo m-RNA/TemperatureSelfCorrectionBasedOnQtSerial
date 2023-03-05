@@ -45,6 +45,8 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_spbxSampleTime_valueChanged(double arg1);
+
 signals:
     void collectDataXYChanged(QVector<double> x, QVector<double> y);
     void fitDataChanged(vector<double> x, vector<double> y);
