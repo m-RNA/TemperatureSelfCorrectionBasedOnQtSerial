@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <vector>
+#include "interactchart.h"
 using namespace std;
 
 namespace Ui
@@ -24,6 +25,8 @@ public:
     void collectStart(void);
     void collectStop(void);
     void collectFinish(void);
+
+    QCPAxis *getXAxis(void);
 
 public slots:
     void slCollectData(double);

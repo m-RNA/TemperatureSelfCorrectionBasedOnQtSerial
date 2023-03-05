@@ -95,7 +95,7 @@ void InteractChart::setXAxisToTimelineState(bool state)
 		this->xAxis->setTicker(timeTicker);
 		oldTime = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间
 
-		this->xAxis->setRange(oldTime * 0.001, 10, Qt::AlignRight);
+		this->xAxis->setRange(oldTime * 0.001, 60, Qt::AlignRight);
 		this->xAxis->setLabel("");
 		this->yAxis->setLabel("y轴");
 	}
@@ -364,8 +364,8 @@ void InteractChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	// 因为我们知道绘图中只有QCPGraphs，所以我们可以立即访问interface1D（）
 	// 通常最好先检查interface1D（）是否返回非零，然后才使用它。
 
-	double dataValue = plottable->interface1D()->dataMainValue(dataIndex);
-	QString message = QString("Clicked on graph '%1' at data point #%2 with value %3.").arg(plottable->name()).arg(dataIndex).arg(dataValue);
+	// double dataValue = plottable->interface1D()->dataMainValue(dataIndex);
+	// QString message = QString("Clicked on graph '%1' at data point #%2 with value %3.").arg(plottable->name()).arg(dataIndex).arg(dataValue);
 	// ui->statusBar->showMessage(message, 2500);
 }
 

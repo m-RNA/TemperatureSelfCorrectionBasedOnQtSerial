@@ -86,6 +86,11 @@ void CollectPanel::collectFinish(void)
     collectStop();
 }
 
+QCPAxis *CollectPanel::getXAxis(void)
+{
+    return ui->chart->xAxis;
+}
+
 // 检查输入数据波动是否超过阈值
 bool checkDataFluctuation(bool reset = false, double data = 0)
 {
