@@ -91,6 +91,12 @@ void StartCommunication::setEncodeMode(EncodingFormat encodeMode)
     }
 }
 
+// 设置协议类型
+void StartCommunication::setAnalyseMode(int type)
+{
+    ui->cbAnalyse->setCurrentIndex(type); 
+}
+
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息
 void StartCommunication::updateSerialPortInfo()
 {

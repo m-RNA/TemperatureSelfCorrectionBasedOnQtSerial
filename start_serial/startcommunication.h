@@ -30,6 +30,9 @@ public:
         return serialPortState;
     }
 
+    void setEncodeMode(EncodingFormat encodeMode);
+    void setAnalyseMode(int type);
+
 public slots:
 
 private slots:
@@ -66,7 +69,6 @@ private:
 
     QByteArray (*decode)(QByteArray const &qByteArray) = nullptr;
     QByteArray (*encode)(QByteArray const &qByteArray) = nullptr;
-    void setEncodeMode(EncodingFormat encodeMode);
 
     void updateSerialPortInfo(void);
     void setSerialPortCtrlState(bool state);

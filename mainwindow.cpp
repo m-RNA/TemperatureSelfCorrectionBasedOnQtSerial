@@ -29,9 +29,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     setDeviceName_Dtm("待定仪器");
     setDeviceName_Std("标准仪器");
+    ui->start_Std->setAnalyseMode(2);
     connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
-
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
