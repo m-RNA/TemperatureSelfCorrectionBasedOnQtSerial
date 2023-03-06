@@ -34,7 +34,11 @@
         "qtimer": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "alignedvector3": "cpp"
+        "alignedvector3": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "hash_map": "cpp",
+        "qtxlsx": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",
@@ -45,6 +49,7 @@
         "INTERACTCHART",
         "leastssquare",
         "pgsb",
+        "SAVEDATATOXLSX",
         "SERIALRECVANALYSE",
         "STARTCOMMUNICATION"
     ]

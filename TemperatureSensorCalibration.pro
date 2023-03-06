@@ -1,4 +1,4 @@
-QT       += core gui printsupport serialport opengl
+QT       += core gui printsupport serialport opengl xlsx
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,6 +30,7 @@ INCLUDEPATH +=  \
 
 SOURCES += \
     about.cpp \
+    collect_data/bll_save_data_to_xlsx.cpp \
     collect_data/collectpanel.cpp \
     config.c \
     least_square_method/bll_leastssquare.cpp \
@@ -45,6 +46,7 @@ SOURCES += \
     qcustomplot/qcustomplot.cpp \
 
 HEADERS += \
+    collect_data/bll_save_data_to_xlsx.h \
     config.h \
     about.h \
     collect_data/collectpanel.h \
