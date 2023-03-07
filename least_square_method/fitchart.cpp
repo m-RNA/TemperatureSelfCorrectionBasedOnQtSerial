@@ -265,7 +265,7 @@ void FitChart::findGraph()
 }
 
 // 更新采集的数据曲线
-void FitChart::updateCollectPlot(QVector<double> x, QVector<double> y)
+void FitChart::updateCollectPlot(const QVector<double> &x, const QVector<double> &y)
 {
 	if (x.size() == 0 || y.size() == 0)
 	{
@@ -283,7 +283,7 @@ void FitChart::updateCollectPlot(QVector<double> x, QVector<double> y)
 }
 
 // 更新拟合曲线
-void FitChart::updateFitPlot(QVector<double> x, QVector<double> y)
+void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 {
 	qDebug() << "更新拟合曲线";
 	// 添加数据

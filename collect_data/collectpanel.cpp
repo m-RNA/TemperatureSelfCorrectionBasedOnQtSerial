@@ -45,7 +45,7 @@ void CollectPanel::setDeviceName(QString name)
 }
 
 // 防止溢出平均值 double在数值较小时，精度较高
-double average(vector<double> data)
+double CollectPanel::average(void)
 {
     double ans = 0;
     unsigned long long size = data.size();
@@ -57,7 +57,7 @@ double average(vector<double> data)
     return ans;
 }
 
-void CollectPanel::slCollectData(double data_t)
+void CollectPanel::slCollectData(const double &data_t)
 {
     // 更新最后示数
     ui->leastData->setText(QString::number(data_t));
@@ -82,7 +82,7 @@ void CollectPanel::collectStop(void)
 void CollectPanel::collectFinish(void)
 {
     ui->chart->chartRefresh(); // 最新几个数据点可能卡在软件定时器里了，更新一下
-    emit sgCollectDataAverage(average(data));
+    emit sgCollectDataAverage(average());
     collectStop();
 }
 
@@ -92,7 +92,7 @@ QCPAxis *CollectPanel::getXAxis(void)
 }
 
 // 检查输入数据波动是否超过阈值
-bool checkDataFluctuation(bool reset = false, double data = 0)
+bool checkDataFluctuation(bool reset = false,const double &data = 0)
 {
     static double maxData = 0;
     static double minData = 0;

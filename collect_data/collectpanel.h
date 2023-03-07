@@ -29,10 +29,10 @@ public:
     QCPAxis *getXAxis(void);
 
 public slots:
-    void slCollectData(double);
+    void slCollectData(const double&);
 
 signals:
-    void sgCollectDataAverage(DECIMAL_TYPE average);
+    void sgCollectDataAverage(const DECIMAL_TYPE &average);
 
 private slots:
 
@@ -40,6 +40,9 @@ private:
     Ui::CollectPanel *ui;
     vector<double> data;
     bool collectState = false;
+
+    double average(void);
+
 };
 
 #endif // COLLECTPANEL_H

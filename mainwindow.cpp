@@ -422,7 +422,7 @@ void LeastSquare::on_btnFit_clicked()
     tryUpdateFitChart(true);
 }
 
-void LeastSquare::setFitChartData(vector<DECIMAL_TYPE> factor)
+void LeastSquare::setFitChartData(const vector<DECIMAL_TYPE> &factor)
 {
     for (unsigned long long i = 0; i <= order; i++)
     {
@@ -517,13 +517,13 @@ void MainWindow::on_actionAbout_triggered()
     about.exec();
 }
 
-void MainWindow::setAverageTableItem_Std(DECIMAL_TYPE data)
+void MainWindow::setAverageTableItem_Std(const DECIMAL_TYPE &data)
 {
     QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
     ui->twAverage->setItem(sampledPointNum, 0, data_Std);
 }
 
-void MainWindow::setAverageTableItem_Dtm(DECIMAL_TYPE data)
+void MainWindow::setAverageTableItem_Dtm(const DECIMAL_TYPE &data)
 {
     QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
     ui->twAverage->setItem(sampledPointNum, 1, data_Dtm);

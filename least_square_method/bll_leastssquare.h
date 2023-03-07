@@ -18,8 +18,8 @@ public:
     void run() override;
 
 public slots:
-    void setGenerateFitData(DECIMAL_TYPE t_left, DECIMAL_TYPE t_right, DECIMAL_TYPE t_step,
-                            vector<DECIMAL_TYPE> t_factor)
+    void setGenerateFitData(const DECIMAL_TYPE &t_left, const DECIMAL_TYPE &t_right, const DECIMAL_TYPE &t_step,
+                            const vector<DECIMAL_TYPE> &t_factor)
     {
         left = t_left;
         right = t_right;
@@ -27,7 +27,7 @@ public slots:
         factor = t_factor;
     }
 signals:
-    void generateFitDataFinish(QVector<double> x, QVector<double> y); // f
+    void generateFitDataFinish(const QVector<double> &x, const QVector<double> &y); // f
 
 private:
     DECIMAL_TYPE left;
@@ -45,14 +45,14 @@ public:
     void run() override;
 
 public slots:
-    void setLeastSquareMethod(int t_N, vector<DECIMAL_TYPE> t_x, vector<DECIMAL_TYPE> t_y)
+    void setLeastSquareMethod(const int &t_N, const vector<DECIMAL_TYPE> &t_x, const vector<DECIMAL_TYPE> &t_y)
     {
         N = t_N;
         x = t_x;
         y = t_y;
     }
 signals:
-    void leastSquareMethodFinish(vector<DECIMAL_TYPE> factor); // f
+    void leastSquareMethodFinish(const vector<DECIMAL_TYPE> &factor); // f
 
 private:
     unsigned long long N;

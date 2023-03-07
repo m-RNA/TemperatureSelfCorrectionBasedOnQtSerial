@@ -18,8 +18,8 @@ public:
     ~FitChart();
 
 public slots:
-    void updateCollectPlot(QVector<double> x, QVector<double> y); // 更新散点图
-    void updateFitPlot(QVector<double> x, QVector<double> y);     // 更新折线图
+    void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
+    void updateFitPlot(const QVector<double> &x, const QVector<double> &y);     // 更新折线图
 
     void clear();
 

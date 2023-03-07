@@ -24,7 +24,7 @@ public:
 private slots:
 
     void on_btnCollect_clicked();
-    
+
     void on_btnCollectStop_clicked();
 
     void on_spbxSamplePointSum_valueChanged(int arg1);
@@ -37,29 +37,29 @@ private slots:
 
     void twAverage_itemChanged(QTableWidgetItem *item);
 
-    void setFitChartData(vector<DECIMAL_TYPE> factor);
+    void setFitChartData(const vector<DECIMAL_TYPE> &factor);
 
-    void setAverageTableItem_Std(DECIMAL_TYPE);
+    void setAverageTableItem_Std(const DECIMAL_TYPE &average);
 
-    void setAverageTableItem_Dtm(DECIMAL_TYPE);
+    void setAverageTableItem_Dtm(const DECIMAL_TYPE &average);
 
     void on_actionAbout_triggered();
 
     void on_spbxSampleTime_valueChanged(double arg1);
 
 signals:
-    void collectDataXYChanged(QVector<double> x, QVector<double> y);
-    void fitDataChanged(vector<double> x, vector<double> y);
+    void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
+    void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
-    void startGenerate(DECIMAL_TYPE t_left, DECIMAL_TYPE t_right, DECIMAL_TYPE t_step, vector<DECIMAL_TYPE> t_factor);
-    void startLeastSquare(int t_N, vector<DECIMAL_TYPE> t_x, vector<DECIMAL_TYPE> t_y);
+    void startGenerate(const DECIMAL_TYPE &t_left, const DECIMAL_TYPE &t_right, const DECIMAL_TYPE &t_step, const vector<DECIMAL_TYPE> &t_factor);
+    void startLeastSquare(const int &t_N, const vector<DECIMAL_TYPE> &t_x, const vector<DECIMAL_TYPE> &t_y);
 
 private:
     Ui::MainWindow *ui;
     QTimer *timerCollect;
     int collectTimestamp;    // 采集时间戳（秒 * TIMESTAMP_FACTOR)
     int sampledPointNum = 0; // 已采集点数
-    int samplePointSum = 8; // 需要采集点数
+    int samplePointSum = 8;  // 需要采集点数
     int pgsbSingleValue = 0; //
 
     void timerCollectTimeOut();
