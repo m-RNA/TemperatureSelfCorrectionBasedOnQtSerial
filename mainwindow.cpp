@@ -234,7 +234,7 @@ void MainWindow::on_btnCollect_clicked()
         ui->pgsbSingle->setMaximum(collectTimestamp);
         ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
         timerCollect->start();
-
+        taskXlsxData->startPoint();
         ui->collectPanel_Dtm->slSetState(2);
         ui->collectPanel_Std->collectStart();
         ui->collectPanel_Dtm->collectStart();

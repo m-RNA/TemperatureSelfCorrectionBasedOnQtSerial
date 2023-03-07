@@ -11,6 +11,13 @@ Bll_SaveDataToXlsx::~Bll_SaveDataToXlsx()
     report->deleteLater();
 }
 
+void Bll_SaveDataToXlsx::startPoint()
+{
+    int col = DATA_C + DATA_C_OFFSET * index + 1;
+
+    report->write(DATA_R - 2, col, QDateTime::currentDateTime().toString("hh:mm:ss(yyyy/MM/dd)"));
+}
+
 void Bll_SaveDataToXlsx::nextPoint()
 {
     ++index;

@@ -29,6 +29,7 @@ public:
     Bll_SaveDataToXlsx(QObject *parent = nullptr);
     ~Bll_SaveDataToXlsx();
 
+    void startPoint();
     void nextPoint();
     void saveInfo(const QStringList &info);
     void saveReport(const QString &fileName);
