@@ -54,6 +54,7 @@ double CollectPanel::average(void)
     {
         ans = (double)i / (double)(i + 1) * ans + data.at(i) / (i + 1);
     }
+    emit sgCollectDataGet(data);
     return ans;
 }
 

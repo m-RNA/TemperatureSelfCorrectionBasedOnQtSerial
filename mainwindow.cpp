@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 1. 创建任务类对象
     taskGen = new Bll_GenerateData(this);
     taskLeastSquare = new Bll_LeastSquareMethod(this);
+    taskXlsxData = new Bll_SaveDataToXlsx(this);
 
     // 这里是根据表格的行数来设置采集点数的
     samplePointSum = ui->twAverage->rowCount();
@@ -106,6 +107,10 @@ MainWindow::MainWindow(QWidget *parent)
             ui->collectPanel_Dtm->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::setRange));
     connect(ui->collectPanel_Dtm->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged),
             ui->collectPanel_Std->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::setRange));
+
+    /* Xlsx 文件记录保存 */
+    connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
+    connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
 }
 
 MainWindow::~MainWindow()
@@ -153,6 +158,7 @@ void MainWindow::timerCollectTimeOut()
     ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
 
     // 更新整体进度条
+    taskXlsxData->nextPoint();
     sampledPointNum = ui->pgsbSum->value() + 1;
     ui->pgsbSum->setValue(sampledPointNum);
 
@@ -185,6 +191,8 @@ void MainWindow::timerCollectTimeOut()
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
+        // 保存报告
+        taskXlsxData->saveReport("Test_" + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss"));
         ui->btnCollect->setText("全部重采");
     }
 }

@@ -38,7 +38,8 @@
         "deque": "cpp",
         "list": "cpp",
         "hash_map": "cpp",
-        "qtxlsx": "cpp"
+        "qtxlsx": "cpp",
+        "random": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

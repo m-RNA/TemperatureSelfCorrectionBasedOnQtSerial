@@ -34,6 +34,8 @@ public slots:
 signals:
     void sgCollectDataAverage(const DECIMAL_TYPE &average);
 
+    void sgCollectDataGet(const vector<double> &data);
+
 private slots:
 
 private:

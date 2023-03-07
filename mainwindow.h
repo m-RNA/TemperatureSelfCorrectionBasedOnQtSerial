@@ -5,6 +5,7 @@
 #include <QSerialPort>
 #include <QTableWidgetItem>
 #include "bll_leastssquare.h"
+#include "bll_save_data_to_xlsx.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -77,6 +78,7 @@ private:
     // 任务类对象
     Bll_GenerateData *taskGen;
     Bll_LeastSquareMethod *taskLeastSquare;
+    Bll_SaveDataToXlsx *taskXlsxData;
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);
