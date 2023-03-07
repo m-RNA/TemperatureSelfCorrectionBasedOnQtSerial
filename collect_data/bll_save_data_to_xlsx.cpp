@@ -2,8 +2,7 @@
 
 Bll_SaveDataToXlsx::Bll_SaveDataToXlsx(QObject *parent) : QObject(parent)
 {
-    report = new Document("../TemperatureSensorCalibration/ReportTemplate.xlsx");
-    report->write(INFO_R, INFO_C, "测试");
+    resetIndex();
 }
 
 Bll_SaveDataToXlsx::~Bll_SaveDataToXlsx()
@@ -16,6 +15,7 @@ void Bll_SaveDataToXlsx::startPoint()
     int col = DATA_C + DATA_C_OFFSET * index + 1;
 
     report->write(DATA_R - 2, col, QDateTime::currentDateTime().toString("hh:mm:ss(yyyy/MM/dd)"));
+    saveReport();
 }
 
 void Bll_SaveDataToXlsx::nextPoint()
@@ -23,9 +23,18 @@ void Bll_SaveDataToXlsx::nextPoint()
     ++index;
 }
 
-void Bll_SaveDataToXlsx::saveReport(const QString &fileName)
+void Bll_SaveDataToXlsx::saveReport()
 {
     report->saveAs(fileName + ".xlsx");
+}
+
+void Bll_SaveDataToXlsx::resetIndex()
+{
+    delete report;
+    report = new Document("../TemperatureSensorCalibration/ReportTemplate.xlsx");
+
+    fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    index = 0;
 }
 
 void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
@@ -39,6 +48,7 @@ void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
     }
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
+    saveReport();
 }
 
 void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
@@ -52,6 +62,7 @@ void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
     }
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R + 1, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
+    saveReport();
 }
 
 void saveFactor(const vector<DECIMAL_TYPE> &factor)

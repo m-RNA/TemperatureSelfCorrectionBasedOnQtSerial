@@ -192,7 +192,7 @@ void MainWindow::timerCollectTimeOut()
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
         // 保存报告
-        taskXlsxData->saveReport("Test_" + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss"));
+        // taskXlsxData->saveReport();
         ui->btnCollect->setText("全部重采");
     }
 }
@@ -260,6 +260,9 @@ void MainWindow::on_btnCollect_clicked()
 
             // 清空拟合图形
             ui->chartFit->clear();
+
+            // 重置表格
+            taskXlsxData->resetIndex();
 
             ui->btnCollect->setText("开始采集");
             // goto SAMPLE_UNFINISHED;

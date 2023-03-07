@@ -32,7 +32,8 @@ public:
     void startPoint();
     void nextPoint();
     void saveInfo(const QStringList &info);
-    void saveReport(const QString &fileName);
+    void saveReport();
+    void resetIndex();
 
 public slots:
     void saveData_Std(const vector<double> &data);
@@ -42,6 +43,7 @@ public slots:
 private:
     Document *report = nullptr;
     size_t index = 0;
+    QString fileName = "";
 
     QString getAverageFormula(int r1, int r2, int c);
 };
