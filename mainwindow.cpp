@@ -111,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
     /* Xlsx 文件记录保存 */
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
 }
 
 MainWindow::~MainWindow()
@@ -191,8 +192,9 @@ void MainWindow::timerCollectTimeOut()
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
+        
         // 保存报告
-        // taskXlsxData->saveReport();
+        taskXlsxData->saveReport();
         ui->btnCollect->setText("全部重采");
     }
 }

@@ -38,7 +38,7 @@ public:
 public slots:
     void saveData_Std(const vector<double> &data);
     void saveData_Dtm(const vector<double> &data);
-    // void saveFactor(const vector<DECIMAL_TYPE> &factor);
+    void saveFactor(const vector<DECIMAL_TYPE> &factor);
 
 private:
     Document *report = nullptr;

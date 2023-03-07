@@ -65,14 +65,17 @@ void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
     saveReport();
 }
 
-void saveFactor(const vector<DECIMAL_TYPE> &factor)
+void Bll_SaveDataToXlsx::saveFactor(const vector<DECIMAL_TYPE> &factor)
 {
     size_t counter = 0;
-    for (DECIMAL_TYPE d : factor)
+    for (DECIMAL_TYPE f : factor)
     {
-        // report->write(FACTOR_R, FACTOR_C + counter, d);
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%.8LE", f);
+        report->write(FACTOR_R, FACTOR_C + counter, globalStringBuffer);
+        report->write(FACTOR_R - 1, FACTOR_C + counter, factor.size() - counter - 1);
         ++counter;
     }
+    saveReport();
 }
 
 // 输入r1，r2，c，返回xlsx中的求平均值公式字符串
