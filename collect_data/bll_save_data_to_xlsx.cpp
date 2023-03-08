@@ -31,7 +31,7 @@ void Bll_SaveDataToXlsx::saveReport()
 void Bll_SaveDataToXlsx::resetIndex()
 {
     delete report;
-    report = new Document("../TemperatureSensorCalibration/ReportTemplate.xlsx");
+    report = new Document(":/ReportTemplate.xlsx");
 
     fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
     index = 0;

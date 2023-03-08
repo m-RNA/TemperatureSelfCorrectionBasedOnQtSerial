@@ -26,5 +26,6 @@
         <file>icon/topcenter.ico</file>
         <file>icon/topleft.ico</file>
         <file>icon/topright.ico</file>
+        <file>ReportTemplate.xlsx</file>
     </qresource>
 </RCC>
