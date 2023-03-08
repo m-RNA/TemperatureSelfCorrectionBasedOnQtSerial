@@ -558,25 +558,50 @@ void MainWindow::on_cbSound_activated(int index)
 
 void MainWindow::on_actionPuTongHua_triggered()
 {
+    ui->actionPuTongHua->setChecked(true);
+    ui->actionYueYu->setChecked(false);
+    ui->actionDongBei->setChecked(false);
+    ui->actionShaanXi->setChecked(false);
+    ui->actionTaiWan->setChecked(false);
     taskSound->setIndex(PuTongHua);
 }
 
 void MainWindow::on_actionYueYu_triggered()
 {
+    ui->actionYueYu->setChecked(true);
+    ui->actionPuTongHua->setChecked(false);
+    ui->actionDongBei->setChecked(false);
+    ui->actionShaanXi->setChecked(false);
+    ui->actionTaiWan->setChecked(false);
     taskSound->setIndex(YueYu);
 }
 
 void MainWindow::on_actionDongBei_triggered()
 {
+    ui->actionDongBei->setChecked(true);
+    ui->actionPuTongHua->setChecked(false);
+    ui->actionYueYu->setChecked(false);
+    ui->actionShaanXi->setChecked(false);
+    ui->actionTaiWan->setChecked(false);
     taskSound->setIndex(DongBei);
 }
 
 void MainWindow::on_actionShaanXi_triggered()
 {
+    ui->actionShaanXi->setChecked(true);
+    ui->actionPuTongHua->setChecked(false);
+    ui->actionYueYu->setChecked(false);
+    ui->actionDongBei->setChecked(false);
+    ui->actionTaiWan->setChecked(false);
     taskSound->setIndex(ShaanXi);
 }
 
 void MainWindow::on_actionTaiWan_triggered()
 {
+    ui->actionTaiWan->setChecked(true);
+    ui->actionPuTongHua->setChecked(false);
+    ui->actionYueYu->setChecked(false);
+    ui->actionDongBei->setChecked(false);
+    ui->actionShaanXi->setChecked(false);
     taskSound->setIndex(TaiWan);
 }

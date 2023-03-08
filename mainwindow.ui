@@ -20,7 +20,7 @@
    <string>温度自校准</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="main.qrc">
+   <iconset>
     <normaloff>:/icon/svg/app.svg</normaloff>:/icon/svg/app.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -471,7 +471,7 @@
                  <string>停止采集</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -488,7 +488,7 @@
                  <string>开始采集</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -591,7 +591,7 @@
                  <string>拟合数据</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/fit.ico</normaloff>:/icon/fit.ico</iconset>
                 </property>
                </widget>
@@ -626,7 +626,7 @@
                  <string>检验结果</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
                 </property>
                </widget>
@@ -640,7 +640,7 @@
                  <string>保存数据</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="main.qrc">
+                 <iconset>
                   <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
@@ -771,15 +771,15 @@
     <property name="title">
      <string>语音</string>
     </property>
-    <addaction name="actionPuTongHua"/>
     <addaction name="actionYueYu"/>
+    <addaction name="actionPuTongHua"/>
+    <addaction name="actionTaiWan"/>
     <addaction name="actionDongBei"/>
     <addaction name="actionShaanXi"/>
-    <addaction name="actionTaiWan"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menuAbout"/>
    <addaction name="menuSound"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout">
@@ -813,26 +813,44 @@
    </property>
   </action>
   <action name="actionPuTongHua">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>普通话</string>
    </property>
   </action>
   <action name="actionYueYu">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>粤语</string>
    </property>
   </action>
   <action name="actionDongBei">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>东北话</string>
    </property>
   </action>
   <action name="actionShaanXi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>陕西话</string>
    </property>
   </action>
   <action name="actionTaiWan">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>台湾话</string>
    </property>
@@ -863,8 +881,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="main.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
