@@ -82,7 +82,7 @@ void Bll_SerialRecvAnalyse::analyseNum()
         {
             ans.value = rxFrame.toDouble();
             // ans.date = QDateTime::currentDateTime().toTime_t();
-            qDebug() << id << ":" << ans.value;
+            // qDebug() << id << ":" << ans.value;
 
             emit sgBll_AnalyseFinish(ans.value);
         }
@@ -96,7 +96,7 @@ void Bll_SerialRecvAnalyse::analyseNum()
 void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 {
     serialAnalyseData ans;
-    qDebug() << id << "buffer:" << buffer;
+    // qDebug() << id << "buffer:" << buffer;
 
     while (1)
     {
@@ -122,14 +122,14 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 
         // 找到了数据包结束标志
         QByteArray rxFrame = buffer.mid(index + 3, endIndex - index - 3);
-        qDebug() << id << "rxFrame:" << rxFrame;
+        // qDebug() << id << "rxFrame:" << rxFrame;
 
         // 处理解析出来的数据
         if (canIntoNum(rxFrame))
         {
             ans.value = rxFrame.toDouble();
             // ans.date = QDateTime::currentDateTime().toTime_t();
-            qDebug() << id << ":" << ans.value;
+            // qDebug() << id << ":" << ans.value;
 
             emit sgBll_AnalyseFinish(ans.value);
         }
