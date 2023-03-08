@@ -386,21 +386,24 @@
                </widget>
               </item>
               <item row="4" column="2">
-               <widget class="QComboBox" name="comboBox_7">
+               <widget class="QComboBox" name="cbSound">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
                 <item>
                  <property name="text">
-                  <string>开</string>
+                  <string>关</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>关</string>
+                  <string>开</string>
                  </property>
                 </item>
                </widget>
@@ -430,7 +433,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>闹钟提醒</string>
+                 <string>语音提醒</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -764,8 +767,19 @@
     <addaction name="separator"/>
     <addaction name="action_4"/>
    </widget>
+   <widget class="QMenu" name="menuSound">
+    <property name="title">
+     <string>语音</string>
+    </property>
+    <addaction name="actionPuTongHua"/>
+    <addaction name="actionYueYu"/>
+    <addaction name="actionDongBei"/>
+    <addaction name="actionShaanXi"/>
+    <addaction name="actionTaiWan"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuAbout"/>
+   <addaction name="menuSound"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout">
@@ -796,6 +810,31 @@
   <action name="action_4">
    <property name="text">
     <string>退出</string>
+   </property>
+  </action>
+  <action name="actionPuTongHua">
+   <property name="text">
+    <string>普通话</string>
+   </property>
+  </action>
+  <action name="actionYueYu">
+   <property name="text">
+    <string>粤语</string>
+   </property>
+  </action>
+  <action name="actionDongBei">
+   <property name="text">
+    <string>东北话</string>
+   </property>
+  </action>
+  <action name="actionShaanXi">
+   <property name="text">
+    <string>陕西话</string>
+   </property>
+  </action>
+  <action name="actionTaiWan">
+   <property name="text">
+    <string>台湾话</string>
    </property>
   </action>
  </widget>

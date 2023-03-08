@@ -49,6 +49,18 @@ private slots:
 
     void on_spbxSampleTime_valueChanged(double arg1);
 
+    void on_cbSound_activated(int index);
+
+    void on_actionPuTongHua_triggered();
+
+    void on_actionYueYu_triggered();
+
+    void on_actionDongBei_triggered();
+
+    void on_actionShaanXi_triggered();
+
+    void on_actionTaiWan_triggered();
+
 signals:
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);

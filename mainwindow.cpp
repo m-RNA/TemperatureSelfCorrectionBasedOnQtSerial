@@ -550,3 +550,33 @@ void MainWindow::setAverageTableItem_Dtm(const DECIMAL_TYPE &data)
     QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
     ui->twAverage->setItem(sampledPointNum, 1, data_Dtm);
 }
+
+void MainWindow::on_cbSound_activated(int index)
+{
+    taskSound->setState((bool)index);
+}
+
+void MainWindow::on_actionPuTongHua_triggered()
+{
+    taskSound->setIndex(PuTongHua);
+}
+
+void MainWindow::on_actionYueYu_triggered()
+{
+    taskSound->setIndex(YueYu);
+}
+
+void MainWindow::on_actionDongBei_triggered()
+{
+    taskSound->setIndex(DongBei);
+}
+
+void MainWindow::on_actionShaanXi_triggered()
+{
+    taskSound->setIndex(ShaanXi);
+}
+
+void MainWindow::on_actionTaiWan_triggered()
+{
+    taskSound->setIndex(TaiWan);
+}

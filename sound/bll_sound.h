@@ -19,11 +19,15 @@ class Bll_Sound : public QObject
 public:
     explicit Bll_Sound(QObject *parent = nullptr);
     ~Bll_Sound();
-    void setIndex(SoundIndex t_index);
 
     void play1();
     void play2();
     void stop();
+
+    void setIndex(SoundIndex t_index);
+
+public slots:
+    void setState(bool t_on) { on = t_on; }
 
 private:
     QString soundPath[10] = {
@@ -38,6 +42,7 @@ private:
         ":/sound/TaiWan1.wav",
         ":/sound/TaiWan2.wav",
     };
+    bool on = true;
     SoundIndex index = PuTongHua;
     QSound *bells = nullptr;
 };

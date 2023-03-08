@@ -18,11 +18,16 @@ Bll_Sound::~Bll_Sound()
 
 void Bll_Sound::setIndex(SoundIndex t_index)
 {
+    if (t_index < PuTongHua || t_index > TaiWan)
+        return;
     index = t_index;
 }
 
 void Bll_Sound::play1()
 {
+    if (!on)
+        return;
+
     if (bells)
     {
         bells->stop();
@@ -36,6 +41,9 @@ void Bll_Sound::play1()
 
 void Bll_Sound::play2()
 {
+    if (!on)
+        return;
+
     if (bells)
     {
         bells->stop();
