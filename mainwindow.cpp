@@ -43,7 +43,6 @@ MainWindow::MainWindow(QWidget *parent)
     // 1. 创建任务类对象
     taskGen = new Bll_GenerateData(this);
     taskLeastSquare = new Bll_LeastSquareMethod(this);
-    taskXlsxData = new Bll_SaveDataToXlsx(this);
 
     // 这里是根据表格的行数来设置采集点数的
     samplePointSum = ui->twAverage->rowCount();
@@ -109,9 +108,13 @@ MainWindow::MainWindow(QWidget *parent)
             ui->collectPanel_Std->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::setRange));
 
     /* Xlsx 文件记录保存 */
+    taskXlsxData = new Bll_SaveDataToXlsx(this);
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
+
+    /* 播放提示音 */
+    taskSound = new Bll_Sound(this);
 }
 
 MainWindow::~MainWindow()
@@ -168,11 +171,14 @@ void MainWindow::timerCollectTimeOut()
         // 各个标定点采集未完成
         ui->btnCollect->setText("采集下点");
         ui->btnCollectStop->setEnabled(false);
+        taskSound->play1();
 
         QMessageBox msgBox(QMessageBox::Information, "提示", "此点采集完成\n请准备下一点采集", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
         {
+            taskSound->stop();
+
             // 重置单点进度
             // ui->pgsbSingle->setFormat("等待下个采集点中");
             pgsbSingleValue = 0;
@@ -189,10 +195,13 @@ void MainWindow::timerCollectTimeOut()
         // ...
         tryUpdateFitChart(false);
         ui->btnCollectStop->setEnabled(false);
+        taskSound->play2();
+
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
-        
+        taskSound->stop();
+
         // 保存报告
         taskXlsxData->saveReport();
         ui->btnCollect->setText("全部重采");

@@ -6,6 +6,7 @@
 #include <QTableWidgetItem>
 #include "bll_leastssquare.h"
 #include "bll_save_data_to_xlsx.h"
+#include "bll_sound.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -57,11 +58,11 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    QTimer *timerCollect;
-    int collectTimestamp;    // 采集时间戳（秒 * TIMESTAMP_FACTOR)
-    int sampledPointNum = 0; // 已采集点数
-    int samplePointSum = 8;  // 需要采集点数
-    int pgsbSingleValue = 0; //
+    QTimer *timerCollect = nullptr;
+    int collectTimestamp = 0; // 采集时间戳（秒 * TIMESTAMP_FACTOR)
+    int sampledPointNum = 0;  // 已采集点数
+    int samplePointSum = 8;   // 需要采集点数
+    int pgsbSingleValue = 0;  // 单点进度条值
 
     void timerCollectTimeOut();
     QString collectTimestampToHhMmSs(int timestamp);
@@ -74,11 +75,13 @@ private:
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
     QRegExp rx;
     QString old_text = "";
+    int soundIndex = 0;
 
     // 任务类对象
-    Bll_GenerateData *taskGen;
-    Bll_LeastSquareMethod *taskLeastSquare;
-    Bll_SaveDataToXlsx *taskXlsxData;
+    Bll_GenerateData *taskGen = nullptr;
+    Bll_LeastSquareMethod *taskLeastSquare = nullptr;
+    Bll_SaveDataToXlsx *taskXlsxData = nullptr;
+    Bll_Sound *taskSound = nullptr;
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);

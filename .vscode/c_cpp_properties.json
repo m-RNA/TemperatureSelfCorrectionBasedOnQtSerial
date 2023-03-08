@@ -9,7 +9,8 @@
                 "F:/Senior_Part1/GraduationProject/UpperComputer/buildTemperatureSensorCalibration/",
                 "D:/eigen-3.3.8/**",
                 "${workspaceRoot}/**",
-                "${workspaceRoot}/qcustomplot/**"
+                "${workspaceRoot}/qcustomplot/**",
+                "${workspaceFolder}/sound/**"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",

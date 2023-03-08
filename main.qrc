@@ -27,5 +27,15 @@
         <file>icon/topleft.ico</file>
         <file>icon/topright.ico</file>
         <file>ReportTemplate.xlsx</file>
+        <file>sound/DongBei1.wav</file>
+        <file>sound/DongBei2.wav</file>
+        <file>sound/PuTongHua1.wav</file>
+        <file>sound/PuTongHua2.wav</file>
+        <file>sound/ShaanXi1.wav</file>
+        <file>sound/ShaanXi2.wav</file>
+        <file>sound/TaiWan1.wav</file>
+        <file>sound/TaiWan2.wav</file>
+        <file>sound/YueYu1.wav</file>
+        <file>sound/YueYu2.wav</file>
     </qresource>
 </RCC>

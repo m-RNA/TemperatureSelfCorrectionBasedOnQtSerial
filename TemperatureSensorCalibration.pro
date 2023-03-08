@@ -1,4 +1,4 @@
-QT       += core gui printsupport serialport opengl xlsx
+QT       += core gui printsupport serialport opengl xlsx multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,6 +21,7 @@ LIBS+=-lopengl32 -lglu32
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 INCLUDEPATH +=  \
+    sound \
     qcustomplot \
     least_square_method \
     collect_data \
@@ -37,6 +38,7 @@ SOURCES += \
     least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
+    sound/bll_sound.cpp \
     start_serial/bll_codeconverter.cpp \
     start_serial/bll_serial.cpp \
     start_serial/bll_serialrecvanalyse.cpp \
@@ -56,6 +58,7 @@ HEADERS += \
     mainwindow.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
+    sound/bll_sound.h \
     start_serial/bll_codeconverter.h \
     start_serial/bll_serial.h \
     start_serial/bll_serialrecvanalyse.h \
