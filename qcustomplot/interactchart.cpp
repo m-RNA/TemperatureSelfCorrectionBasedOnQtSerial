@@ -295,8 +295,10 @@ void InteractChart::findGraph()
 	double range = upper - lower;
 
 	this->rescaleAxes(true); // 调整显示全部区域（true的意思时仅可见曲线）
-
-	this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 恢复为原来x范围
+	if (timelineState)
+		this->xAxis->setRange(nowTime * 0.001, range, Qt::AlignRight); // 恢复为原来时间轴范围
+	else
+		this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 恢复为原来x范围
 
 	this->replot(); // 刷新画图
 }
