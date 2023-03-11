@@ -1,6 +1,7 @@
 #include "bll_serialrecvanalyse.h"
 #include <QThread>
 #include <QDebug>
+#include <QTime>
 
 // 全局静态变量，用于生成 id
 static unsigned globalId = 0;
@@ -30,7 +31,8 @@ void Bll_SerialRecvAnalyse::working(QByteArray rxRowData)
     (this->*analyseBuffer)();
 }
 
-// 设置解码模式
+// 设置解码模式 （通过函数指针实现）
+// 1：数字，2：道万科技
 void Bll_SerialRecvAnalyse::setAnalyseMode(int type)
 {
     switch (type)
@@ -62,7 +64,7 @@ bool Bll_SerialRecvAnalyse::canIntoNum(const QString data)
 // 12.3456
 void Bll_SerialRecvAnalyse::analyseNum()
 {
-    serialAnalyseData ans;
+    serialAnalyseCell cell;
 
     while (1)
     {
@@ -80,11 +82,11 @@ void Bll_SerialRecvAnalyse::analyseNum()
         QByteArray rxFrame = buffer.left(endIndex);
         if (canIntoNum(rxFrame))
         {
-            ans.value = rxFrame.toDouble();
-            // ans.date = QDateTime::currentDateTime().toTime_t();
-            // qDebug() << id << ":" << ans.value;
+            cell.value = rxFrame.toDouble();
+            cell.moment = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间;
+            // qDebug() << id << ":" << cell.value;
 
-            emit sgBll_AnalyseFinish(ans.value);
+            emit sgBll_AnalyseFinish(cell);
         }
 
         buffer.remove(0, endIndex + 1);
@@ -95,7 +97,7 @@ void Bll_SerialRecvAnalyse::analyseNum()
 // $T=019.1263 ;
 void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 {
-    serialAnalyseData ans;
+    serialAnalyseCell cell;
     // qDebug() << id << "buffer:" << buffer;
 
     while (1)
@@ -127,11 +129,11 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
         // 处理解析出来的数据
         if (canIntoNum(rxFrame))
         {
-            ans.value = rxFrame.toDouble();
-            // ans.date = QDateTime::currentDateTime().toTime_t();
-            // qDebug() << id << ":" << ans.value;
+            cell.value = rxFrame.toDouble();
+            cell.moment = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间;
+            // qDebug() << id << ":" << cell.value;
 
-            emit sgBll_AnalyseFinish(ans.value);
+            emit sgBll_AnalyseFinish(cell);
         }
         // 从缓冲区中移除已经解析的数据包
         buffer.remove(0, endIndex + 2);

@@ -239,8 +239,8 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
         connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, this, [&](double data)
-                { emit sgStartAnalyseFinish(data); });
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, this, [&](serialAnalyseCell cell)
+                { emit sgStartAnalyseFinish(cell); });
     }
     else // 打开-->关闭
     {

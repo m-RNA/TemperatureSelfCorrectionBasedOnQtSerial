@@ -369,13 +369,13 @@ void InteractChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	// ui->statusBar->showMessage(message, 2500);
 }
 
-void InteractChart::addYPoint(double y)
+void InteractChart::addYPoint(const serialAnalyseCell &cell)
 {
 	if (pauseState == true) // 暂停时退出
 		return;
 
 	xDefault++;
-	this->graph()->addData(xDefault, y); // 添加数据
+	this->graph()->addData(xDefault, cell.value); // 添加数据
 
 	ftime(&t2);
 	if ((t2.time - t1.time) * 1000 + (t2.millitm - t1.millitm) < 50) // 50ms 刷新一次
@@ -384,14 +384,14 @@ void InteractChart::addYPoint(double y)
 	chartRefresh();
 }
 
-void InteractChart::addYPointBaseOnCurrentTime(double y)
+void InteractChart::addYPointBaseOnTime(const serialAnalyseCell &cell)
 {
 	if (pauseState == true) // 暂停时退出
 		return;
 
-	nowTime = QTime::currentTime().msecsSinceStartOfDay();
-
-	this->graph()->addData(nowTime * 0.001, y); // 添加数据
+	// 这里似乎有点问题？？
+	nowTime = cell.moment;
+	this->graph()->addData(nowTime * 0.001, cell.value); // 添加数据
 
 	if (nowTime - oldTime < 50) // 50ms 刷新一次
 		return;

@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <vector>
 #include "interactchart.h"
+#include "bll_serialrecvanalyse.h"
 using namespace std;
 
 namespace Ui
@@ -29,7 +30,7 @@ public:
     QCPAxis *getXAxis(void);
 
 public slots:
-    void slCollectData(const double&);
+    void slCollectData(const serialAnalyseCell &cell);
 
 signals:
     void sgCollectDataAverage(const DECIMAL_TYPE &average);

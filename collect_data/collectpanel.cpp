@@ -58,17 +58,17 @@ double CollectPanel::average(void)
     return ans;
 }
 
-void CollectPanel::slCollectData(const double &data_t)
+void CollectPanel::slCollectData(const serialAnalyseCell &cell)
 {
     // 更新最后示数
-    ui->leastData->setText(QString::number(data_t));
+    ui->leastData->setText(QString::number(cell.value));
 
     // 将Y轴数据添加到曲线图上
-    ui->chart->addYPointBaseOnCurrentTime(data_t);
+    ui->chart->addYPointBaseOnTime(cell);
 
     // 如果是采集状态，将数据添加到data中
     if (collectState == true)
-        data.push_back(data_t);
+        data.push_back(cell.value);
 }
 
 void CollectPanel::collectStart(void)

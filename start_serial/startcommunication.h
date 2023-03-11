@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "bll_serial.h"
 #include "bll_codeconverter.h"
+#include "bll_serialrecvanalyse.h"
 
 namespace Ui
 {
@@ -54,8 +55,8 @@ private slots:
 
 signals:
     void serialStateChange(bool);
-    void sgSerialPortSendData(QByteArray);
-    void sgStartAnalyseFinish(double);
+    void sgSerialPortSendData(const QByteArray &);
+    void sgStartAnalyseFinish(const serialAnalyseCell &);
 
 private:
     Ui::StartCommunication *ui;

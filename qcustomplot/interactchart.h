@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "qcustomplot.h"
 #include <sys/timeb.h>
+#include "bll_serialrecvanalyse.h"
 
 namespace Ui
 {
@@ -32,8 +33,8 @@ public:
 public slots:
     void clear();
 
-    void addYPoint(double y);
-    void addYPointBaseOnCurrentTime(double y);
+    void addYPoint(const serialAnalyseCell &cell);
+    void addYPointBaseOnTime(const serialAnalyseCell &cell);
 
 protected:
     // 鼠标滚轮事件

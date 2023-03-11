@@ -6,9 +6,9 @@
 
 typedef struct
 {
-    double date;  // 日期
+    int moment;   // 时刻
     double value; // 数据
-} serialAnalyseData;
+} serialAnalyseCell;
 
 class Bll_SerialRecvAnalyse : public QObject //, public QRunnable
 {
@@ -27,7 +27,7 @@ public slots:
     // void slBll_GetRowRecvData(QByteArray rxData) { rxRowData = rxData; }
 
 signals:
-    void sgBll_AnalyseFinish(double);
+    void sgBll_AnalyseFinish(const serialAnalyseCell &);
 
 private:
     // QByteArray rxRowData;
