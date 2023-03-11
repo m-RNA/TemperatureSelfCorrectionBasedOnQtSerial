@@ -33,7 +33,7 @@ void Bll_SaveDataToXlsx::resetIndex()
     delete report;
     report = new Document(":/ReportTemplate.xlsx");
 
-    fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
     index = 0;
 }
 
@@ -43,13 +43,13 @@ void Bll_SaveDataToXlsx::saveInfo(const QStringList &info)
     report->write(row, INFO_C, info[0]); // 地点
 
     report->write(++row, INFO_C, info[1]);   // 温度
-    report->write(row, INFO_C + 1, info[2]); // 湿度
+    report->write(row, INFO_C + 2, info[2]); // 湿度
 
     report->write(++row, INFO_C, info[3]);   // 日期
-    report->write(row, INFO_C + 1, info[4]); // 人员
+    report->write(row, INFO_C + 2, info[4]); // 人员
 
     report->write(++row, INFO_C, info[5]); // 标准传感器编号
-    report->write(row, INFO_C, info[6]);   // 待定传感器编号
+    report->write(++row, INFO_C, info[6]); // 待定传感器编号
 
     saveReport();
 }
