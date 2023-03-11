@@ -800,6 +800,9 @@
    <property name="text">
     <string>新建校准任务</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="action_2">
    <property name="enabled">
@@ -807,6 +810,9 @@
    </property>
    <property name="text">
     <string>打开校准任务</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="action_3">
@@ -821,56 +827,16 @@
    <property name="text">
     <string>关闭校准任务</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
   </action>
   <action name="action_4">
    <property name="text">
     <string>退出</string>
    </property>
-  </action>
-  <action name="actionPuTongHua">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>普通话</string>
-   </property>
-  </action>
-  <action name="actionYueYu">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>粤语</string>
-   </property>
-  </action>
-  <action name="actionDongBei">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>东北话</string>
-   </property>
-  </action>
-  <action name="actionShaanXi">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>陕西话</string>
-   </property>
-  </action>
-  <action name="actionTaiWan">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>台湾话</string>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
