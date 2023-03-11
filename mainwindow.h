@@ -53,6 +53,8 @@ private slots:
 
     void on_btnSaveReport_clicked();
 
+    void on_actionWizard_triggered();
+
 signals:
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);

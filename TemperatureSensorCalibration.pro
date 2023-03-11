@@ -21,13 +21,13 @@ LIBS+=-lopengl32 -lglu32
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 INCLUDEPATH +=  \
+    wizard\
     sound \
     qcustomplot \
     least_square_method \
     collect_data \
     start_serial \
-    D:/eigen-3.3.8 \
-
+    D:/eigen-3.3.8
 
 SOURCES += \
     about.cpp \
@@ -46,6 +46,8 @@ SOURCES += \
     mainwindow.cpp \
     qcustomplot/interactchart.cpp \
     qcustomplot/qcustomplot.cpp \
+    wizard/serialsetting.cpp \
+    wizard/wizard.cpp
 
 HEADERS += \
     collect_data/bll_save_data_to_xlsx.h \
@@ -62,13 +64,17 @@ HEADERS += \
     start_serial/bll_codeconverter.h \
     start_serial/bll_serial.h \
     start_serial/bll_serialrecvanalyse.h \
-    start_serial/startcommunication.h
+    start_serial/startcommunication.h \
+    wizard/serialsetting.h \
+    wizard/wizard.h
 
 FORMS += \
     about.ui \
     collect_data/collectpanel.ui \
     mainwindow.ui \
-    start_serial/startcommunication.ui
+    start_serial/startcommunication.ui \
+    wizard/serialsetting.ui \
+    wizard/wizard.ui
 
 TRANSLATIONS += \
     TemperatureSensorCalibration_zh_CN.ts

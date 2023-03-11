@@ -779,7 +779,7 @@
     <property name="title">
      <string>文件</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="actionWizard"/>
     <addaction name="action_2"/>
     <addaction name="action_3"/>
     <addaction name="separator"/>
@@ -796,17 +796,23 @@
     <string>关于</string>
    </property>
   </action>
-  <action name="action">
+  <action name="actionWizard">
    <property name="text">
     <string>新建校准任务</string>
    </property>
   </action>
   <action name="action_2">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>打开校准任务</string>
    </property>
   </action>
   <action name="action_3">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>最近校准任务</string>
    </property>

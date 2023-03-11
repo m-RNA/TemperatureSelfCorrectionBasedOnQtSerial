@@ -5,6 +5,7 @@
 #include "interactchart.h"
 #include "fitchart.h"
 #include "about.h"
+#include "wizard.h"
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -579,4 +580,11 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 void MainWindow::on_btnSaveReport_clicked()
 {
     taskXlsxData->saveReport();
+}
+
+void MainWindow::on_actionWizard_triggered()
+{
+    Wizard wizard(this);
+    wizard.exec();
+    qDebug() << "OK";
 }
