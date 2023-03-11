@@ -4,6 +4,7 @@
 #include <QThread>
 #include "bll_save_data_to_xlsx.h"
 #include "bll_serialrecvanalyse.h"
+#include "wizard.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QVector<long double>>("QVector<long double>"); // 添加不支持的类型
     qRegisterMetaType<vector<long double>>("vector<long double>");   // 添加不支持的类型
     qRegisterMetaType<serialAnalyseCell>("serialAnalyseCell");       // 添加不支持的类型
+    qRegisterMetaType<WizardInfo>("WizardInfo");                     // 添加不支持的类型
 
     qDebug() << "主线程ID：" << QThread::currentThread();
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);

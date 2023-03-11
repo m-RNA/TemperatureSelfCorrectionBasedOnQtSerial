@@ -585,6 +585,10 @@ void MainWindow::on_btnSaveReport_clicked()
 void MainWindow::on_actionWizard_triggered()
 {
     Wizard wizard(this);
+    connect(&wizard, &Wizard::wizardInfoFinish, this, [&](const WizardInfo &info)
+            {
+                qDebug() << "向导结束";
+                taskXlsxData->saveInfo(info.baseInfo);
+            });
     wizard.exec();
-    qDebug() << "OK";
 }

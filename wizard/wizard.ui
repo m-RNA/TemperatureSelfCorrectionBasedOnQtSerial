@@ -50,7 +50,7 @@
     <item row="1" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QSpinBox" name="spbxTemp">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -93,7 +93,7 @@
     <item row="1" column="3">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QSpinBox" name="spinBox_2">
+       <widget class="QSpinBox" name="spbxRH">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -161,7 +161,7 @@
      </widget>
     </item>
     <item row="2" column="3">
-     <widget class="QLineEdit" name="lineEdit_5">
+     <widget class="QLineEdit" name="leOperator">
       <property name="text">
        <string>老陈皮</string>
       </property>
@@ -187,7 +187,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_6">
+       <widget class="QLineEdit" name="leID_Std">
         <property name="inputMask">
          <string/>
         </property>
@@ -214,9 +214,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_7">
+       <widget class="QLineEdit" name="leID_Dtm">
         <property name="text">
-         <string>Pt_Test_01</string>
+         <string>Pt_Test</string>
         </property>
         <property name="placeholderText">
          <string>名称或编号</string>
@@ -226,7 +226,7 @@
      </layout>
     </item>
     <item row="0" column="1" colspan="3">
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="lePlace">
       <property name="text">
        <string>中北大学工程训练中心</string>
       </property>
@@ -247,7 +247,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="tab_Std">
        <attribute name="title">
         <string>标准仪器[COMx]</string>
        </attribute>
@@ -265,11 +265,11 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="SerialSetting" name="widget" native="true"/>
+         <widget class="SerialSetting" name="ss_Std" native="true"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="tab_Dtm">
        <attribute name="title">
         <string>待定仪器[COMx]</string>
        </attribute>
@@ -287,7 +287,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="SerialSetting" name="widget_2" native="true"/>
+         <widget class="SerialSetting" name="ss_Dtm" native="true"/>
         </item>
        </layout>
       </widget>

@@ -10,7 +10,8 @@
                 "D:/eigen-3.3.8/**",
                 "${workspaceRoot}/**",
                 "${workspaceRoot}/qcustomplot/**",
-                "${workspaceFolder}/sound/**"
+                "${workspaceFolder}/sound/**",
+                "${workspaceFolder}/wizard"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",

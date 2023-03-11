@@ -39,7 +39,9 @@
         "list": "cpp",
         "hash_map": "cpp",
         "qtxlsx": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "qwidget": "cpp",
+        "qwizard": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",
