@@ -37,6 +37,23 @@ void Bll_SaveDataToXlsx::resetIndex()
     index = 0;
 }
 
+void Bll_SaveDataToXlsx::saveInfo(const QStringList &info)
+{
+    int row = INFO_R;
+    report->write(row, INFO_C, info[0]); // 地点
+
+    report->write(++row, INFO_C, info[1]);   // 温度
+    report->write(row, INFO_C + 1, info[2]); // 湿度
+
+    report->write(++row, INFO_C, info[3]);   // 日期
+    report->write(row, INFO_C + 1, info[4]); // 人员
+
+    report->write(++row, INFO_C, info[5]); // 标准传感器编号
+    report->write(row, INFO_C, info[6]);   // 待定传感器编号
+
+    saveReport();
+}
+
 void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
 {
     size_t counter = 0;
