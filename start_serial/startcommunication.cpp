@@ -296,7 +296,7 @@ void StartCommunication::on_btnClearSendTE_clicked()
 }
 
 /// @brief 串口接收消息框更新
-void StartCommunication::slSerialPortRecvData(QByteArray rxData)
+void StartCommunication::slSerialPortRecvData(const QByteArray &rxData)
 {
     // 暂停接收时，读完串口消息就退出不处理
     if (recvPauseState == true)

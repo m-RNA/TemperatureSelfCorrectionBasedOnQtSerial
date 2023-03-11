@@ -39,7 +39,7 @@ public slots:
 private slots:
     void on_btnSerialSwitch_clicked();
 
-    void slSerialPortRecvData(QByteArray rxData); // 更新TextEdit
+    void slSerialPortRecvData(const QByteArray &rxData); // 更新TextEdit
 
     void on_btnClearRecvTE_clicked();
 
