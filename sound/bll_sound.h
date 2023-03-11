@@ -6,11 +6,12 @@
 
 typedef enum
 {
-    PuTongHua = 0,
+    Off = 0,
     YueYu,
+    PuTongHua,
+    TaiWan,
     DongBei,
     ShaanXi,
-    TaiWan,
 } SoundIndex;
 
 class Bll_Sound : public QObject
@@ -27,22 +28,20 @@ public:
     void setIndex(SoundIndex t_index);
 
 public slots:
-    void setState(bool t_on) { on = t_on; }
 
 private:
     QString soundPath[10] = {
-        ":/sound/PuTongHua1.wav",
-        ":/sound/PuTongHua2.wav",
         ":/sound/YueYu1.wav",
         ":/sound/YueYu2.wav",
+        ":/sound/PuTongHua1.wav",
+        ":/sound/PuTongHua2.wav",
+        ":/sound/TaiWan1.wav",
+        ":/sound/TaiWan2.wav",
         ":/sound/DongBei1.wav",
         ":/sound/DongBei2.wav",
         ":/sound/ShaanXi1.wav",
         ":/sound/ShaanXi2.wav",
-        ":/sound/TaiWan1.wav",
-        ":/sound/TaiWan2.wav",
     };
-    bool on = true;
     SoundIndex index = PuTongHua;
     QSound *bells = nullptr;
 };

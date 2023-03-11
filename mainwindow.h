@@ -49,17 +49,7 @@ private slots:
 
     void on_spbxSampleTime_valueChanged(double arg1);
 
-    void on_cbSound_activated(int index);
-
-    void on_actionPuTongHua_triggered();
-
-    void on_actionYueYu_triggered();
-
-    void on_actionDongBei_triggered();
-
-    void on_actionShaanXi_triggered();
-
-    void on_actionTaiWan_triggered();
+    void on_cbSound_currentIndexChanged(int index);
 
     void on_btnSaveReport_clicked();
 

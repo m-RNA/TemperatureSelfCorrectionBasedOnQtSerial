@@ -114,7 +114,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
 
     /* 播放提示音 */
-    taskSound = new Bll_Sound(this);
+    if (ui->cbSound->currentIndex() > 0)
+    {
+        taskSound = new Bll_Sound(this);
+        taskSound->setIndex((SoundIndex)ui->cbSound->currentIndex());
+    }
 }
 
 MainWindow::~MainWindow()
@@ -171,13 +175,15 @@ void MainWindow::timerCollectTimeOut()
         // 各个标定点采集未完成
         ui->btnCollect->setText("采集下点");
         ui->btnCollectStop->setEnabled(false);
-        taskSound->play1();
+        if (taskSound)
+            taskSound->play1();
 
         QMessageBox msgBox(QMessageBox::Information, "提示", "此点采集完成\n请准备下一点采集", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         if (msgBox.exec() == QMessageBox::AcceptRole)
         {
-            taskSound->stop();
+            if (taskSound)
+                taskSound->stop();
 
             // 重置单点进度
             // ui->pgsbSingle->setFormat("等待下个采集点中");
@@ -195,12 +201,14 @@ void MainWindow::timerCollectTimeOut()
         // ...
         tryUpdateFitChart(false);
         ui->btnCollectStop->setEnabled(false);
-        taskSound->play2();
+        if (taskSound)
+            taskSound->play2();
 
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
-        taskSound->stop();
+        if (taskSound)
+            taskSound->stop();
 
         // 保存报告
         taskXlsxData->saveReport();
@@ -551,59 +559,21 @@ void MainWindow::setAverageTableItem_Dtm(const DECIMAL_TYPE &data)
     ui->twAverage->setItem(sampledPointNum, 1, data_Dtm);
 }
 
-void MainWindow::on_cbSound_activated(int index)
+void MainWindow::on_cbSound_currentIndexChanged(int index)
 {
-    taskSound->setState((bool)index);
-}
+    if (taskSound)
+    {
+        taskSound->stop();
+        taskSound->deleteLater();
+    }
 
-void MainWindow::on_actionPuTongHua_triggered()
-{
-    ui->actionPuTongHua->setChecked(true);
-    ui->actionYueYu->setChecked(false);
-    ui->actionDongBei->setChecked(false);
-    ui->actionShaanXi->setChecked(false);
-    ui->actionTaiWan->setChecked(false);
-    taskSound->setIndex(PuTongHua);
-}
-
-void MainWindow::on_actionYueYu_triggered()
-{
-    ui->actionYueYu->setChecked(true);
-    ui->actionPuTongHua->setChecked(false);
-    ui->actionDongBei->setChecked(false);
-    ui->actionShaanXi->setChecked(false);
-    ui->actionTaiWan->setChecked(false);
-    taskSound->setIndex(YueYu);
-}
-
-void MainWindow::on_actionDongBei_triggered()
-{
-    ui->actionDongBei->setChecked(true);
-    ui->actionPuTongHua->setChecked(false);
-    ui->actionYueYu->setChecked(false);
-    ui->actionShaanXi->setChecked(false);
-    ui->actionTaiWan->setChecked(false);
-    taskSound->setIndex(DongBei);
-}
-
-void MainWindow::on_actionShaanXi_triggered()
-{
-    ui->actionShaanXi->setChecked(true);
-    ui->actionPuTongHua->setChecked(false);
-    ui->actionYueYu->setChecked(false);
-    ui->actionDongBei->setChecked(false);
-    ui->actionTaiWan->setChecked(false);
-    taskSound->setIndex(ShaanXi);
-}
-
-void MainWindow::on_actionTaiWan_triggered()
-{
-    ui->actionTaiWan->setChecked(true);
-    ui->actionPuTongHua->setChecked(false);
-    ui->actionYueYu->setChecked(false);
-    ui->actionDongBei->setChecked(false);
-    ui->actionShaanXi->setChecked(false);
-    taskSound->setIndex(TaiWan);
+    if (index > 0)
+    {
+        taskSound = new Bll_Sound(this);
+        taskSound->setIndex((SoundIndex)index);
+    }
+    else
+        taskSound = nullptr;
 }
 
 void MainWindow::on_btnSaveReport_clicked()

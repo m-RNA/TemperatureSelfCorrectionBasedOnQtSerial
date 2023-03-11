@@ -326,7 +326,144 @@
               <string>采集</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
-              <item row="2" column="2">
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_15">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>标定点数</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="label_21">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>语音提醒</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1" colspan="3">
+               <widget class="QPushButton" name="btnCollectStop">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>停止采集</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1" colspan="3">
+               <widget class="QPushButton" name="btnCollect">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>开始采集</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QSpinBox" name="spbxSamplePointSum">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>99999</number>
+                </property>
+                <property name="value">
+                 <number>8</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="3">
+               <widget class="QComboBox" name="cbSound">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="currentIndex">
+                 <number>2</number>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>关</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>粤语</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>普通话</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>台湾话</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>东北话</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>陕西话</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="3">
                <widget class="QDoubleSpinBox" name="spbxSampleTime">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -360,54 +497,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="2">
-               <widget class="QSpinBox" name="spbxSamplePointSum">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-                <property name="suffix">
-                 <string/>
-                </property>
-                <property name="minimum">
-                 <number>2</number>
-                </property>
-                <property name="maximum">
-                 <number>99999</number>
-                </property>
-                <property name="value">
-                 <number>8</number>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="2">
-               <widget class="QComboBox" name="cbSound">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="currentIndex">
-                 <number>1</number>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>关</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>开</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
               <item row="2" column="1">
                <widget class="QLabel" name="label_17">
                 <property name="maximumSize">
@@ -421,75 +510,6 @@
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QLabel" name="label_21">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>语音提醒</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_15">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>标定点数</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollectStop">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>停止采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollect">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>开始采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
               </item>
@@ -767,18 +787,7 @@
     <addaction name="separator"/>
     <addaction name="action_4"/>
    </widget>
-   <widget class="QMenu" name="menuSound">
-    <property name="title">
-     <string>语音</string>
-    </property>
-    <addaction name="actionYueYu"/>
-    <addaction name="actionPuTongHua"/>
-    <addaction name="actionTaiWan"/>
-    <addaction name="actionDongBei"/>
-    <addaction name="actionShaanXi"/>
-   </widget>
    <addaction name="menu"/>
-   <addaction name="menuSound"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -826,6 +835,9 @@
   <action name="actionYueYu">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>粤语</string>
