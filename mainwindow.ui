@@ -20,7 +20,7 @@
    <string>温度自校准</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="main.qrc">
     <normaloff>:/icon/svg/app.svg</normaloff>:/icon/svg/app.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -471,7 +471,7 @@
                  <string>停止采集</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -488,7 +488,7 @@
                  <string>开始采集</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
@@ -591,7 +591,7 @@
                  <string>拟合数据</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/fit.ico</normaloff>:/icon/fit.ico</iconset>
                 </property>
                </widget>
@@ -626,21 +626,21 @@
                  <string>检验结果</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
                 </property>
                </widget>
               </item>
               <item row="9" column="1" colspan="2">
-               <widget class="QPushButton" name="pushButton_26">
+               <widget class="QPushButton" name="btnSaveReport">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>保存数据</string>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="main.qrc">
                   <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
@@ -881,6 +881,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -605,3 +605,8 @@ void MainWindow::on_actionTaiWan_triggered()
     ui->actionShaanXi->setChecked(false);
     taskSound->setIndex(TaiWan);
 }
+
+void MainWindow::on_btnSaveReport_clicked()
+{
+    taskXlsxData->saveReport();
+}

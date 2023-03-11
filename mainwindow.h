@@ -61,6 +61,8 @@ private slots:
 
     void on_actionTaiWan_triggered();
 
+    void on_btnSaveReport_clicked();
+
 signals:
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
