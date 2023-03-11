@@ -780,12 +780,12 @@
      <string>文件</string>
     </property>
     <addaction name="actionWizard"/>
-    <addaction name="action_2"/>
+    <addaction name="actionOpen"/>
     <addaction name="action_3"/>
     <addaction name="separator"/>
-    <addaction name="action_5"/>
+    <addaction name="actionClose"/>
     <addaction name="separator"/>
-    <addaction name="action_4"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuAbout"/>
@@ -804,7 +804,7 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="action_2">
+  <action name="actionOpen">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -823,7 +823,10 @@
     <string>最近校准任务</string>
    </property>
   </action>
-  <action name="action_5">
+  <action name="actionClose">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>关闭校准任务</string>
    </property>
@@ -831,7 +834,7 @@
     <string>Ctrl+W</string>
    </property>
   </action>
-  <action name="action_4">
+  <action name="actionQuit">
    <property name="text">
     <string>退出</string>
    </property>
