@@ -179,21 +179,20 @@ void MainWindow::timerCollectTimeOut()
         ui->btnCollectStop->setEnabled(false);
         if (taskSound)
             taskSound->play1();
-
-        QMessageBox msgBox(QMessageBox::Information, "提示", "此点采集完成\n请准备下一点采集", 0, this);
+        QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
+        QMessageBox msgBox(QMessageBox::Information, "提示", msg, 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
-        if (msgBox.exec() == QMessageBox::AcceptRole)
-        {
-            if (taskSound)
-                taskSound->stop();
+        msgBox.exec();
 
-            // 重置单点进度
-            // ui->pgsbSingle->setFormat("等待下个采集点中");
-            pgsbSingleValue = 0;
-            ui->pgsbSingle->setValue(0);
-            ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
-            // ui->pgsbSingle->setMaximum(0);
-        }
+        if (taskSound)
+            taskSound->stop();
+
+        // 重置单点进度
+        // ui->pgsbSingle->setFormat("等待下个采集点中");
+        pgsbSingleValue = 0;
+        ui->pgsbSingle->setValue(0);
+        ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
+        // ui->pgsbSingle->setMaximum(0);
     }
     else
     {

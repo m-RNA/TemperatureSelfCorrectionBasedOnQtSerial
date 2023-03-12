@@ -27,6 +27,7 @@ public:
     void collectStop(void);
     void collectFinish(void);
 
+    double getRange(void);
     QCPAxis *getXAxis(void);
 
 public slots:
@@ -44,8 +45,12 @@ private:
     vector<double> data;
     bool collectState = false;
 
-    double average(void);
+    double min = 0;
+    double max = 0;
+    double range = 0;
+    bool resetRange = true;
 
+    double average(void);
 };
 
 #endif // COLLECTPANEL_H

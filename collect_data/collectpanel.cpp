@@ -18,22 +18,22 @@ void CollectPanel::slSetState(int state)
     switch (state)
     {
     case 0:
-        ui->ledText->setText("离线     ");
+        ui->ledText->setText("离线    ");
         ui->led->setStyleSheet("border-radius:7px;background-color: red;");
         break;
 
     case 1:
-        ui->ledText->setText("在线     ");
+        ui->ledText->setText("在线    ");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);"); // 绿色
         break;
 
     case 2:
-        ui->ledText->setText("采集中...");
+        ui->ledText->setText("采集中  ");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(23, 111, 217);"); // 蓝色
         break;
 
     case 3:
-        ui->ledText->setText("数据波动 ");
+        ui->ledText->setText("数据波动");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(197, 186, 10);"); // 黄色
         break;
     }
@@ -66,19 +66,43 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
     // 将Y轴数据添加到曲线图上
     ui->chart->addYPointBaseOnTime(cell);
 
+    // 如果是刚刚打开采集状态，就要重置最大值和最小值
+    if (resetRange == true)
+    {
+        min = cell.value;
+        max = cell.value;
+        resetRange = false;
+    }
+
     // 如果是采集状态，将数据添加到data中
     if (collectState == true)
+    {
         data.push_back(cell.value);
+        if (cell.value > max)
+        {
+            max = cell.value;
+            range = max - min;
+            ui->lbRange->setText(QString::number(range));
+        }
+        if (cell.value < min)
+        {
+            min = cell.value;
+            range = max - min;
+            ui->lbRange->setText(QString::number(range));
+        }
+    }
 }
 
 void CollectPanel::collectStart(void)
 {
+    resetRange = true;
     collectState = true;
     data.clear();
 }
 void CollectPanel::collectStop(void)
 {
     collectState = false;
+    ui->lbRange->setText("NULL");
 }
 void CollectPanel::collectFinish(void)
 {
@@ -87,13 +111,18 @@ void CollectPanel::collectFinish(void)
     collectStop();
 }
 
+double CollectPanel::getRange(void)
+{
+    return range;
+}
+
 QCPAxis *CollectPanel::getXAxis(void)
 {
     return ui->chart->xAxis;
 }
 
 // 检查输入数据波动是否超过阈值
-bool checkDataFluctuation(bool reset = false,const double &data = 0)
+bool checkDataFluctuation(bool reset = false, const double &data = 0)
 {
     static double maxData = 0;
     static double minData = 0;
