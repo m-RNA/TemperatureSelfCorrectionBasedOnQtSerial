@@ -38,10 +38,9 @@ public:
     void setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex);
 
 public slots:
-
-private slots:
     void on_btnSerialSwitch_clicked();
 
+private slots:
     void slSerialPortRecvData(const QByteArray &rxData); // 更新TextEdit
 
     void on_btnClearRecvTE_clicked();

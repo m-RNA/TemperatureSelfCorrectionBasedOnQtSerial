@@ -599,8 +599,14 @@ void MainWindow::on_actionWizard_triggered()
     connect(&wizard, &Wizard::wizardInfoFinish, this, [&](const WizardInfo &info)
             {
                 qDebug() << "向导结束";
+                if(ui->start_Std->state() == true)
+                    ui->start_Std->on_btnSerialSwitch_clicked();
+                if(ui->start_Dtm->state() == true)
+                    ui->start_Dtm->on_btnSerialSwitch_clicked(); 
                 taskXlsxData->saveInfo(info.baseInfo);
                 ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
-                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); });
+                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
+                ui->start_Std->on_btnSerialSwitch_clicked();
+                ui->start_Dtm->on_btnSerialSwitch_clicked(); });
     wizard.exec();
 }
