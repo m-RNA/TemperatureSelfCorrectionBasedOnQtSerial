@@ -41,7 +41,8 @@
         "qtxlsx": "cpp",
         "random": "cpp",
         "qwidget": "cpp",
-        "qwizard": "cpp"
+        "qwizard": "cpp",
+        "qserialport": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

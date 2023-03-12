@@ -1,5 +1,4 @@
 #include "bll_serial.h"
-
 #include <QElapsedTimer>
 
 Bll_SerialPort::Bll_SerialPort(QString name, QObject *parent) : QObject(parent)
@@ -72,7 +71,7 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting &setting, RES &res)
     res.returnCode = 0;
 }
 
-void Bll_SerialPort::slSendData(const QByteArray& data)
+void Bll_SerialPort::slSendData(const QByteArray &data)
 {
     serial->write(data);
 

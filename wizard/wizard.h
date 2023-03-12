@@ -7,8 +7,8 @@
 typedef struct
 {
     QStringList baseInfo;
-    Bll_SerialPortSetting sSetting_Std;
-    Bll_SerialPortSetting sSetting_Dtm;
+    Ui_SerialSettingIndex ssIndex_Std;
+    Ui_SerialSettingIndex ssIndex_Dtm;
 } WizardInfo;
 
 namespace Ui

@@ -94,7 +94,19 @@ void StartCommunication::setEncodeMode(EncodingFormat encodeMode)
 // 设置协议类型
 void StartCommunication::setAnalyseMode(int type)
 {
-    ui->cbAnalyse->setCurrentIndex(type); 
+    ui->cbAnalyse->setCurrentIndex(type);
+}
+
+void StartCommunication::setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex)
+{
+    ui->cbSerial->setCurrentIndex(uiIndex.portNameIndex);
+    ui->cbBaudrate->setCurrentText(uiIndex.baudRate);
+    ui->cbDataBit->setCurrentIndex(uiIndex.dataBitsIndex);
+    ui->cbCheckBit->setCurrentIndex(uiIndex.parityIndex);
+    ui->cbStopBit->setCurrentIndex(uiIndex.stopBitsIndex);
+    ui->cbFlowCtrl->setCurrentIndex(uiIndex.flowControlIndex);
+    ui->cbEncode->setCurrentIndex(uiIndex.encodeModeIndex);
+    ui->cbAnalyse->setCurrentIndex(uiIndex.analyseModeIndex);
 }
 
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息

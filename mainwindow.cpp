@@ -589,6 +589,7 @@ void MainWindow::on_actionWizard_triggered()
             {
                 qDebug() << "向导结束";
                 taskXlsxData->saveInfo(info.baseInfo);
-            });
+                ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
+                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); });
     wizard.exec();
 }

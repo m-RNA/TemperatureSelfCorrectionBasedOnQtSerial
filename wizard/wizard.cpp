@@ -19,10 +19,10 @@ Wizard::Wizard(QWidget *parent) : QWizard(parent),
     ui->ss_Dtm->setAnalyseIndex(1);
 
     // 从串口设置中获取串口名，设置到Tab标签名上
-    ui->ss_Std->getSettings(wizardInfo.sSetting_Std);
-    ui->ss_Dtm->getSettings(wizardInfo.sSetting_Dtm);
-    setTabName_Std(wizardInfo.sSetting_Std.portName);
-    setTabName_Dtm(wizardInfo.sSetting_Dtm.portName);
+    ui->ss_Std->getSettingIndex(wizardInfo.ssIndex_Std);
+    ui->ss_Dtm->getSettingIndex(wizardInfo.ssIndex_Dtm);
+    setTabName_Std(wizardInfo.ssIndex_Std.portName);
+    setTabName_Dtm(wizardInfo.ssIndex_Dtm.portName);
 
     // 实时改变Tab标签名
     connect(ui->ss_Std, &SerialSetting::serialPortChanged, this, &Wizard::setTabName_Std);
@@ -69,10 +69,11 @@ void Wizard::getInfo()
                         << ui->leID_Dtm->text();
     qDebug() << wizardInfo.baseInfo;
 
-    ui->ss_Std->getSettings(wizardInfo.sSetting_Std);
-    ui->ss_Dtm->getSettings(wizardInfo.sSetting_Dtm);
-    qDebug() << wizardInfo.sSetting_Std.portName << wizardInfo.sSetting_Std.baudRate << wizardInfo.sSetting_Std.parity << wizardInfo.sSetting_Std.dataBits << wizardInfo.sSetting_Std.stopBits << wizardInfo.sSetting_Std.flowControl << wizardInfo.sSetting_Std.encodeMode << wizardInfo.sSetting_Std.analyseMode;
-    qDebug() << wizardInfo.sSetting_Dtm.portName << wizardInfo.sSetting_Dtm.baudRate << wizardInfo.sSetting_Dtm.parity << wizardInfo.sSetting_Dtm.dataBits << wizardInfo.sSetting_Dtm.stopBits << wizardInfo.sSetting_Dtm.flowControl << wizardInfo.sSetting_Dtm.encodeMode << wizardInfo.sSetting_Dtm.analyseMode;
+    ui->ss_Std->getSettingIndex(wizardInfo.ssIndex_Std);
+    ui->ss_Dtm->getSettingIndex(wizardInfo.ssIndex_Dtm);
+
+    qDebug() << wizardInfo.ssIndex_Std.portName << wizardInfo.ssIndex_Std.portNameIndex << wizardInfo.ssIndex_Std.baudRate << wizardInfo.ssIndex_Std.dataBitsIndex << wizardInfo.ssIndex_Std.parityIndex << wizardInfo.ssIndex_Std.stopBitsIndex << wizardInfo.ssIndex_Std.flowControlIndex << wizardInfo.ssIndex_Std.encodeModeIndex << wizardInfo.ssIndex_Std.analyseModeIndex;
+    qDebug() << wizardInfo.ssIndex_Dtm.portName << wizardInfo.ssIndex_Dtm.portNameIndex << wizardInfo.ssIndex_Dtm.baudRate << wizardInfo.ssIndex_Dtm.dataBitsIndex << wizardInfo.ssIndex_Dtm.parityIndex << wizardInfo.ssIndex_Dtm.stopBitsIndex << wizardInfo.ssIndex_Dtm.flowControlIndex << wizardInfo.ssIndex_Dtm.encodeModeIndex << wizardInfo.ssIndex_Dtm.analyseModeIndex;
 
     emit wizardInfoFinish(wizardInfo);
 }

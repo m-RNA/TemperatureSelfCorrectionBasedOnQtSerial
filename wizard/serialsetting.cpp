@@ -28,90 +28,17 @@ SerialSetting::~SerialSetting()
     delete ui;
 }
 
-/// @brief 从ui界面获取串口设置参数，并对传入的参数赋值
-/// @param setting
-void SerialSetting::getSettings(Bll_SerialPortSetting &setting)
+void SerialSetting::getSettingIndex(Ui_SerialSettingIndex &uiIndex)
 {
-    QString portName = ui->cbSerial->currentText();
-    if (portName.isEmpty())
-        return;
-
-    setting.portName = portName;
-    setting.baudRate = ui->cbBaudrate->currentText().toInt();
-
-    // 数据位
-    switch (ui->cbDataBit->currentText().toInt())
-    {
-    case 5:
-        setting.dataBits = QSerialPort::Data5;
-        break;
-    case 6:
-        setting.dataBits = QSerialPort::Data6;
-        break;
-    case 7:
-        setting.dataBits = QSerialPort::Data7;
-        break;
-    case 8:
-        setting.dataBits = QSerialPort::Data8;
-        break;
-    default:
-
-        break;
-    }
-
-    // 校验位
-    switch (ui->cbCheckBit->currentIndex())
-    {
-    case 0:
-        setting.parity = QSerialPort::NoParity;
-        break;
-    case 1:
-        setting.parity = QSerialPort::OddParity;
-        break;
-    case 2:
-        setting.parity = QSerialPort::EvenParity;
-        break;
-    default:
-        break;
-    }
-
-    // 停止位
-    switch (ui->cbStopBit->currentIndex())
-    {
-    case 0:
-        setting.stopBits = QSerialPort::OneStop;
-        break;
-    case 1:
-        setting.stopBits = QSerialPort::OneAndHalfStop;
-        break;
-    case 2:
-        setting.stopBits = QSerialPort::TwoStop;
-        break;
-    default:
-        break;
-    }
-
-    // 流控
-    switch (ui->cbFlowCtrl->currentIndex())
-    {
-    case 0:
-        setting.flowControl = QSerialPort::NoFlowControl;
-        break;
-    case 1:
-        setting.flowControl = QSerialPort::HardwareControl;
-        break;
-    case 2:
-        setting.flowControl = QSerialPort::SoftwareControl;
-        break;
-    default:
-        break;
-    }
-
-    // 编码格式
-    setting.encodeMode = ui->cbEncode->currentIndex();
-
-    // 解码格式
-    setting.analyseMode = ui->cbAnalyse->currentIndex();
+    uiIndex.portName = ui->cbSerial->currentText();
+    uiIndex.portNameIndex = ui->cbSerial->currentIndex();
+    uiIndex.baudRate = ui->cbBaudrate->currentText();
+    uiIndex.dataBitsIndex = ui->cbDataBit->currentIndex();
+    uiIndex.parityIndex = ui->cbCheckBit->currentIndex();
+    uiIndex.stopBitsIndex = ui->cbStopBit->currentIndex();
+    uiIndex.flowControlIndex = ui->cbFlowCtrl->currentIndex();
+    uiIndex.encodeModeIndex = ui->cbEncode->currentIndex();
+    uiIndex.analyseModeIndex = ui->cbAnalyse->currentIndex();
 }
 
 /// @brief 事件过滤器

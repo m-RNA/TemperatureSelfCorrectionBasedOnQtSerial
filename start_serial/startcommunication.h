@@ -7,6 +7,7 @@
 #include "bll_serial.h"
 #include "bll_codeconverter.h"
 #include "bll_serialrecvanalyse.h"
+#include "serialsetting.h"
 
 namespace Ui
 {
@@ -33,6 +34,8 @@ public:
 
     void setEncodeMode(EncodingFormat encodeMode);
     void setAnalyseMode(int type);
+
+    void setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex);
 
 public slots:
 

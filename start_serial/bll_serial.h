@@ -10,13 +10,25 @@
 #include "bll_serialrecvanalyse.h"
 #include "interactchart.h"
 #include "bll_codeconverter.h"
-#include "serialsetting.h"
 
 typedef struct
 {
     int returnCode = 0;
     QString msg = "";
 } RES;
+
+typedef struct
+{
+    QString portName;
+    int baudRate;
+    QSerialPort::Parity parity;
+    QSerialPort::DataBits dataBits;
+    QSerialPort::StopBits stopBits;
+    QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
+
+    int encodeMode = 0;
+    int analyseMode = 0;
+} Bll_SerialPortSetting;
 
 class Bll_SerialPort : public QObject // , public QRunnable
 {

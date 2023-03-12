@@ -7,15 +7,15 @@
 typedef struct
 {
     QString portName;
-    int baudRate;
-    QSerialPort::Parity parity;
-    QSerialPort::DataBits dataBits;
-    QSerialPort::StopBits stopBits;
-    QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
-
-    int encodeMode = 0;
-    int analyseMode = 0;
-} Bll_SerialPortSetting;
+    int portNameIndex;
+    QString baudRate;
+    int dataBitsIndex;
+    int parityIndex;
+    int stopBitsIndex;
+    int flowControlIndex;
+    int encodeModeIndex;
+    int analyseModeIndex;
+} Ui_SerialSettingIndex;
 
 namespace Ui
 {
@@ -29,7 +29,7 @@ class SerialSetting : public QWidget
 public:
     explicit SerialSetting(QWidget *parent = nullptr);
     ~SerialSetting();
-    void getSettings(Bll_SerialPortSetting &settings);
+    void getSettingIndex(Ui_SerialSettingIndex &uiIndex);
     void setSerialIndex(const int index);
     void setAnalyseIndex(const int index);
 
