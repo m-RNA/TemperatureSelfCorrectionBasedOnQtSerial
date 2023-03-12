@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>944</width>
-    <height>669</height>
+    <width>905</width>
+    <height>693</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -102,79 +102,11 @@
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="CollectPanel" name="collectPanel_Dtm" native="true"/>
                 </item>
                </layout>
               </widget>
-             </widget>
-            </item>
-            <item>
-             <widget class="QFrame" name="frame">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QProgressBar" name="pgsbSingle">
-                 <property name="minimum">
-                  <number>0</number>
-                 </property>
-                 <property name="maximum">
-                  <number>100</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="invertedAppearance">
-                  <bool>false</bool>
-                 </property>
-                 <property name="format">
-                  <string>--:--:--</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QProgressBar" name="pgsbSum">
-                 <property name="maximum">
-                  <number>8</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="format">
-                  <string>整体进度：%v/%m</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
            </layout>
@@ -326,7 +258,7 @@
               <string>采集</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
-              <item row="0" column="3">
+              <item row="0" column="2">
                <widget class="QSpinBox" name="spbxSamplePointSum">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -351,6 +283,26 @@
                 </property>
                </widget>
               </item>
+              <item row="12" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollectStop">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>停止采集</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collectstop.ico</normaloff>:/icon/collectstop.ico</iconset>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="1">
                <widget class="QLabel" name="label_15">
                 <property name="maximumSize">
@@ -364,6 +316,22 @@
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1" colspan="2">
+               <widget class="QProgressBar" name="pgsbSum">
+                <property name="maximum">
+                 <number>8</number>
+                </property>
+                <property name="value">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="format">
+                 <string>整体进度：%v/%m</string>
                 </property>
                </widget>
               </item>
@@ -383,7 +351,7 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="3">
+              <item row="4" column="2">
                <widget class="QComboBox" name="cbSound">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -442,7 +410,7 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="3">
+              <item row="2" column="2">
                <widget class="QDoubleSpinBox" name="spbxSampleTime">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -476,36 +444,44 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="1" colspan="3">
-               <widget class="QPushButton" name="btnCollect">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+              <item row="6" column="1" colspan="2">
+               <widget class="QProgressBar" name="pgsbSingle">
+                <property name="minimum">
+                 <number>0</number>
                 </property>
-                <property name="text">
-                 <string>开始采集</string>
+                <property name="maximum">
+                 <number>100</number>
                 </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
+                <property name="value">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="invertedAppearance">
+                 <bool>false</bool>
+                </property>
+                <property name="format">
+                 <string>--:--:--</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="1" colspan="3">
-               <widget class="QPushButton" name="btnCollectStop">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
+              <item row="11" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollect">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>104</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="text">
-                 <string>停止采集</string>
+                 <string>开始采集</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
@@ -528,27 +504,8 @@
               <string>最小二乘法</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="3" column="1">
-               <widget class="QSpinBox" name="spbxOrder">
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-                <property name="suffix">
-                 <string/>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>7</number>
-                </property>
-                <property name="value">
-                 <number>3</number>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_19">
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_25">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -556,7 +513,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>多项阶数</string>
+                 <string>预处理</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -583,8 +540,8 @@
                 </item>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_25">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_19">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -592,7 +549,7 @@
                  </size>
                 </property>
                 <property name="text">
-                 <string>预处理</string>
+                 <string>多项阶数</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -616,6 +573,25 @@
                 </property>
                </widget>
               </item>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="spbxOrder">
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>7</number>
+                </property>
+                <property name="value">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -632,20 +608,6 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="9" column="1" colspan="2">
-               <widget class="QPushButton" name="btnSaveReport">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="text">
-                 <string>保存数据</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1" colspan="2">
                <widget class="QPushButton" name="pushButton_25">
                 <property name="enabled">
                  <bool>false</bool>
@@ -662,6 +624,20 @@
                 <property name="icon">
                  <iconset resource="main.qrc">
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1" colspan="2">
+               <widget class="QPushButton" name="btnSaveReport">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>保存数据</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
               </item>
@@ -771,7 +747,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>944</width>
+     <width>905</width>
      <height>23</height>
     </rect>
    </property>

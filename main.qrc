@@ -37,5 +37,6 @@
         <file>sound/TaiWan2.wav</file>
         <file>sound/YueYu1.wav</file>
         <file>sound/YueYu2.wav</file>
+        <file>icon/collectstop.ico</file>
     </qresource>
 </RCC>
