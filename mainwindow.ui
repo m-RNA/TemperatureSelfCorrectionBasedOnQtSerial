@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>928</width>
-    <height>642</height>
+    <width>944</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -326,6 +326,31 @@
               <string>采集</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
+              <item row="0" column="3">
+               <widget class="QSpinBox" name="spbxSamplePointSum">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>99999</number>
+                </property>
+                <property name="value">
+                 <number>8</number>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="1">
                <widget class="QLabel" name="label_15">
                 <property name="maximumSize">
@@ -355,68 +380,6 @@
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1" colspan="3">
-               <widget class="QPushButton" name="btnCollectStop">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>停止采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1" colspan="3">
-               <widget class="QPushButton" name="btnCollect">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>开始采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QSpinBox" name="spbxSamplePointSum">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-                <property name="suffix">
-                 <string/>
-                </property>
-                <property name="minimum">
-                 <number>2</number>
-                </property>
-                <property name="maximum">
-                 <number>99999</number>
-                </property>
-                <property name="value">
-                 <number>8</number>
                 </property>
                </widget>
               </item>
@@ -463,6 +426,22 @@
                 </item>
                </widget>
               </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_17">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>单点时长</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
               <item row="2" column="3">
                <widget class="QDoubleSpinBox" name="spbxSampleTime">
                 <property name="sizePolicy">
@@ -497,19 +476,40 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="label_17">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
+              <item row="5" column="1" colspan="3">
+               <widget class="QPushButton" name="btnCollect">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>单点时长</string>
+                 <string>开始采集</string>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1" colspan="3">
+               <widget class="QPushButton" name="btnCollectStop">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>停止采集</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
               </item>
@@ -631,6 +631,20 @@
               <string>操作</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
+              <item row="9" column="1" colspan="2">
+               <widget class="QPushButton" name="btnSaveReport">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>保存数据</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
+                </property>
+               </widget>
+              </item>
               <item row="8" column="1" colspan="2">
                <widget class="QPushButton" name="pushButton_25">
                 <property name="enabled">
@@ -648,20 +662,6 @@
                 <property name="icon">
                  <iconset resource="main.qrc">
                   <normaloff>:/icon/check.ico</normaloff>:/icon/check.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1" colspan="2">
-               <widget class="QPushButton" name="btnSaveReport">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="text">
-                 <string>保存数据</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/save.ico</normaloff>:/icon/save.ico</iconset>
                 </property>
                </widget>
               </item>
@@ -715,6 +715,12 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="alternatingRowColors">
+                 <bool>false</bool>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>false</bool>
+                </property>
                 <property name="rowCount">
                  <number>4</number>
                 </property>
@@ -765,7 +771,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>928</width>
+     <width>944</width>
      <height>23</height>
     </rect>
    </property>
@@ -784,6 +790,9 @@
     <addaction name="action_3"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveReport"/>
+    <addaction name="actionAutoSave"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -840,6 +849,25 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionAutoSave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>自动保存</string>
+   </property>
+  </action>
+  <action name="actionSaveReport">
+   <property name="text">
+    <string>保存数据</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

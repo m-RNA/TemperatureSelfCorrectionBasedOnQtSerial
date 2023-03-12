@@ -53,6 +53,10 @@ private slots:
 
     void on_btnSaveReport_clicked();
 
+    void on_actionSaveReport_triggered();
+
+    void on_actionAutoSave_triggered(bool checked);
+
     void on_actionWizard_triggered();
 
 signals:

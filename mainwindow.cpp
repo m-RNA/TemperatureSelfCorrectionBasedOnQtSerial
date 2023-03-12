@@ -110,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Xlsx 文件记录保存 */
     taskXlsxData = new Bll_SaveDataToXlsx(this);
+    taskXlsxData->autoSave(ui->actionAutoSave->isChecked());
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
@@ -580,6 +581,16 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 void MainWindow::on_btnSaveReport_clicked()
 {
     taskXlsxData->saveReport();
+}
+
+void MainWindow::on_actionSaveReport_triggered()
+{
+    taskXlsxData->saveReport();
+}
+
+void MainWindow::on_actionAutoSave_triggered(bool checked)
+{
+    taskXlsxData->autoSave(checked);
 }
 
 void MainWindow::on_actionWizard_triggered()

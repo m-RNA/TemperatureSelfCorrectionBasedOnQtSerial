@@ -15,7 +15,9 @@ void Bll_SaveDataToXlsx::startPoint()
     int col = DATA_C + DATA_C_OFFSET * index + 1;
 
     report->write(DATA_R - 2, col, QDateTime::currentDateTime().toString("hh:mm:ss(yyyy/MM/dd)"));
-    saveReport();
+
+    if (autoSaveState)
+        saveReport();
 }
 
 void Bll_SaveDataToXlsx::nextPoint()
@@ -37,6 +39,11 @@ void Bll_SaveDataToXlsx::resetIndex()
     index = 0;
 }
 
+void Bll_SaveDataToXlsx::autoSave(bool state)
+{
+    autoSaveState = state;
+}
+
 void Bll_SaveDataToXlsx::saveInfo(const QStringList &info)
 {
     int row = INFO_R;
@@ -51,7 +58,8 @@ void Bll_SaveDataToXlsx::saveInfo(const QStringList &info)
     report->write(++row, INFO_C, info[5]); // 标准传感器编号
     report->write(++row, INFO_C, info[6]); // 待定传感器编号
 
-    saveReport();
+    if (autoSaveState)
+        saveReport();
 }
 
 void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
@@ -65,7 +73,9 @@ void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
     }
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
-    saveReport();
+
+    if (autoSaveState)
+        saveReport();
 }
 
 void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
@@ -79,7 +89,9 @@ void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
     }
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R + 1, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
-    saveReport();
+
+    if (autoSaveState)
+        saveReport();
 }
 
 void Bll_SaveDataToXlsx::saveFactor(const vector<DECIMAL_TYPE> &factor)
@@ -92,7 +104,9 @@ void Bll_SaveDataToXlsx::saveFactor(const vector<DECIMAL_TYPE> &factor)
         report->write(FACTOR_R - 1, FACTOR_C + counter, factor.size() - counter - 1);
         ++counter;
     }
-    saveReport();
+
+    if (autoSaveState)
+        saveReport();
 }
 
 // 输入r1，r2，c，返回xlsx中的求平均值公式字符串
