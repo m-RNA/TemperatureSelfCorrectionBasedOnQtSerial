@@ -106,7 +106,7 @@ void FitChart::axisXYDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
 	if (part == QCPAxis::spAxis)
 	{
 		bool ok;
-		double newRange = QInputDialog::getDouble(this, "设置范围", "新的坐标轴范围", range, 0, 99999, 1, &ok, Qt::WindowCloseButtonHint);
+		double newRange = QInputDialog::getDouble(this, "设置范围", "新的坐标轴范围", range, 0, 99999, 4, &ok, Qt::WindowCloseButtonHint);
 
 		if (ok)
 		{
