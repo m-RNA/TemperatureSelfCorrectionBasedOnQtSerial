@@ -29,6 +29,9 @@ public:
 
     double getRange(void);
     QCPAxis *getXAxis(void);
+    void setRange(const double range);
+    void setCheckState(bool check);
+    bool isStable(void);
 
 public slots:
     void slCollectData(const serialAnalyseCell &cell);
@@ -42,15 +45,22 @@ private slots:
 
 private:
     Ui::CollectPanel *ui;
+    QString deviceName;
     vector<double> data;
     bool collectState = false;
 
     double min = 0;
     double max = 0;
-    double range = 0;
+    double currentRange = 0;
+    double commandRange = 0.01;
     bool resetRange = true;
 
+    bool checkState = true;
+    bool stableState = false;
+    QVector<double> dataWave;
+
     double average(void);
+    void checkDataWave(const double &data);
 };
 
 #endif // COLLECTPANEL_H

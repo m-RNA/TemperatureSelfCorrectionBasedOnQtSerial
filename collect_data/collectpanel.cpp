@@ -41,6 +41,7 @@ void CollectPanel::slSetState(int state)
 
 void CollectPanel::setDeviceName(QString name)
 {
+    deviceName = name;
     ui->chart->graph()->setName(name);
 }
 
@@ -77,18 +78,24 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
     // 如果是采集状态，将数据添加到data中
     if (collectState == true)
     {
+        // 采集数据
         data.push_back(cell.value);
+
+        // 检查数据是否波动
+        if (checkState)
+            checkDataWave(cell.value);
+
         if (cell.value > max)
         {
             max = cell.value;
-            range = max - min;
-            ui->lbRange->setText(QString::number(range));
+            currentRange = max - min;
+            ui->lbRange->setText(QString::number(currentRange));
         }
-        if (cell.value < min)
+        else if (cell.value < min)
         {
             min = cell.value;
-            range = max - min;
-            ui->lbRange->setText(QString::number(range));
+            currentRange = max - min;
+            ui->lbRange->setText(QString::number(currentRange));
         }
     }
 }
@@ -113,7 +120,7 @@ void CollectPanel::collectFinish(void)
 
 double CollectPanel::getRange(void)
 {
-    return range;
+    return currentRange;
 }
 
 QCPAxis *CollectPanel::getXAxis(void)
@@ -121,49 +128,53 @@ QCPAxis *CollectPanel::getXAxis(void)
     return ui->chart->xAxis;
 }
 
-// 检查输入数据波动是否超过阈值
-bool checkDataFluctuation(bool reset = false, const double &data = 0)
+void CollectPanel::setRange(const double range)
 {
-    static double maxData = 0;
-    static double minData = 0;
-    static unsigned count = 0;
-    bool stateFlag = false;
-    static bool lastStateFlag = stateFlag;
+    commandRange = range;
+}
 
-    // 重置变量
-    if (reset == true)
+void CollectPanel::setCheckState(bool check)
+{
+    checkState = check;
+}
+
+bool CollectPanel::isStable(void)
+{
+    return stableState;
+}
+
+// 以滑动窗口的方式检查数据波动
+void CollectPanel::checkDataWave(const double &data)
+{
+    // 滑动窗口
+    if (dataWave.size() < 10)
     {
-        maxData = data;
-        minData = data;
-        count = 0;
-        return true;
+        dataWave.push_back(data);
+        stableState = false;
+        qDebug() << "dataWave.size() < 10";
+        return;
+    }
+    else
+    {
+        dataWave.pop_front();
+        dataWave.push_back(data);
     }
 
-    // 记录最大值和最小值
-    if (data > maxData)
-        maxData = data;
-    if (data < minData)
-        minData = data;
-
-    // 当数据量大于10时，检查最大值和最小值的差值是否超过阈值
-    if (count > 10)
+    // 检查数据波动
+    double max = dataWave.at(0);
+    double min = dataWave.at(0);
+    for (int i = 0; i < 10; ++i)
     {
-        stateFlag = (maxData - minData) > 0.5 ? false : true;
+        if (dataWave.at(i) > max)
+            max = dataWave.at(i);
+        if (dataWave.at(i) < min)
+            min = dataWave.at(i);
     }
 
-    // 检查状态是否发生变化 有变化就打印
-    if (stateFlag ^ lastStateFlag)
-    {
-        qDebug() << "maxData:" << maxData;
-        qDebug() << "minData:" << minData;
+    if (max - min > commandRange)
+        stableState = false;
+    else
+        stableState = true;
 
-        if (stateFlag == false)
-            qDebug() << "数据波动超过阈值";
-        else
-            qDebug() << "数据波动正常";
-    }
-
-    lastStateFlag = stateFlag;
-    count++;
-    return true;
+    qDebug() << deviceName << "StableState:" << stableState;
 }
