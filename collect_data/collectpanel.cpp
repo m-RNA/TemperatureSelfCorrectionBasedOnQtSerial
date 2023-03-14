@@ -13,7 +13,17 @@ CollectPanel::~CollectPanel()
     delete ui;
 }
 
-void CollectPanel::slSetState(int state)
+void CollectPanel::setOnlineState(bool state)
+{
+    onlineState = state;
+
+    if (onlineState)
+        setState(1);
+    else
+        setState(0);
+}
+
+void CollectPanel::setState(int state)
 {
     switch (state)
     {
@@ -33,8 +43,13 @@ void CollectPanel::slSetState(int state)
         break;
 
     case 3:
-        ui->ledText->setText("数据波动");
-        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(197, 186, 10);"); // 黄色
+        ui->ledText->setText("波动超阈");
+        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(255, 176, 5);"); // 黄色
+        break;
+
+    case 4:
+        ui->ledText->setText("波动稳定");
+        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);"); // 绿色
         break;
     }
 }
@@ -82,8 +97,6 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
         data.push_back(cell.value);
 
         // 检查数据是否波动
-        if (checkState)
-            checkDataWave(cell.value);
 
         if (cell.value > max)
         {
@@ -98,6 +111,8 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
             ui->lbRange->setText(QString::number(currentRange));
         }
     }
+    else if (checkWaveState) // 是否检查数据波动
+        checkDataWave(cell.value);
 }
 
 void CollectPanel::collectStart(void)
@@ -105,6 +120,7 @@ void CollectPanel::collectStart(void)
     resetRange = true;
     collectState = true;
     data.clear();
+    setState(2);
 }
 void CollectPanel::collectStop(void)
 {
@@ -128,14 +144,19 @@ QCPAxis *CollectPanel::getXAxis(void)
     return ui->chart->xAxis;
 }
 
-void CollectPanel::setRange(const double range)
+void CollectPanel::setCheckWaveRange(const double range)
 {
     commandRange = range;
 }
 
-void CollectPanel::setCheckState(bool check)
+void CollectPanel::setCheckWaveState(bool check)
 {
-    checkState = check;
+    checkWaveState = check;
+}
+
+void CollectPanel::setCheckWaveNum(int num)
+{
+    checkWaveNum = num;
 }
 
 bool CollectPanel::isStable(void)
@@ -147,11 +168,11 @@ bool CollectPanel::isStable(void)
 void CollectPanel::checkDataWave(const double &data)
 {
     // 滑动窗口
-    if (dataWave.size() < 10)
+    if (dataWave.size() < checkWaveNum)
     {
         dataWave.push_back(data);
         stableState = false;
-        qDebug() << "dataWave.size() < 10";
+        qDebug() << deviceName << "dataWave.size() < " << checkWaveNum;
         return;
     }
     else
@@ -176,5 +197,15 @@ void CollectPanel::checkDataWave(const double &data)
     else
         stableState = true;
 
-    qDebug() << deviceName << "StableState:" << stableState;
+    // 如果和上一次的状态不一样，就更新状态
+    if (laseStableState ^ stableState)
+    {
+        if (stableState)
+            setState(4);
+        else
+            setState(3);
+
+        qDebug() << deviceName << "StableState:" << stableState;
+    }
+    laseStableState = stableState;
 }

@@ -59,6 +59,10 @@ private slots:
 
     void on_actionWizard_triggered();
 
+    void on_spbxWaveNum_valueChanged(int arg1);
+
+    void on_spbxWaveRange_valueChanged(double arg1);
+
 signals:
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);

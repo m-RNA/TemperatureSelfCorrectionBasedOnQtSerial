@@ -20,18 +20,20 @@ class CollectPanel : public QWidget
 public:
     explicit CollectPanel(QWidget *parent = nullptr);
     ~CollectPanel();
-    void slSetState(int state);
+
     void setDeviceName(QString name);
+    void setOnlineState(bool state);
+    void setCheckWaveState(bool check);
+    void setCheckWaveNum(int num);
+    void setCheckWaveRange(const double range);
+
+    bool isStable(void);
+    double getRange(void);
+    QCPAxis *getXAxis(void);
 
     void collectStart(void);
     void collectStop(void);
     void collectFinish(void);
-
-    double getRange(void);
-    QCPAxis *getXAxis(void);
-    void setRange(const double range);
-    void setCheckState(bool check);
-    bool isStable(void);
 
 public slots:
     void slCollectData(const serialAnalyseCell &cell);
@@ -53,12 +55,16 @@ private:
     double max = 0;
     double currentRange = 0;
     double commandRange = 0.01;
+    double checkWaveNum = 10;
     bool resetRange = true;
 
-    bool checkState = true;
+    bool onlineState = false;
+    bool checkWaveState = false;
     bool stableState = false;
+    bool laseStableState = false;
     QVector<double> dataWave;
 
+    void setState(int state);
     double average(void);
     void checkDataWave(const double &data);
 };

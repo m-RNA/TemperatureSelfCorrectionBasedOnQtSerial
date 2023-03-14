@@ -73,7 +73,7 @@
      <item>
       <widget class="QLabel" name="ledText">
        <property name="text">
-        <string>离线    </string>
+        <string>离线  </string>
        </property>
       </widget>
      </item>
@@ -92,7 +92,7 @@
         </font>
        </property>
        <property name="text">
-        <string>最后示数：</string>
+        <string>  最后示数：</string>
        </property>
       </widget>
      </item>

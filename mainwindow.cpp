@@ -31,8 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     setDeviceName_Dtm("待定仪器");
     setDeviceName_Std("标准仪器");
     ui->start_Std->setAnalyseMode(2);
-    connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::slSetState);
-    connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::slSetState);
+    connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::setOnlineState);
+    connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::setOnlineState);
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
@@ -99,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 整体进度条
     ui->pgsbSum->setMaximum(samplePointSum);
 
+    ui->collectPanel_Std->setCheckWaveState(true);
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
 
@@ -164,8 +165,8 @@ void MainWindow::timerCollectTimeOut()
     // 打点填表
     ui->collectPanel_Std->collectFinish();
     ui->collectPanel_Dtm->collectFinish();
-    ui->collectPanel_Std->slSetState(ui->start_Std->state());
-    ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
+    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
+    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
 
     // 更新整体进度条
     taskXlsxData->nextPoint();
@@ -230,7 +231,6 @@ void MainWindow::on_btnCollect_clicked()
         }
         ui->spbxSamplePointSum->setEnabled(false);
         ui->spbxSampleTime->setEnabled(false);
-        ui->collectPanel_Std->slSetState(2);
         // 一段时间内标准仪器波动<0.01
         // if (ui->collectPanel_Std->isStable() == false)
         // {
@@ -255,7 +255,7 @@ void MainWindow::on_btnCollect_clicked()
         ui->pgsbSingle->setFormat(collectTimestampToHhMmSs(collectTimestamp));
         timerCollect->start();
         taskXlsxData->startPoint();
-        ui->collectPanel_Dtm->slSetState(2);
+
         ui->collectPanel_Std->collectStart();
         ui->collectPanel_Dtm->collectStart();
     }
@@ -304,8 +304,8 @@ void MainWindow::on_btnCollectStop_clicked()
 
     ui->collectPanel_Std->collectStop();
     ui->collectPanel_Dtm->collectStop();
-    ui->collectPanel_Std->slSetState(ui->start_Std->state());
-    ui->collectPanel_Dtm->slSetState(ui->start_Dtm->state());
+    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
+    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
 }
 
 // 更新单点进度条显示时间
@@ -608,4 +608,14 @@ void MainWindow::on_actionWizard_triggered()
                 ui->start_Std->on_btnSerialSwitch_clicked();
                 ui->start_Dtm->on_btnSerialSwitch_clicked(); });
     wizard.exec();
+}
+
+void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
+{
+    ui->collectPanel_Std->setCheckWaveNum(arg1);
+}
+
+void MainWindow::on_spbxWaveRange_valueChanged(double arg1)
+{
+    ui->collectPanel_Std->setCheckWaveRange(arg1);
 }
