@@ -31,10 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
     setDeviceName_Dtm("待定仪器");
     setDeviceName_Std("标准仪器");
     ui->start_Std->setAnalyseMode(2);
-    connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::setOnlineState);
-    connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::setOnlineState);
-    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
-    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
     //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
     //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
@@ -99,7 +95,10 @@ MainWindow::MainWindow(QWidget *parent)
     // 整体进度条
     ui->pgsbSum->setMaximum(samplePointSum);
 
+    /* 采集仪表盘 */
     ui->collectPanel_Std->setCheckWaveState(true);
+    ui->collectPanel_Std->setCheckWaveNum(ui->spbxWaveNum->value());
+    ui->collectPanel_Std->setCheckWaveRange(ui->spbxWaveRange->value());
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
 
@@ -108,6 +107,12 @@ MainWindow::MainWindow(QWidget *parent)
             ui->collectPanel_Dtm->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::setRange));
     connect(ui->collectPanel_Dtm->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged),
             ui->collectPanel_Std->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::setRange));
+
+    // 同步指示灯的变化
+    connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::setOnlineState);
+    connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::setOnlineState);
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
+    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
     /* Xlsx 文件记录保存 */
     taskXlsxData = new Bll_SaveDataToXlsx(this);
