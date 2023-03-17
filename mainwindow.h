@@ -18,16 +18,24 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    typedef enum
+    {
+        CollectBtnState_Start = 0,
+        CollectBtnState_Stop,
+        CollectBtnState_Next,
+        CollectBtnState_End,
+    } CollectBtnState;
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void on_btnCollectSwitch_clicked1();
 
+    void on_btnCollectReset_clicked1();
 private slots:
+    void on_btnCollectSwitch_clicked();
 
-    void on_btnCollect_clicked();
-
-    void on_btnCollectStop_clicked();
+    void on_btnCollectReset_clicked();
 
     void on_spbxSamplePointSum_valueChanged(int arg1);
 
@@ -73,13 +81,22 @@ signals:
 private:
     Ui::MainWindow *ui;
     QTimer *timerCollect = nullptr;
-    int collectTimestamp = 0; // 采集时间戳（秒 * TIMESTAMP_FACTOR)
-    int sampledPointNum = 0;  // 已采集点数
+    bool isCollecting = false;
+    CollectBtnState btnSwitchState = CollectBtnState_Start;
+    int collectTimeStamp = 0; // 采集时间戳（秒 * TIMESTAMP_FACTOR)
+    int collectCounter = 0;   // 已采集点数
     int samplePointSum = 8;   // 需要采集点数
     int pgsbSingleValue = 0;  // 单点进度条值
 
+    QString collectTimeStampToHhMmSs(int timestamp);
+    void timerCollectTimeOut1();
     void timerCollectTimeOut();
-    QString collectTimestampToHhMmSs(int timestamp);
+    void startCollect();
+    void stopCollect();
+    void finishCollect();
+    void resetCollect();
+    void nextCollect();
+
     void setDeviceName_Std(QString name);
     void setDeviceName_Dtm(QString name);
 
