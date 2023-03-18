@@ -49,6 +49,7 @@
         "collectcomplete",
         "COLLECTPANEL",
         "collectstop",
+        "collectwait",
         "Eigen",
         "fitchart",
         "INTERACTCHART",

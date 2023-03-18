@@ -40,5 +40,6 @@
         <file>icon/collectstop.ico</file>
         <file>icon/yes.ico</file>
         <file>icon/collectrestart.ico</file>
+        <file>icon/collectwait.ico</file>
     </qresource>
 </RCC>

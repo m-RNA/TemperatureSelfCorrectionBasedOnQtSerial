@@ -173,7 +173,7 @@ void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
         break;
     case CollectBtnState_Wait:
         ui->btnCollectSwitch->setText("取消候稳");
-        ui->btnCollectSwitch->setIcon(QIcon("://icon/collectstop.ico"));
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/collectwait.ico"));
         break;
     case CollectBtnState_Stop:
         ui->btnCollectSwitch->setText("停止采集");
