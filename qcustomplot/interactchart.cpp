@@ -97,7 +97,7 @@ void InteractChart::setXAxisToTimelineState(bool state)
 
 		this->xAxis->setRange(oldTime * 0.001, 60, Qt::AlignRight);
 		this->xAxis->setLabel("");
-		this->yAxis->setLabel("y轴");
+		this->yAxis->setLabel("");
 	}
 	else
 	{
