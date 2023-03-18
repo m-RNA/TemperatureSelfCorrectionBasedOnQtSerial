@@ -33,7 +33,7 @@ public:
     void nextPoint();
     void saveInfo(const QStringList &info);
     void saveReport();
-    void resetIndex();
+    void resetReport();
     void autoSave(bool);
 
 public slots:

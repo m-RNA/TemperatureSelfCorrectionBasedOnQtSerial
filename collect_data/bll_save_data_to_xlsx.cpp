@@ -2,7 +2,7 @@
 
 Bll_SaveDataToXlsx::Bll_SaveDataToXlsx(QObject *parent) : QObject(parent)
 {
-    resetIndex();
+    resetReport();
 }
 
 Bll_SaveDataToXlsx::~Bll_SaveDataToXlsx()
@@ -30,7 +30,7 @@ void Bll_SaveDataToXlsx::saveReport()
     report->saveAs(fileName + ".xlsx");
 }
 
-void Bll_SaveDataToXlsx::resetIndex()
+void Bll_SaveDataToXlsx::resetReport()
 {
     delete report;
     report = new Document(":/ReportTemplate.xlsx");
@@ -74,6 +74,9 @@ void Bll_SaveDataToXlsx::saveData_Std(const vector<double> &data)
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
 
+    // 清空多余的单元格
+    while (report->read(DATA_R + counter, col).toString() != "")
+        report->write(DATA_R + counter++, col, QVariant());
     if (autoSaveState)
         saveReport();
 }
@@ -89,6 +92,10 @@ void Bll_SaveDataToXlsx::saveData_Dtm(const vector<double> &data)
     }
     // 在求平均值的单元格写入公式
     report->write(AVERAGE_R + 1, AVERAGE_C + AVERAGE_C_OFFSET * index, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
+
+    // 清空多余的单元格
+    while (report->read(DATA_R + counter, col).toString() != "")
+        report->write(DATA_R + counter++, col, QVariant());
 
     if (autoSaveState)
         saveReport();
