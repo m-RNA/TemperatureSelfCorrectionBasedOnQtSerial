@@ -120,6 +120,7 @@ void CollectPanel::collectStart(void)
 {
     resetRange = true;
     collectState = true;
+    stableState = false; // 设置为不稳定，防止采集完成后，波动检查还没完成，就开始采集下一组数据
     data.clear();
     setState(2);
 }
