@@ -121,7 +121,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>验证 2022/12/21</string>
+        <string>雏形2号 2023/3/18</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
