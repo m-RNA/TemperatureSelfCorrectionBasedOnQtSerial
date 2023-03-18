@@ -197,7 +197,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         if (btnSwitchState == CollectBtnState_End)
         {
             ui->btnCollectSwitch->setEnabled(false);
-            ui->btnCollectReset->setEnabled(false);
+            ui->btnCollectRestart->setEnabled(false);
 
             // 保存报告
             taskXlsxData->saveReport();
@@ -221,7 +221,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
 
         isCollecting = true;
         setCollectBtnState(CollectBtnState_Stop);
-        ui->btnCollectReset->setEnabled(true);
+        ui->btnCollectRestart->setEnabled(true);
 
         timerCollect->start();
         startCollect();
@@ -239,11 +239,11 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         stopCollect();
 
         setCollectBtnState(CollectBtnState_Start);
-        ui->btnCollectReset->setEnabled(false);
+        ui->btnCollectRestart->setEnabled(false);
     }
 }
 
-void Bll_CollectBtn::on_btnCollectReset_clicked()
+void Bll_CollectBtn::on_btnCollectRestart_clicked()
 {
     isCollecting = true;
     if (btnSwitchState == CollectBtnState_End)
@@ -277,7 +277,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
     pgsbSingleValue = 0;
     finishCollect();
 
-    ui->btnCollectReset->setEnabled(true);
+    ui->btnCollectRestart->setEnabled(true);
     if (collectCounter < samplePointSum - 1)
     {
         ui->pgsbSum->setValue(collectCounter + 1);
@@ -350,8 +350,8 @@ void Bll_CollectBtn::resetCollect()
 {
     taskXlsxData->startPoint();
 
-    ui->collectPanel_Std->collectReset();
-    ui->collectPanel_Dtm->collectReset();
+    ui->collectPanel_Std->collectRestart();
+    ui->collectPanel_Dtm->collectRestart();
 
     qDebug() << "重采本点" << collectCounter;
 }

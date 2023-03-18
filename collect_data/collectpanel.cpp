@@ -134,7 +134,7 @@ void CollectPanel::collectFinish(void)
     emit sgCollectDataAverage(average());
     collectStop();
 }
-void CollectPanel::collectReset(void)
+void CollectPanel::collectRestart(void)
 {
     collectStart();
     ui->lbRange->setText("NULL");

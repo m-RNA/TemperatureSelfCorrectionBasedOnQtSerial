@@ -34,7 +34,7 @@ public:
     void collectStart(void);
     void collectStop(void);
     void collectFinish(void);
-    void collectReset(void);
+    void collectRestart(void);
 
 public slots:
     void slCollectData(const serialAnalyseCell &cell);

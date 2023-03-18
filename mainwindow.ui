@@ -291,7 +291,7 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
               <item row="15" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollectReset">
+               <widget class="QPushButton" name="btnCollectRestart">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>

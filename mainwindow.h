@@ -29,13 +29,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void on_btnCollectSwitch_clicked1();
 
-    void on_btnCollectReset_clicked1();
 private slots:
     void on_btnCollectSwitch_clicked();
 
-    void on_btnCollectReset_clicked();
+    void on_btnCollectRestart_clicked();
 
     void on_spbxSamplePointSum_valueChanged(int arg1);
 
