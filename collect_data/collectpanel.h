@@ -50,6 +50,7 @@ private:
     QString deviceName;
     vector<double> data;
     bool collectState = false;
+    int uiLedState = 0;
 
     double min = 0;
     double max = 0;

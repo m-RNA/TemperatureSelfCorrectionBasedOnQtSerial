@@ -25,6 +25,7 @@ void CollectPanel::setOnlineState(bool state)
 
 void CollectPanel::setState(int state)
 {
+    uiLedState = state;
     switch (state)
     {
     case 0:
@@ -82,11 +83,12 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
     // 将Y轴数据添加到曲线图上
     ui->chart->addYPointBaseOnTime(cell);
 
-    // 如果是刚刚打开采集状态，就要重置最大值和最小值
+    // 如果是刚刚打开采集状态，就要重置最大值和最小值,并清空数据
     if (resetRange == true)
     {
         min = cell.value;
         max = cell.value;
+        dataWave.clear();
         resetRange = false;
     }
 
@@ -96,8 +98,7 @@ void CollectPanel::slCollectData(const serialAnalyseCell &cell)
         // 采集数据
         data.push_back(cell.value);
 
-        // 检查数据是否波动
-
+        // 计算采集过程中的极差
         if (cell.value > max)
         {
             max = cell.value;
@@ -198,7 +199,7 @@ void CollectPanel::checkDataWave(const double &data)
         stableState = true;
 
     // 如果和上一次的状态不一样，就更新状态
-    if (laseStableState ^ stableState)
+    if (uiLedState == 1 || laseStableState ^ stableState)
     {
         if (stableState)
             setState(4);
