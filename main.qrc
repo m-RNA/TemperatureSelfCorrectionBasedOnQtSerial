@@ -39,5 +39,6 @@
         <file>sound/YueYu2.wav</file>
         <file>icon/collectstop.ico</file>
         <file>icon/yes.ico</file>
+        <file>icon/collectrestart.ico</file>
     </qresource>
 </RCC>
