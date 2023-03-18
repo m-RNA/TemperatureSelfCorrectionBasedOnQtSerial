@@ -44,6 +44,8 @@ signals:
 
     void sgCollectDataGet(const vector<double> &data);
 
+    void sgTurnToStable();
+
 private slots:
 
 private:

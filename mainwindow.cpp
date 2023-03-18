@@ -115,6 +115,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
+    // 标准仪器稳定后，开始采集数据
+    connect(ui->collectPanel_Std, &CollectPanel::sgTurnToStable, [=]()
+            {
+        if (waitingStdStable)
+        {
+            waitingStdStable = false;
+            goOnCollect();
+        } });
+
     /* Xlsx 文件记录保存 */
     taskXlsxData = new Bll_SaveDataToXlsx(this);
     taskXlsxData->autoSave(ui->actionAutoSave->isChecked());
@@ -162,6 +171,10 @@ void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
         ui->btnCollectSwitch->setText("开始采集");
         ui->btnCollectSwitch->setIcon(QIcon("://icon/collect.ico"));
         break;
+    case CollectBtnState_Wait:
+        ui->btnCollectSwitch->setText("取消候稳");
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/collectstop.ico"));
+        break;
     case CollectBtnState_Stop:
         ui->btnCollectSwitch->setText("停止采集");
         ui->btnCollectSwitch->setIcon(QIcon("://icon/collectstop.ico"));
@@ -177,11 +190,35 @@ void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
     }
 }
 
+// 初始化单点进度条
+void MainWindow::pgsbSingleInit()
+{
+    pgsbSingleReset();
+    ui->pgsbSingle->setMaximum(collectTimeStamp);
+}
+
+// 重置单点进度条
+void MainWindow::pgsbSingleReset()
+{
+    pgsbSingleValue = 0;
+    ui->pgsbSingle->setValue(0);
+    ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
+}
+
 void Bll_CollectBtn::on_btnCollectSwitch_clicked()
 {
     qDebug() << "切换采集状态" << isCollecting;
     if (isCollecting == false) // 开始采集
     {
+        // 取消等待标准仪器稳定
+        if (btnSwitchState == CollectBtnState_Wait)
+        {
+            waitingStdStable = false;
+            pgsbSingleInit();
+            setCollectBtnState(CollectBtnState_Start);
+            return;
+        }
+
         // 两个串口是否同时打开
         if (!(ui->start_Dtm->state() && ui->start_Std->state()))
         {
@@ -214,50 +251,62 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
             ui->pgsbSum->setMaximum(ui->spbxSamplePointSum->value());
             ui->pgsbSum->setValue(0);
         }
-        pgsbSingleValue = 0;
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setMaximum(collectTimeStamp);
-        ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
 
-        isCollecting = true;
-        setCollectBtnState(CollectBtnState_Stop);
-        ui->btnCollectRestart->setEnabled(true);
-
-        timerCollect->start();
-        startCollect();
+        // 检查数据波动是否超过阈值
+        if (ui->collectPanel_Std->isStable() == false)
+        {
+            ui->pgsbSingle->setMaximum(0);
+            waitingStdStable = true;
+            setCollectBtnState(CollectBtnState_Wait);
+            return;
+        }
+        goOnCollect();
     }
     else // 停止采集
     {
         timerCollect->stop();
         isCollecting = false;
 
-        // 重置单点进度
-        pgsbSingleValue = 0;
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
+        // 重置单点进度条
+        pgsbSingleReset();
 
         stopCollect();
 
         setCollectBtnState(CollectBtnState_Start);
         ui->btnCollectRestart->setEnabled(false);
+
+        // 如果一点都没采集，就可以重新设置采集参数
+        if (collectCounter == 0)
+        {
+            ui->spbxSamplePointSum->setEnabled(true);
+            ui->spbxSampleTime->setEnabled(true);
+            ui->spbxWaveNum->setEnabled(true);
+            ui->spbxWaveRange->setEnabled(true);
+        }
     }
 }
 
 void Bll_CollectBtn::on_btnCollectRestart_clicked()
 {
     isCollecting = true;
-    if (btnSwitchState == CollectBtnState_End)
-    {
-        ui->btnCollectSwitch->setEnabled(false);
-    }
-    else
-    {
-        setCollectBtnState(CollectBtnState_Stop);
-    }
-
-    pgsbSingleValue = 0;
     ui->pgsbSum->setValue(collectCounter);
 
+    // 这里是重新采集本点
+    if (btnSwitchState == CollectBtnState_Next)
+    {
+        // 检查数据波动是否超过阈值
+        if (ui->collectPanel_Std->isStable() == false)
+        {
+            waitingStdStable = true;
+            ui->pgsbSingle->setMaximum(0);
+            ui->btnCollectRestart->setEnabled(false);
+            setCollectBtnState(CollectBtnState_Wait);
+            return;
+        }
+    }
+
+    setCollectBtnState(CollectBtnState_Stop);
+    pgsbSingleReset();
     resetCollect();
 
     timerCollect->start(); // 开始倒计时
@@ -274,7 +323,6 @@ void Bll_CollectBtn::timerCollectTimeOut()
 
     timerCollect->stop();
     isCollecting = false;
-    pgsbSingleValue = 0;
     finishCollect();
 
     ui->btnCollectRestart->setEnabled(true);
@@ -293,9 +341,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
             taskSound->stop();
 
         // 重置单点进度
-        pgsbSingleValue = 0;
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
+        pgsbSingleReset();
     }
     else // 全部采集完成
     {
@@ -311,9 +357,20 @@ void Bll_CollectBtn::timerCollectTimeOut()
         if (taskSound)
             taskSound->stop();
 
-        ui->btnCollectSwitch->setEnabled(true);
         qDebug() << "全部采集完成啦~";
     }
+}
+
+// 接着开始采集
+void Bll_CollectBtn::goOnCollect()
+{
+    pgsbSingleInit();
+    setCollectBtnState(CollectBtnState_Stop);
+    ui->btnCollectRestart->setEnabled(true);
+
+    isCollecting = true;
+    timerCollect->start();
+    startCollect();
 }
 
 void Bll_CollectBtn::startCollect()

@@ -208,7 +208,10 @@ void CollectPanel::checkDataWave(const double &data)
     if (uiLedState == 1 || laseStableState ^ stableState)
     {
         if (stableState)
+        {
             setState(4);
+            emit sgTurnToStable();
+        }
         else
             setState(3);
 

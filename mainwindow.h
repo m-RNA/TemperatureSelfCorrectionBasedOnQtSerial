@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow
     typedef enum
     {
         CollectBtnState_Start = 0,
+        CollectBtnState_Wait,
         CollectBtnState_Stop,
         CollectBtnState_Next,
         CollectBtnState_End,
@@ -79,13 +80,16 @@ signals:
 private:
     Ui::MainWindow *ui;
     QTimer *timerCollect = nullptr;
-    bool isCollecting = false;
     CollectBtnState btnSwitchState = CollectBtnState_Start;
+    bool isCollecting = false;
+    bool waitingStdStable = false;
     int collectTimeStamp = 0; // 采集时间戳（秒 * TIMESTAMP_FACTOR)
     int collectCounter = 0;   // 已采集点数
     int samplePointSum = 8;   // 需要采集点数
     int pgsbSingleValue = 0;  // 单点进度条值
 
+    void pgsbSingleInit();
+    void pgsbSingleReset();
     QString collectTimeStampToHhMmSs(int timestamp);
     void timerCollectTimeOut();
     void startCollect();
@@ -93,6 +97,7 @@ private:
     void finishCollect();
     void resetCollect();
     void nextCollect();
+    void goOnCollect();
 
     void setDeviceName_Std(QString name);
     void setDeviceName_Dtm(QString name);
