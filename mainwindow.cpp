@@ -193,6 +193,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         ui->spbxWaveNum->setEnabled(false);
         ui->spbxWaveRange->setEnabled(false);
 
+        // 最终的完成采集
         if (btnSwitchState == CollectBtnState_End)
         {
             ui->btnCollectSwitch->setEnabled(false);
@@ -347,7 +348,10 @@ void Bll_CollectBtn::finishCollect()
 
 void Bll_CollectBtn::resetCollect()
 {
-    startCollect();
+    taskXlsxData->startPoint();
+
+    ui->collectPanel_Std->collectReset();
+    ui->collectPanel_Dtm->collectReset();
 
     qDebug() << "重采本点" << collectCounter;
 }
