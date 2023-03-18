@@ -443,6 +443,11 @@ void Bll_CollectBtn::timerCollectTimeOut()
     else // 全部采集完成
     {
         btnSwitchState = CollectBtnState_End;
+        if (ui->pgsbSum->value() < ui->pgsbSum->maximum())
+        {
+            ui->pgsbSum->setValue(collectCounter + 1);
+            ui->btnCollectSwitch->setText("完成采集");
+        }
         tryUpdateFitChart(false);
         if (taskSound)
             taskSound->play2();
@@ -452,11 +457,6 @@ void Bll_CollectBtn::timerCollectTimeOut()
         if (taskSound)
             taskSound->stop();
 
-        if (ui->pgsbSum->value() < ui->pgsbSum->maximum())
-        {
-            ui->pgsbSum->setValue(collectCounter + 1);
-            ui->btnCollectSwitch->setText("完成采集");
-        }
         ui->btnCollectSwitch->setEnabled(true);
         qDebug() << "全部采集完成啦~";
     }
