@@ -153,167 +153,28 @@ QString MainWindow::collectTimeStampToHhMmSs(int timestamp)
     return QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60);
 }
 
-void MainWindow::timerCollectTimeOut1()
+void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
 {
-    pgsbSingleValue++; // 进来进度条++
-    ui->pgsbSingle->setValue(pgsbSingleValue);
-    ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp - pgsbSingleValue));
-
-    if (collectTimeStamp > pgsbSingleValue) // 时间是否到了
-        return;                             // 没到退出
-
-    // 时间到了
-    timerCollect->stop();
-    ui->pgsbSingle->setFormat("00:00:00");
-
-    // emit
-    // 计算平均值
-    // 打点填表
-    ui->collectPanel_Std->collectFinish();
-    ui->collectPanel_Dtm->collectFinish();
-    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
-    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
-
-    taskXlsxData->nextPoint();
-    // 更新整体进度条
-    collectCounter = ui->pgsbSum->value() + 1;
-    ui->pgsbSum->setValue(collectCounter);
-
-    if (ui->pgsbSum->maximum() > collectCounter) // 各个标定点是否采集完成
+    btnSwitchState = state;
+    switch (state)
     {
-        // 各个标定点采集未完成
+    case CollectBtnState_Start:
+        ui->btnCollectSwitch->setText("开始采集");
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/collect.ico"));
+        break;
+    case CollectBtnState_Stop:
+        ui->btnCollectSwitch->setText("停止采集");
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/collectstop.ico"));
+        break;
+    case CollectBtnState_Next:
         ui->btnCollectSwitch->setText("采集下点");
-        ui->btnCollectReset->setEnabled(false);
-        if (taskSound)
-            taskSound->play1();
-        QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
-        QMessageBox msgBox(QMessageBox::Information, "提示", msg, 0, this);
-        msgBox.addButton("Yes", QMessageBox::AcceptRole);
-        msgBox.exec();
-
-        if (taskSound)
-            taskSound->stop();
-
-        // 重置单点进度
-        // ui->pgsbSingle->setFormat("等待下个采集点中");
-        pgsbSingleValue = 0;
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
-        // ui->pgsbSingle->setMaximum(0);
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/collect.ico"));
+        break;
+    case CollectBtnState_End:
+        ui->btnCollectSwitch->setText("完成采集");
+        ui->btnCollectSwitch->setIcon(QIcon("://icon/yes.ico"));
+        break;
     }
-    else
-    {
-        // 各个标定点未采集完成
-
-        // 计算拟合结果
-        // ...
-        tryUpdateFitChart(false);
-        ui->btnCollectReset->setEnabled(false);
-        if (taskSound)
-            taskSound->play2();
-
-        QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
-        msgBox.addButton("Yes", QMessageBox::AcceptRole);
-        msgBox.exec();
-        if (taskSound)
-            taskSound->stop();
-
-        // 保存报告
-        taskXlsxData->saveReport();
-        ui->btnCollectSwitch->setText("全部重采");
-    }
-}
-void MainWindow::on_btnCollectSwitch_clicked1()
-{
-    if (samplePointSum > collectCounter)
-    {
-        // SAMPLE_UNFINISHED: // 采集未完成
-        // 两个串口是否同时打开
-        if (!(ui->start_Dtm->state() && ui->start_Std->state()))
-        {
-            QMessageBox::critical(this, "错误", "请同时连接两个仪器");
-            return;
-        }
-        ui->spbxSamplePointSum->setEnabled(false);
-        ui->spbxSampleTime->setEnabled(false);
-        ui->spbxWaveNum->setEnabled(false);
-        ui->spbxWaveRange->setEnabled(false);
-
-        // 一段时间内标准仪器波动<0.01
-        // if (ui->collectPanel_Std->isStable() == false)
-        // {
-        //     QMessageBox::critical(this, "错误", "标准仪器波动过大，请重新采集");
-        //     return;
-        // }
-
-        ui->btnCollectSwitch->setText("重采该点");
-        ui->btnCollectReset->setEnabled(true);
-
-        // # 这个放在if (collectCounter == 0)里面才对(调试)
-        if (collectCounter == 0) // 第一次采集
-        {
-            collectTimeStamp = ui->spbxSampleTime->value() * 60 * TIMESTAMP_FACTOR; // 分钟转换时间戳
-            qDebug() << "collectTimeStamp" << collectTimeStamp;
-            ui->pgsbSum->setMaximum(ui->spbxSamplePointSum->value());
-            ui->pgsbSum->setValue(0);
-        }
-        pgsbSingleValue = 0;
-        ui->pgsbSingle->setValue(0);
-        ui->pgsbSingle->setMaximum(collectTimeStamp);
-        ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
-        timerCollect->start();
-        taskXlsxData->startPoint();
-
-        ui->collectPanel_Std->collectStart();
-        ui->collectPanel_Dtm->collectStart();
-    }
-    else // 所有点采集完毕
-    {
-        QMessageBox msgBox(QMessageBox::Warning, "警告", "这将清除全部数据\n是否继续？", 0, this);
-        msgBox.addButton("Yes", QMessageBox::AcceptRole);
-        msgBox.addButton("No", QMessageBox::RejectRole);
-        if (msgBox.exec() == QMessageBox::AcceptRole)
-        {
-            // qDebug() << "确认";
-            ui->spbxSamplePointSum->setEnabled(true);
-            ui->spbxSampleTime->setEnabled(true);
-            collectCounter = 0;
-            ui->pgsbSum->setValue(0);
-            ui->pgsbSingle->setValue(0);
-            ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
-
-            // 需要清空表格数据
-            ui->twAverage->clearContents();
-            ui->twFactor->clearContents();
-
-            // 清空拟合图形
-            ui->chartFit->clear();
-
-            // 重置表格
-            taskXlsxData->resetIndex();
-
-            ui->btnCollectSwitch->setText("开始采集");
-            // goto SAMPLE_UNFINISHED;
-        }
-    }
-}
-
-// 停止采集
-void MainWindow::on_btnCollectReset_clicked1()
-{
-    ui->btnCollectReset->setEnabled(false);
-    if (timerCollect->isActive())
-        timerCollect->stop();
-
-    // 重置单点进度
-    pgsbSingleValue = 0;
-    ui->pgsbSingle->setValue(0);
-    ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
-
-    ui->collectPanel_Std->collectStop();
-    ui->collectPanel_Dtm->collectStop();
-    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
-    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
 }
 
 void Bll_CollectBtn::on_btnCollectSwitch_clicked()
@@ -358,19 +219,16 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
 
         isCollecting = true;
-        btnSwitchState = CollectBtnState_Stop;
-        timerCollect->start();
-
-        startCollect();
-
-        ui->btnCollectSwitch->setText("停止采集");
+        setCollectBtnState(CollectBtnState_Stop);
         ui->btnCollectReset->setEnabled(true);
+
+        timerCollect->start();
+        startCollect();
     }
     else // 停止采集
     {
         timerCollect->stop();
         isCollecting = false;
-        btnSwitchState = CollectBtnState_Start;
 
         // 重置单点进度
         pgsbSingleValue = 0;
@@ -379,7 +237,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
 
         stopCollect();
 
-        ui->btnCollectSwitch->setText("开始采集");
+        setCollectBtnState(CollectBtnState_Start);
         ui->btnCollectReset->setEnabled(false);
     }
 }
@@ -393,8 +251,7 @@ void Bll_CollectBtn::on_btnCollectReset_clicked()
     }
     else
     {
-        btnSwitchState = CollectBtnState_Stop;
-        ui->btnCollectSwitch->setText("停止采集");
+        setCollectBtnState(CollectBtnState_Stop);
     }
 
     pgsbSingleValue = 0;
@@ -416,7 +273,6 @@ void Bll_CollectBtn::timerCollectTimeOut()
 
     timerCollect->stop();
     isCollecting = false;
-    btnSwitchState = CollectBtnState_Next;
     pgsbSingleValue = 0;
     finishCollect();
 
@@ -424,7 +280,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
     if (collectCounter < samplePointSum - 1)
     {
         ui->pgsbSum->setValue(collectCounter + 1);
-        ui->btnCollectSwitch->setText("采集下点");
+        setCollectBtnState(CollectBtnState_Next);
         if (taskSound)
             taskSound->play1();
         QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
@@ -442,12 +298,9 @@ void Bll_CollectBtn::timerCollectTimeOut()
     }
     else // 全部采集完成
     {
-        btnSwitchState = CollectBtnState_End;
-        if (ui->pgsbSum->value() < ui->pgsbSum->maximum())
-        {
-            ui->pgsbSum->setValue(collectCounter + 1);
-            ui->btnCollectSwitch->setText("完成采集");
-        }
+        ui->pgsbSum->setValue(collectCounter + 1);
+        setCollectBtnState(CollectBtnState_End);
+
         tryUpdateFitChart(false);
         if (taskSound)
             taskSound->play2();

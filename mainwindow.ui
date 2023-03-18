@@ -306,7 +306,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
-                  <normaloff>:/icon/collectstop.ico</normaloff>:/icon/collectstop.ico</iconset>
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
               </item>

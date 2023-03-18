@@ -89,7 +89,6 @@ private:
     int pgsbSingleValue = 0;  // 单点进度条值
 
     QString collectTimeStampToHhMmSs(int timestamp);
-    void timerCollectTimeOut1();
     void timerCollectTimeOut();
     void startCollect();
     void stopCollect();
@@ -99,6 +98,7 @@ private:
 
     void setDeviceName_Std(QString name);
     void setDeviceName_Dtm(QString name);
+    void setCollectBtnState(const CollectBtnState &state);
 
     unsigned long long order; // 最小二乘法多项式阶数
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
