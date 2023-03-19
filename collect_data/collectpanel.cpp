@@ -76,7 +76,7 @@ string CollectPanel::average(void)
     // 将数据发送给主线程中的xlsx表格保存数据
     emit sgCollectDataGet(data);
 
-    return (sum / (double)size).toString();
+    return (sum / (double)size).toString(10);
 }
 
 void CollectPanel::slCollectData(const serialAnalyseCell &cell)

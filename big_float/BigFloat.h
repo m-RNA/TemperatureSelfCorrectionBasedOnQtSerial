@@ -68,7 +68,7 @@ public:
     BigFloat abs() const;      // 取绝对值
     BigFloat pow(int n) const; // 幂
 
-    string toString() const;
+    string toString(size_t decimalNum, bool mode) const;
     int toInt() const;
     float toFloat() const;
     double toDouble() const;
@@ -272,21 +272,48 @@ inline BigFloat operator-(const BigFloat &num) // 取负操作
     return temp;
 }
 
-inline string BigFloat::toString() const // 转换为字符串
+// 转换为字符串.可控制格式化输出
+// mode == false 默认输出, mode == true 科学计数法输出
+// 小数位数可控制，小数位数为0时不输出小数部分，默认为8位
+inline string BigFloat::toString(size_t decimalNum = 8, bool mode = false) const
 {
     string ans = "";
+    BigFloat temp = *this;
     if (!tag)
     {
         ans += '-';
     }
-    for (auto iter = integer.rbegin(); iter != integer.rend(); iter++)
+    if (mode == false) // 默认输出
     {
-        ans += (char)((*iter) + '0');
+        if (decimalNum > 0)
+        {
+            // 如果小数部分位数比要求输出位数多，就进行四舍五入
+            if (decimal.size() > decimalNum)
+            {
+                auto min = decimal[decimal.size() - decimalNum - 1];
+                if (min >= 5)
+                {
+                    BigFloat addNum("0.1");
+                    addNum = addNum.pow(decimalNum);
+                    temp += addNum;
+                }
+            }
+        }
+
+        for (auto iter = temp.integer.rbegin(); iter != temp.integer.rend(); iter++)
+        {
+            ans += (char)((*iter) + '0');
+        }
+        ans += '.';
+        for (auto iter = temp.decimal.rbegin(); (iter != temp.decimal.rend()) && (decimalNum > 0); ++iter, --decimalNum)
+        {
+            ans += (char)((*iter) + '0');
+        }
     }
-    ans += '.';
-    for (auto iter = decimal.rbegin(); iter != decimal.rend(); iter++)
+    else
     {
-        ans += (char)((*iter) + '0');
+        // 暂未支持科学计数法
+        return toString();
     }
     return ans;
 }
