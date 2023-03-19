@@ -6,6 +6,7 @@
 #include "fitchart.h"
 #include "about.h"
 #include "wizard.h"
+#include "BigFloat.h"
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -468,39 +469,6 @@ DECIMAL_TYPE min(vector<DECIMAL_TYPE> &data)
     return *min;
 }
 
-DECIMAL_TYPE atoDec(const char *str)
-{
-    bool negativeFlag = false;
-    if (str[0] == '-')
-    {
-        negativeFlag = true;
-        str++;
-    }
-    else if (str[0] == '+')
-    {
-        str++;
-    }
-
-    unsigned long long allNum = 0;
-    unsigned long long count = 1;
-    bool dotFlag = false;
-    while (*str)
-    {
-        if (*str == '.')
-        {
-            dotFlag = true;
-            str++;
-            continue;
-        }
-        if (dotFlag == true)
-            count *= 10;
-
-        allNum = allNum * 10 + (*str - '0');
-        str++;
-    }
-    return negativeFlag ? -((DECIMAL_TYPE)allNum / count) : ((DECIMAL_TYPE)allNum / count);
-}
-
 void LeastSquare::updateCollectDataXY(void)
 {
     DECIMAL_TYPE temp;
@@ -515,17 +483,18 @@ void LeastSquare::updateCollectDataXY(void)
             continue;
         // qDebug() << "counter" << counter;
 
-        temp = atoDec(qsX.toStdString().c_str());
+        temp = BigFloat::toLongDouble(qsX.toStdString());
+        qDebug() << "\nLeastSquare::updateCollectDataXY ";
+        qDebug() << "BigFloat x =" << BigFloat(qsX.toStdString());
         collectDataX.push_back(temp);
-        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "LeastSquare::updateCollectDataXY   atoDec x = %.20LE\n", temp);
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         qDebug() << globalStringBuffer;
-        // printf("LeastSquare::updateCollectDataXY toDouble x = %.20e\n", qsX.toDouble());
 
-        temp = atoDec(qsY.toStdString().c_str());
+        temp = BigFloat::toLongDouble(qsY.toStdString());
+        qDebug() << "BigFloat y =" << BigFloat(qsY.toStdString());
         collectDataY.push_back(temp);
-        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "LeastSquare::updateCollectDataXY   atoDec y = %.20LE\n", temp);
+        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         qDebug() << globalStringBuffer;
-        // printf("LeastSquare::updateCollectDataXY toDouble y = %.20e\n", qsY.toDouble());
 
         qDebug() << i << ":" << qsX << qsY;
     }
@@ -661,15 +630,15 @@ void MainWindow::on_actionAbout_triggered()
     about.exec();
 }
 
-void MainWindow::setAverageTableItem_Std(const DECIMAL_TYPE &data)
+void MainWindow::setAverageTableItem_Std(const string &data)
 {
-    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
+    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(data));
     ui->twAverage->setItem(collectCounter, 0, data_Std);
 }
 
-void MainWindow::setAverageTableItem_Dtm(const DECIMAL_TYPE &data)
+void MainWindow::setAverageTableItem_Dtm(const string &data)
 {
-    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(std::to_string(data)));
+    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(data));
     ui->twAverage->setItem(collectCounter, 1, data_Dtm);
 }
 

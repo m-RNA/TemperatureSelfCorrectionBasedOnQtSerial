@@ -42,7 +42,9 @@
         "random": "cpp",
         "qwidget": "cpp",
         "qwizard": "cpp",
-        "qserialport": "cpp"
+        "qserialport": "cpp",
+        "config.h": "c",
+        "iosfwd": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

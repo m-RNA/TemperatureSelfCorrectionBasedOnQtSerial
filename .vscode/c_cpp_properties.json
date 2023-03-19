@@ -11,7 +11,8 @@
                 "${workspaceRoot}/**",
                 "${workspaceRoot}/qcustomplot/**",
                 "${workspaceFolder}/sound/**",
-                "${workspaceFolder}/wizard"
+                "${workspaceFolder}/wizard/**",
+                "${workspaceFolder}/big_float/**"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",

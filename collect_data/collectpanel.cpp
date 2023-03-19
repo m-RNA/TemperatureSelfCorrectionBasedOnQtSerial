@@ -1,5 +1,6 @@
 #include "collectpanel.h"
 #include "ui_collectpanel.h"
+#include "BigFloat.h"
 
 CollectPanel::CollectPanel(QWidget *parent) : QWidget(parent),
                                               ui(new Ui::CollectPanel)
@@ -61,18 +62,21 @@ void CollectPanel::setDeviceName(QString name)
     ui->chart->graph()->setName(name);
 }
 
-// 防止溢出平均值 double在数值较小时，精度较高
-double CollectPanel::average(void)
+// BigFloat计算平均值，模拟笔算，精度更高
+string CollectPanel::average(void)
 {
-    double ans = 0;
-    unsigned long long size = data.size();
+    BigFloat sum = 0;
+    size_t size = data.size();
 
-    for (unsigned long long i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
-        ans = (double)i / (double)(i + 1) * ans + data.at(i) / (i + 1);
+        sum += data[i];
     }
+
+    // 将数据发送给主线程中的xlsx表格保存数据
     emit sgCollectDataGet(data);
-    return ans;
+
+    return (sum / (double)size).toString();
 }
 
 void CollectPanel::slCollectData(const serialAnalyseCell &cell)

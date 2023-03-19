@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <vector>
+#include <string>
 #include "interactchart.h"
 #include "bll_serialrecvanalyse.h"
 using namespace std;
@@ -40,7 +41,7 @@ public slots:
     void slCollectData(const serialAnalyseCell &cell);
 
 signals:
-    void sgCollectDataAverage(const DECIMAL_TYPE &average);
+    void sgCollectDataAverage(const string &average);
 
     void sgCollectDataGet(const vector<double> &data);
 
@@ -69,7 +70,7 @@ private:
     QVector<double> dataWave;
 
     void setState(int state);
-    double average(void);
+    string average(void);
     void checkDataWave(const double &data);
 };
 

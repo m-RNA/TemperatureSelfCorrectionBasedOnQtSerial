@@ -48,9 +48,9 @@ private slots:
 
     void setFitChartData(const vector<DECIMAL_TYPE> &factor);
 
-    void setAverageTableItem_Std(const DECIMAL_TYPE &average);
+    void setAverageTableItem_Std(const string &average);
 
-    void setAverageTableItem_Dtm(const DECIMAL_TYPE &average);
+    void setAverageTableItem_Dtm(const string &average);
 
     void on_actionAbout_triggered();
 
