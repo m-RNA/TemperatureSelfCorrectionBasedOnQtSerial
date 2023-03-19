@@ -112,6 +112,14 @@ void Bll_SaveDataToXlsx::saveFactor(const vector<DECIMAL_TYPE> &factor)
         ++counter;
     }
 
+    // 清空多余的单元格
+    while (report->read(FACTOR_R, FACTOR_C + counter).toString() != "")
+    {
+        report->write(FACTOR_R, FACTOR_C + counter, QVariant());
+        report->write(FACTOR_R - 1, FACTOR_C + counter, QVariant());
+        ++counter;
+    }
+
     if (autoSaveState)
         saveReport();
 }
