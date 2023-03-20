@@ -129,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
     taskXlsxData = new Bll_SaveDataToXlsx();
     taskXlsxData->setAutoSave(ui->actionAutoSave->isChecked());
 
-    threadXlsx = new QThread(this);
+    threadXlsx = new QThread();
     taskXlsxData->moveToThread(threadXlsx);
     connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 防止内存泄漏
     connect(this, &MainWindow::sgXlsxStartPoint, taskXlsxData, &Bll_SaveDataToXlsx::startPoint);
@@ -152,6 +152,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // 释放线程
+    threadXlsx->quit();
+    threadXlsx->wait();
     delete ui;
 }
 

@@ -44,7 +44,8 @@
         "qwizard": "cpp",
         "qserialport": "cpp",
         "config.h": "c",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "condition_variable": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",
