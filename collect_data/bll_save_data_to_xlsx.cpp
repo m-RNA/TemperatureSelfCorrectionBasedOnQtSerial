@@ -2,7 +2,7 @@
 
 Bll_SaveDataToXlsx::Bll_SaveDataToXlsx(QObject *parent) : QObject(parent)
 {
-    resetReport();
+    initReport();
 }
 
 Bll_SaveDataToXlsx::~Bll_SaveDataToXlsx()
@@ -30,16 +30,17 @@ void Bll_SaveDataToXlsx::saveReport()
     report->saveAs(fileName + ".xlsx");
 }
 
-void Bll_SaveDataToXlsx::resetReport()
+void Bll_SaveDataToXlsx::initReport()
 {
-    delete report;
+    if (report != nullptr)
+        delete report;
     report = new Document(":/ReportTemplate.xlsx");
 
     fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
     index = 0;
 }
 
-void Bll_SaveDataToXlsx::autoSave(bool state)
+void Bll_SaveDataToXlsx::setAutoSave(const bool state)
 {
     autoSaveState = state;
 }

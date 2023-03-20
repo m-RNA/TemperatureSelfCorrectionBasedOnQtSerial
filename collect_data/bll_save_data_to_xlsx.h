@@ -29,14 +29,12 @@ public:
     Bll_SaveDataToXlsx(QObject *parent = nullptr);
     ~Bll_SaveDataToXlsx();
 
+public slots:
     void startPoint();
     void nextPoint();
-    void saveInfo(const QStringList &info);
     void saveReport();
-    void resetReport();
-    void autoSave(bool);
-
-public slots:
+    void setAutoSave(const bool);
+    void saveInfo(const QStringList &info);
     void saveData_Std(const vector<double> &data);
     void saveData_Dtm(const vector<double> &data);
     void saveFactor(const vector<DECIMAL_TYPE> &factor);
@@ -47,6 +45,7 @@ private:
     QString fileName = "";
     bool autoSaveState = false;
 
+    void initReport();
     QString getAverageFormula(int r1, int r2, int c);
 };
 

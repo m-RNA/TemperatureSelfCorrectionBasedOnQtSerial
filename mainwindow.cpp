@@ -126,11 +126,21 @@ MainWindow::MainWindow(QWidget *parent)
         } });
 
     /* Xlsx 文件记录保存 */
-    taskXlsxData = new Bll_SaveDataToXlsx(this);
-    taskXlsxData->autoSave(ui->actionAutoSave->isChecked());
+    taskXlsxData = new Bll_SaveDataToXlsx();
+    taskXlsxData->setAutoSave(ui->actionAutoSave->isChecked());
+
+    threadXlsx = new QThread(this);
+    taskXlsxData->moveToThread(threadXlsx);
+    connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 防止内存泄漏
+    connect(this, &MainWindow::sgXlsxStartPoint, taskXlsxData, &Bll_SaveDataToXlsx::startPoint);
+    connect(this, &MainWindow::sgXlsxNextPoint, taskXlsxData, &Bll_SaveDataToXlsx::nextPoint);
+    connect(this, &MainWindow::sgXlsxSaveReport, taskXlsxData, &Bll_SaveDataToXlsx::saveReport);
+    connect(this, &MainWindow::sgXlsxSetAutoSave, taskXlsxData, &Bll_SaveDataToXlsx::setAutoSave);
+    connect(this, &MainWindow::sgXlsxSaveInfo, taskXlsxData, &Bll_SaveDataToXlsx::saveInfo);
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
+    threadXlsx->start();
 
     /* 播放提示音 */
     if (ui->cbSound->currentIndex() > 0)
@@ -238,7 +248,9 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
             ui->btnCollectRestart->setEnabled(false);
 
             // 保存报告
-            taskXlsxData->saveReport();
+            // taskXlsxData->saveReport();
+            emit sgXlsxSaveReport();
+
             return;
         }
 
@@ -376,7 +388,7 @@ void Bll_CollectBtn::goOnCollect()
 
 void Bll_CollectBtn::startCollect()
 {
-    taskXlsxData->startPoint();
+    emit sgXlsxStartPoint();
 
     ui->collectPanel_Std->collectStart();
     ui->collectPanel_Dtm->collectStart();
@@ -406,7 +418,7 @@ void Bll_CollectBtn::finishCollect()
 
 void Bll_CollectBtn::resetCollect()
 {
-    taskXlsxData->startPoint();
+    emit sgXlsxStartPoint();
 
     ui->collectPanel_Std->collectRestart();
     ui->collectPanel_Dtm->collectRestart();
@@ -417,7 +429,7 @@ void Bll_CollectBtn::resetCollect()
 void Bll_CollectBtn::nextCollect()
 {
     collectCounter++;
-    taskXlsxData->nextPoint();
+    emit sgXlsxNextPoint();
 
     qDebug() << "采集下点" << collectCounter;
 }
@@ -661,17 +673,17 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 
 void MainWindow::on_btnSaveReport_clicked()
 {
-    taskXlsxData->saveReport();
+    emit sgXlsxSaveReport();
 }
 
 void MainWindow::on_actionSaveReport_triggered()
 {
-    taskXlsxData->saveReport();
+    emit sgXlsxSaveReport();
 }
 
 void MainWindow::on_actionAutoSave_triggered(bool checked)
 {
-    taskXlsxData->autoSave(checked);
+    emit sgXlsxSetAutoSave(checked);
 }
 
 void MainWindow::on_actionWizard_triggered()
@@ -684,7 +696,8 @@ void MainWindow::on_actionWizard_triggered()
                     ui->start_Std->on_btnSerialSwitch_clicked();
                 if(ui->start_Dtm->state() == true)
                     ui->start_Dtm->on_btnSerialSwitch_clicked(); 
-                taskXlsxData->saveInfo(info.baseInfo);
+                emit sgXlsxSaveInfo(info.baseInfo);
+
                 ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
                 ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
                 ui->start_Std->on_btnSerialSwitch_clicked();

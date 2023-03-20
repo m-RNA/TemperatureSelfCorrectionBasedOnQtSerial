@@ -71,6 +71,12 @@ private slots:
     void on_spbxWaveRange_valueChanged(double arg1);
 
 signals:
+    void sgXlsxStartPoint();
+    void sgXlsxNextPoint();
+    void sgXlsxSaveReport();
+    void sgXlsxSetAutoSave(const bool);
+    void sgXlsxSaveInfo(const QStringList &info);
+
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
@@ -115,6 +121,7 @@ private:
     Bll_GenerateData *taskGen = nullptr;
     Bll_LeastSquareMethod *taskLeastSquare = nullptr;
     Bll_SaveDataToXlsx *taskXlsxData = nullptr;
+    QThread *threadXlsx = nullptr;
     Bll_Sound *taskSound = nullptr;
 
     void updateCollectDataXY(void);
