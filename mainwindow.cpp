@@ -284,6 +284,8 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         {
             ui->pgsbSingle->setMaximum(0);
             waitingStdStable = true;
+            if (btnSwitchState == CollectBtnState_Next)
+                ui->btnCollectRestart->setEnabled(false);
             setCollectBtnState(CollectBtnState_Wait);
             return;
         }
