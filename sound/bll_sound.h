@@ -21,11 +21,10 @@ public:
     explicit Bll_Sound(QObject *parent = nullptr);
     ~Bll_Sound();
 
+public slots:
     void play1(const SoundIndex &index);
     void play2(const SoundIndex &index);
     void stop();
-
-public slots:
 
 private:
     QString soundPath[10] = {
