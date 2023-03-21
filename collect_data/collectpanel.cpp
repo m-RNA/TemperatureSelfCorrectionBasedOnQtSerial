@@ -62,23 +62,6 @@ void CollectPanel::setDeviceName(QString name)
     ui->chart->graph()->setName(name);
 }
 
-// BigFloat计算平均值，模拟笔算，精度更高
-string CollectPanel::average(void)
-{
-    BigFloat sum = 0;
-    size_t size = data.size();
-
-    for (size_t i = 0; i < size; ++i)
-    {
-        sum += data[i];
-    }
-
-    // 将数据发送给主线程中的xlsx表格保存数据
-    emit sgCollectDataGet(data);
-
-    return (sum / (double)size).toString(10);
-}
-
 void CollectPanel::slCollectData(const serialAnalyseCell &cell)
 {
     // 更新最后示数
@@ -127,6 +110,14 @@ void CollectPanel::collectStart(void)
     stableState = false; // 设置为不稳定，防止采集完成后，波动检查还没完成，就开始采集下一组数据
     data.clear();
     setState(2);
+
+    // 关闭线程，应该可以早点关闭的
+    if (threadAverage)
+    {
+        threadAverage->quit();
+        threadAverage->wait();
+        threadAverage = nullptr;
+    }
 }
 void CollectPanel::collectStop(void)
 {
@@ -135,8 +126,29 @@ void CollectPanel::collectStop(void)
 }
 void CollectPanel::collectFinish(void)
 {
-    ui->chart->chartRefresh(); // 最新几个数据点可能卡在软件定时器里了，更新一下
-    emit sgCollectDataAverage(average());
+    // 最新几个数据点可能卡在软件定时器里了，更新一下
+    ui->chart->chartRefresh();
+
+    // 将数据发送给主线程中的xlsx表格保存数据
+    emit sgCollectDataGet(data);
+
+    // 启动计算平均值线程
+    // 局部线程的创建的创建
+    if (threadAverage)
+    {
+        threadAverage->quit();
+        threadAverage->wait();
+    }
+    taskAverage = new Bll_Average;
+    threadAverage = new QThread;
+    taskAverage->moveToThread(threadAverage);
+    connect(threadAverage, &QThread::finished, [=]()
+            {taskAverage->deleteLater(); qDebug() << "threadAverage finished"; });
+    connect(this, &CollectPanel::sgDataAverage, taskAverage, &Bll_Average::slAverage);
+    connect(taskAverage, &Bll_Average::sgAverage, [=](const string &str)
+            { emit sgCollectDataAverage(str); });
+    threadAverage->start();
+    emit sgDataAverage(data);
     collectStop();
 }
 void CollectPanel::collectRestart(void)
@@ -222,4 +234,24 @@ void CollectPanel::checkDataWave(const double &data)
         qDebug() << deviceName << "StableState:" << stableState;
     }
     laseStableState = stableState;
+}
+
+Bll_Average::Bll_Average(QObject *parent): QObject(parent)
+{
+}
+
+void Bll_Average::slAverage(const vector<double> &data)
+{
+    qDebug() << "Bll_Average::slAverage" << QThread::currentThread();
+
+    // BigFloat计算平均值，模拟笔算，精度更高
+    BigFloat sum("0");
+    size_t size = data.size();
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        sum += data[i];
+    }
+
+    emit sgAverage((sum / (double)size).toString(10));
 }

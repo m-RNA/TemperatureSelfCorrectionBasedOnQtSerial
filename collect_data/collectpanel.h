@@ -14,6 +14,19 @@ namespace Ui
     class CollectPanel;
 }
 
+class Bll_Average : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Bll_Average(QObject *parent = nullptr);
+
+public slots:
+    void slAverage(const vector<double> &data);
+
+signals:
+    void sgAverage(const string &average);
+};
+
 class CollectPanel : public QWidget
 {
     Q_OBJECT
@@ -47,6 +60,8 @@ signals:
 
     void sgTurnToStable();
 
+    void sgDataAverage(const vector<double> &data);
+
 private slots:
 
 private:
@@ -68,10 +83,13 @@ private:
     bool stableState = false;
     bool laseStableState = false;
     QVector<double> dataWave;
+    Bll_Average *taskAverage = nullptr;
+    QThread *threadAverage = nullptr;
 
     void setState(int state);
-    string average(void);
     void checkDataWave(const double &data);
 };
+
+
 
 #endif // COLLECTPANEL_H
