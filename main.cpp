@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<vector<long double>>("vector<long double>");   // 添加不支持的类型
     qRegisterMetaType<serialAnalyseCell>("serialAnalyseCell");       // 添加不支持的类型
     qRegisterMetaType<WizardInfo>("WizardInfo");                     // 添加不支持的类型
+    qRegisterMetaType<SoundIndex>("SoundIndex");                     // 添加不支持的类型
 
     qDebug() << "主线程ID：" << QThread::currentThread();
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);

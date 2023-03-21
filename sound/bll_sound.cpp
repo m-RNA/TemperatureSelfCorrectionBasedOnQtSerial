@@ -15,17 +15,10 @@ Bll_Sound::~Bll_Sound()
     }
 }
 
-void Bll_Sound::setIndex(SoundIndex t_index)
-{
-    if (t_index < Off || t_index > ShaanXi)
-        return;
-    index = t_index;
-}
-
-void Bll_Sound::play1()
+void Bll_Sound::play1(const SoundIndex &index)
 {
     qDebug() << "Bll_Sound::play1";
-    if (index == Off)
+    if (index <= Off || index > ShaanXi)
         return;
 
     if (bells)
@@ -38,10 +31,10 @@ void Bll_Sound::play1()
     bells->play();
 }
 
-void Bll_Sound::play2()
+void Bll_Sound::play2(const SoundIndex &index)
 {
     qDebug() << "Bll_Sound::play2";
-    if (index == Off)
+    if (index <= Off || index > ShaanXi)
         return;
 
     if (bells)

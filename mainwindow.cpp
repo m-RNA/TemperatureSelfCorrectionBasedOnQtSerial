@@ -126,9 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
         } });
 
     /* Xlsx 文件记录保存 */
-    taskXlsxData = new Bll_SaveDataToXlsx();
-    taskXlsxData->setAutoSave(ui->actionAutoSave->isChecked());
-
+    taskXlsxData = new Bll_SaveDataToXlsx;
     threadXlsx = new QThread();
     taskXlsxData->moveToThread(threadXlsx);
     connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 防止内存泄漏
@@ -141,20 +139,34 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
     threadXlsx->start();
+    emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
     /* 播放提示音 */
     if (ui->cbSound->currentIndex() > 0)
     {
-        taskSound = new Bll_Sound(this);
-        taskSound->setIndex((SoundIndex)ui->cbSound->currentIndex());
+        soundInit();
     }
+}
+
+void MainWindow::soundInit()
+{
+    taskSound = new Bll_Sound();
+    threadSound = new QThread();
+    taskSound->moveToThread(threadSound);
+    connect(threadSound, &QThread::finished, taskSound, &QObject::deleteLater); // 防止内存泄漏
+    connect(this, &MainWindow::sgSoundPlay1, taskSound, &Bll_Sound::play1);
+    connect(this, &MainWindow::sgSoundPlay2, taskSound, &Bll_Sound::play2);
+    connect(this, &MainWindow::sgSoundStop, taskSound, &Bll_Sound::stop);
+    threadSound->start();
 }
 
 MainWindow::~MainWindow()
 {
     // 释放线程
     threadXlsx->quit();
+    threadSound->quit();
     threadXlsx->wait();
+    threadSound->wait();
     delete ui;
 }
 
@@ -347,14 +359,16 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_Next);
         if (taskSound)
-            taskSound->play1();
+            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
+        // taskSound->play1();
         QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
         QMessageBox msgBox(QMessageBox::Information, "提示", msg, 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
 
         if (taskSound)
-            taskSound->stop();
+            emit sgSoundStop();
+        // taskSound->stop();
 
         // 重置单点进度
         pgsbSingleReset();
@@ -366,12 +380,15 @@ void Bll_CollectBtn::timerCollectTimeOut()
 
         tryUpdateFitChart(false);
         if (taskSound)
-            taskSound->play2();
+            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
+
+        // taskSound->play2();
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
         msgBox.exec();
         if (taskSound)
-            taskSound->stop();
+            emit sgSoundStop();
+        // taskSound->stop();
 
         qDebug() << "全部采集完成啦~";
     }
@@ -661,14 +678,15 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 {
     if (taskSound)
     {
-        taskSound->stop();
-        taskSound->deleteLater();
+        // taskSound->stop();
+        // taskSound->deleteLater();
+        threadSound->quit();
+        threadSound->wait();
     }
 
     if (index > 0)
     {
-        taskSound = new Bll_Sound(this);
-        taskSound->setIndex((SoundIndex)index);
+        soundInit();
     }
     else
         taskSound = nullptr;

@@ -21,11 +21,9 @@ public:
     explicit Bll_Sound(QObject *parent = nullptr);
     ~Bll_Sound();
 
-    void play1();
-    void play2();
+    void play1(const SoundIndex &index);
+    void play2(const SoundIndex &index);
     void stop();
-
-    void setIndex(SoundIndex t_index);
 
 public slots:
 
@@ -42,7 +40,6 @@ private:
         ":/sound/ShaanXi1.wav",
         ":/sound/ShaanXi2.wav",
     };
-    SoundIndex index = PuTongHua;
     QSound *bells = nullptr;
 };
 

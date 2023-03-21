@@ -77,6 +77,10 @@ signals:
     void sgXlsxSetAutoSave(const bool);
     void sgXlsxSaveInfo(const QStringList &info);
 
+    void sgSoundPlay1(const SoundIndex &index);
+    void sgSoundPlay2(const SoundIndex &index);
+    void sgSoundStop();
+
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
@@ -109,6 +113,8 @@ private:
     void setDeviceName_Dtm(QString name);
     void setCollectBtnState(const CollectBtnState &state);
 
+    void soundInit();
+
     unsigned long long order; // 最小二乘法多项式阶数
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
     DECIMAL_TYPE collectDataX_Max, collectDataX_Min;
@@ -123,6 +129,7 @@ private:
     Bll_SaveDataToXlsx *taskXlsxData = nullptr;
     QThread *threadXlsx = nullptr;
     Bll_Sound *taskSound = nullptr;
+    QThread *threadSound = nullptr;
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);
