@@ -25,14 +25,57 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget_5">
-      <property name="currentIndex">
-       <number>1</number>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
-      <widget class="QWidget" name="tab_11">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="tabPosition">
+       <enum>QTabWidget::West</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>30</width>
+        <height>52</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/icon/NUC.ico</normaloff>:/icon/NUC.ico</iconset>
+       </attribute>
        <attribute name="title">
-        <string>开始</string>
+        <string/>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_11">
+       <attribute name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/icon/terminal.ico</normaloff>:/icon/terminal.ico</iconset>
+       </attribute>
+       <attribute name="title">
+        <string/>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_30">
         <item row="0" column="0">
@@ -47,8 +90,12 @@
        </layout>
       </widget>
       <widget class="QWidget" name="tab_12">
+       <attribute name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/icon/target.ico</normaloff>:/icon/target.ico</iconset>
+       </attribute>
        <attribute name="title">
-        <string>校准</string>
+        <string/>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="0">

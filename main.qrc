@@ -41,5 +41,8 @@
         <file>icon/yes.ico</file>
         <file>icon/collectrestart.ico</file>
         <file>icon/collectwait.ico</file>
+        <file>icon/terminal.ico</file>
+        <file>icon/target.ico</file>
+        <file>icon/NUC.ico</file>
     </qresource>
 </RCC>
