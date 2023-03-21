@@ -140,33 +140,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
     threadXlsx->start();
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
-
-    /* 播放提示音 */
-    if (ui->cbSound->currentIndex() > 0)
-    {
-        soundInit();
-    }
-}
-
-void MainWindow::soundInit()
-{
-    taskSound = new Bll_Sound();
-    threadSound = new QThread();
-    taskSound->moveToThread(threadSound);
-    connect(threadSound, &QThread::finished, taskSound, &QObject::deleteLater); // 防止内存泄漏
-    connect(this, &MainWindow::sgSoundPlay1, taskSound, &Bll_Sound::play1);
-    connect(this, &MainWindow::sgSoundPlay2, taskSound, &Bll_Sound::play2);
-    connect(this, &MainWindow::sgSoundStop, taskSound, &Bll_Sound::stop);
-    threadSound->start();
 }
 
 MainWindow::~MainWindow()
 {
     // 释放线程
     threadXlsx->quit();
-    threadSound->quit();
     threadXlsx->wait();
-    threadSound->wait();
+
+    if (threadSound)
+    {
+        emit sgSoundStop();
+        threadSound->quit();
+        threadSound->wait();
+    }
     delete ui;
 }
 
@@ -180,6 +167,18 @@ void MainWindow::setDeviceName_Dtm(QString name)
 {
     ui->start_Dtm->setDeviceName(name);
     ui->collectPanel_Dtm->setDeviceName(name);
+}
+
+void MainWindow::soundInit()
+{
+    taskSound = new Bll_Sound;
+    threadSound = new QThread;
+    taskSound->moveToThread(threadSound);
+    connect(threadSound, &QThread::finished, taskSound, &QObject::deleteLater); // 防止内存泄漏
+    connect(this, &MainWindow::sgSoundPlay1, taskSound, &Bll_Sound::play1);
+    connect(this, &MainWindow::sgSoundPlay2, taskSound, &Bll_Sound::play2);
+    connect(this, &MainWindow::sgSoundStop, taskSound, &Bll_Sound::stop);
+    threadSound->start();
 }
 
 QString MainWindow::collectTimeStampToHhMmSs(int timestamp)
@@ -358,17 +357,26 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_Next);
-        if (taskSound)
-            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
-        // taskSound->play1();
+
         QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
         QMessageBox msgBox(QMessageBox::Information, "提示", msg, 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
+
+        if (ui->cbSound->currentIndex() > 0)
+        {
+            soundInit();
+            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
+        }
+
         msgBox.exec();
 
-        if (taskSound)
+        if (ui->cbSound->currentIndex() > 0)
+        {
             emit sgSoundStop();
-        // taskSound->stop();
+            threadSound->quit();
+            threadSound->wait(); // 这里需要吗？
+            threadSound = nullptr;
+        }
 
         // 重置单点进度
         pgsbSingleReset();
@@ -379,16 +387,25 @@ void Bll_CollectBtn::timerCollectTimeOut()
         setCollectBtnState(CollectBtnState_End);
 
         tryUpdateFitChart(false);
-        if (taskSound)
-            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
 
-        // taskSound->play2();
         QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
+
+        if (ui->cbSound->currentIndex() > 0)
+        {
+            soundInit();
+            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
+        }
+
         msgBox.exec();
-        if (taskSound)
+
+        if (ui->cbSound->currentIndex() > 0)
+        {
             emit sgSoundStop();
-        // taskSound->stop();
+            threadSound->quit();
+            threadSound->wait(); // 这里需要吗？
+            threadSound = nullptr;
+        }
 
         qDebug() << "全部采集完成啦~";
     }
@@ -676,20 +693,17 @@ void MainWindow::setAverageTableItem_Dtm(const string &data)
 
 void MainWindow::on_cbSound_currentIndexChanged(int index)
 {
-    if (taskSound)
-    {
-        // taskSound->stop();
-        // taskSound->deleteLater();
-        threadSound->quit();
-        threadSound->wait();
-    }
 
-    if (index > 0)
+    if (index <= 0)
     {
-        soundInit();
+        if (threadSound)
+        {
+            emit sgSoundStop();
+            threadSound->quit();
+            threadSound->wait();
+            threadSound = nullptr;
+        }
     }
-    else
-        taskSound = nullptr;
 }
 
 void MainWindow::on_btnSaveReport_clicked()
