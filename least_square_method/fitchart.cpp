@@ -7,11 +7,12 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	qDebug() << "FitChart opengle=" << openGl();
 
 	tracer = new QCPItemTracer(this);
-	tracer->setInterpolating(false);
+	tracer->setInterpolating(false); // 不插值
 	tracer->setStyle(QCPItemTracer::tsCircle);
-	tracer->setPen(QPen(Qt::red));
-	tracer->setBrush(Qt::red);
+	tracer->setPen(QPen(QColor(255, 0, 0, 180)));
+	tracer->setBrush(QBrush(QColor(255, 0, 0, 100)));
 	tracer->setSize(10);
+	tracer->setVisible(false); // 暂时不显示
 
 	// 设置交互方式
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
@@ -21,7 +22,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	this->yAxis->setRange(-5, 5);
 	this->xAxis->setLabel("x轴");
 	this->yAxis->setLabel("y轴");
-	this->xAxis->setNumberFormat("f"); // 设置坐标轴格式
+	this->xAxis->setNumberFormat("f");	// 设置坐标轴格式
 	this->xAxis->setNumberPrecision(0); // 设置坐标轴精度
 
 	this->axisRect()->setupFullAxesBox();
@@ -243,10 +244,10 @@ void FitChart::mouseMoveEvent(QMouseEvent *ev)
 		// 显示tip框
 		const QPointF coords = tracer->position->coords();
 		QToolTip::showText(ev->globalPos(),
-						   tr("<h4>%1</h4><table><tr><td><h5>X: %2</h5></td><td>, </td><td><h5>Y: %3</h5></td></tr></table>")
+						   tr("<h4>%1</h4><h5>标准: %2<p></p>待定: %3</h5>")
 							   .arg(selectedGraph->name())
-							   .arg(QString::number(coords.x(), 'g', 6))
-							   .arg(QString::number(coords.y(), 'g', 6)),
+							   .arg(QString::number(coords.y(), 'g', 6))
+							   .arg(QString::number(coords.x(), 'f', 2)),
 						   this, this->rect());
 	}
 	else
