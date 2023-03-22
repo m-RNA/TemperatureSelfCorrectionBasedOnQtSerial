@@ -13,7 +13,6 @@
         <file>icon/check.ico</file>
         <file>icon/fit.ico</file>
         <file>icon/app.ico</file>
-        <file>icon/svg/app.svg</file>
         <file>icon/cut.ico</file>
         <file>icon/copy.ico</file>
         <file>icon/paste.ico</file>
@@ -44,5 +43,6 @@
         <file>icon/terminal.ico</file>
         <file>icon/target.ico</file>
         <file>icon/NUC.ico</file>
+        <file>icon/appColor.ico</file>
     </qresource>
 </RCC>

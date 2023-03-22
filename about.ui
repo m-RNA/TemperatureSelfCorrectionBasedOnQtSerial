@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>380</width>
-    <height>180</height>
+    <width>325</width>
+    <height>175</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>380</width>
-    <height>180</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>380</width>
+    <width>350</width>
     <height>180</height>
    </size>
   </property>
@@ -26,7 +26,7 @@
    <string>关于</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="1">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -36,14 +36,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>141</width>
-       <height>131</height>
+       <width>128</width>
+       <height>128</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>141</width>
-       <height>131</height>
+       <width>128</width>
+       <height>128</height>
       </size>
      </property>
      <property name="text">
@@ -53,7 +53,7 @@
       <enum>Qt::AutoText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="main.qrc">:/icon/svg/app.svg</pixmap>
+      <pixmap resource="main.qrc">:/icon/appColor.ico</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -63,7 +63,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_2">
@@ -130,7 +130,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="1" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -139,6 +139,22 @@
       <set>QDialogButtonBox::Close</set>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>8</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
