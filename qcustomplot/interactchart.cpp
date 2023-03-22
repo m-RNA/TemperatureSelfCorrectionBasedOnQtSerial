@@ -2,6 +2,9 @@
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
 #include <QDateTime>
 
+// 宏定义刷新时间间隔
+#define CHART_REFRESH_TIME_MS 50
+
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
 	setOpenGl(true);
@@ -380,7 +383,7 @@ void InteractChart::addYPoint(const serialAnalyseCell &cell)
 	this->graph()->addData(xDefault, cell.value); // 添加数据
 
 	ftime(&t2);
-	if ((t2.time - t1.time) * 1000 + (t2.millitm - t1.millitm) < 50) // 50ms 刷新一次
+	if ((t2.time - t1.time) * 1000 + (t2.millitm - t1.millitm) < CHART_REFRESH_TIME_MS) // CHART_REFRESH_TIME_MS 刷新一次
 		return;
 	ftime(&t1);
 	chartRefresh();
