@@ -34,9 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
     setDeviceName_Std("标准仪器");
     ui->start_Std->setAnalyseMode(2);
 
-    //    connect(ui->start_Std, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addVLine);
-    //    connect(ui->start_Dtm, &StartCommunication::RecvDataAnalyseFinish, ui->calibrationChart, &CustomChart::addHLine);
-
     /*** LeastSquare Begin ***/
 
     // 1. 创建任务类对象
@@ -751,4 +748,23 @@ void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 void MainWindow::on_spbxWaveRange_valueChanged(double arg1)
 {
     ui->collectPanel_Std->setCheckWaveRange(arg1);
+}
+
+void MainWindow::on_btnVerify_clicked()
+{
+    verifyState = !verifyState;
+    if (verifyState)
+    {
+        connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
+        connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        ui->btnVerify->setText("关闭检验");
+        ui->chartFit->setVerifyTracerVisible(true);
+    }
+    else
+    {
+        disconnect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
+        disconnect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        ui->btnVerify->setText("开启检验");
+        ui->chartFit->setVerifyTracerVisible(false);
+    }
 }

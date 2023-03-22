@@ -778,9 +778,9 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="9" column="1" colspan="2">
-               <widget class="QPushButton" name="pushButton_25">
+               <widget class="QPushButton" name="btnVerify">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -789,7 +789,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>检验结果</string>
+                 <string>开启检验</string>
                 </property>
                 <property name="icon">
                  <iconset resource="main.qrc">
@@ -797,7 +797,7 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="1" colspan="2">
+              <item row="10" column="1" colspan="2">
                <widget class="QPushButton" name="btnSaveReport">
                 <property name="enabled">
                  <bool>true</bool>

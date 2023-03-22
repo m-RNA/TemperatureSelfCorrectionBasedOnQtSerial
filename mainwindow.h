@@ -70,6 +70,8 @@ private slots:
 
     void on_spbxWaveRange_valueChanged(double arg1);
 
+    void on_btnVerify_clicked();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxNextPoint();
@@ -122,6 +124,7 @@ private:
     QRegExp rx;
     QString old_text = "";
     int soundIndex = 0;
+    bool verifyState = false;
 
     // 任务类对象
     Bll_GenerateData *taskGen = nullptr;

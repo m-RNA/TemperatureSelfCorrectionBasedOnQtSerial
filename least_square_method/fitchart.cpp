@@ -23,7 +23,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	this->xAxis->setLabel("x轴");
 	this->yAxis->setLabel("y轴");
 	this->xAxis->setNumberFormat("f");	// 设置坐标轴格式
-	this->xAxis->setNumberPrecision(0); // 设置坐标轴精度
+	this->xAxis->setNumberPrecision(2); // 设置坐标轴精度
 
 	this->axisRect()->setupFullAxesBox();
 	this->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft | Qt::AlignTop); // 设置图例位置为左上角
@@ -81,6 +81,26 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 FitChart::~FitChart()
 {
+}
+
+void FitChart::setVerifyTracerVisible(const bool visible)
+{
+	if (visible)
+	{
+		verifyTracer = new QCPItemTracer(this);
+		verifyTracer->setInterpolating(false);				// 不插值
+		verifyTracer->setStyle(QCPItemTracer::tsCrosshair); // 十字线
+		verifyTracer->setPen(QPen(QColor(23, 111, 217, 200)));
+		verifyTracer->setBrush(Qt::blue);
+		verifyTracer->setSize(6);
+		verifyTracer->setVisible(true);
+	}
+	else
+	{
+		verifyTracer->setVisible(false); // 不显示
+		verifyTracer->deleteLater();
+	}
+	replot();
 }
 
 // 双击坐标标签
@@ -294,6 +314,38 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 	// rescalseValueAxis
 	// this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
 	this->replot(); // 刷新画图
+}
+
+void FitChart::updateVerifyTracerX(const serialAnalyseCell &x)
+{
+	// qDebug() << "更新验证锚点的x坐标";
+	xVerify = x.value;
+	verifyTracer->position->setCoords(xVerify, yVerify);
+	this->replot();
+
+	// 显示tip框
+	// const QPointF coords = verifyTracer->position->coords();
+	// QToolTip::showText(QCursor::pos(),
+	// 				   tr("<h4>检验</h4><h5>标准: %1<p></p>待定: %2</h5>")
+	// 					   .arg(QString::number(coords.y(), 'g', 6))
+	// 					   .arg(QString::number(coords.x(), 'f', 2)),
+	// 				   this, this->rect());
+}
+
+void FitChart::updateVerifyTracerY(const serialAnalyseCell &y)
+{
+	// qDebug() << "更新验证锚点的y坐标";
+	yVerify = y.value;
+	verifyTracer->position->setCoords(xVerify, yVerify);
+	this->replot();
+
+	// 显示tip框
+	// const QPointF coords = verifyTracer->position->coords();
+	// QToolTip::showText(QCursor::pos(),
+	// 				   tr("<h4>检验</h4><h5>标准: %1<p></p>待定: %2</h5>")
+	// 					   .arg(QString::number(coords.y(), 'g', 6))
+	// 					   .arg(QString::number(coords.x(), 'f', 2)),
+	// 				   this, this->rect());
 }
 
 // 清空图线

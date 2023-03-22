@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
+#include "bll_serialrecvanalyse.h"
 
 namespace Ui
 {
@@ -17,9 +18,14 @@ public:
     explicit FitChart(QWidget *parent = nullptr);
     ~FitChart();
 
+    void setVerifyTracerVisible(const bool visible); // 设置是否有验证游标
+
 public slots:
     void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
     void updateFitPlot(const QVector<double> &x, const QVector<double> &y);     // 更新折线图
+
+    void updateVerifyTracerX(const serialAnalyseCell &x); // 更新验证游标的x坐标
+    void updateVerifyTracerY(const serialAnalyseCell &y); // 更新验证游标的y坐标
 
     void clear();
 
@@ -48,7 +54,10 @@ private slots:
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
 private:
-    QCPItemTracer *tracer = nullptr; // 坐标跟随鼠标.使用时创建
+    QCPItemTracer *tracer = nullptr;       // 坐标跟随鼠标
+    QCPItemTracer *verifyTracer = nullptr; // 坐标跟随采集数据
+    double xVerify = 0;
+    double yVerify = 0;
 
     int x_default = 0;
 };
