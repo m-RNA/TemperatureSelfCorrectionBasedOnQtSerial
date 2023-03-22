@@ -11,11 +11,12 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 	qDebug() << "InteractChart opengle=" << openGl();
 
 	tracer = new QCPItemTracer(this);
-	tracer->setInterpolating(false);
+	tracer->setInterpolating(false); // 不插值
 	tracer->setStyle(QCPItemTracer::tsCircle);
-	tracer->setPen(QPen(Qt::red));
-	tracer->setBrush(Qt::red);
+	tracer->setPen(QPen(QColor(255, 0, 0, 180)));
+	tracer->setBrush(QBrush(QColor(255, 0, 0, 100)));
 	tracer->setSize(6);
+	tracer->setVisible(false); // 暂时不显示
 
 	// x轴设置为计数轴
 	setXAxisToTimelineState(false);
@@ -272,12 +273,24 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 
 		// 显示tip框
 		const QPointF coords = tracer->position->coords();
-		QToolTip::showText(ev->globalPos(),
-						   tr("<h4>%1</h4><table><tr><td><h5>X: %2</h5></td><td>, </td><td><h5>Y: %3</h5></td></tr></table>")
-							   .arg(selectedGraph->name())
-							   .arg(QString::number(coords.x(), 'g', 6))
-							   .arg(QString::number(coords.y(), 'g', 6)),
-						   this, this->rect());
+		if (timelineState)
+		{
+			QToolTip::showText(ev->globalPos(),
+                               tr("<h5><table><tr><td align='right'>%1:</td><td>%2</td></tr><tr><td align='right'>时间:<td>%3</td></tr></h5>")
+								   .arg(selectedGraph->name())
+								   .arg(QString::number(coords.y(), 'g', 6))
+								   .arg(QTime::fromMSecsSinceStartOfDay(coords.x() * 1000).toString("hh:mm:ss.zzz")), // 将x轴的值转换为时间
+							   this, this->rect());
+		}
+		else
+		{
+			QToolTip::showText(ev->globalPos(),
+							   tr("<h4>%1</h4><table><tr><td><h5>Y: %2</h5></td><td>, </td><td><h5>X: %3</h5></td></tr></table>")
+								   .arg(selectedGraph->name())
+								   .arg(QString::number(coords.y(), 'g', 6))
+								   .arg(QString::number(coords.x(), 'g', 6)),
+							   this, this->rect());
+		}
 	}
 	else
 	{
