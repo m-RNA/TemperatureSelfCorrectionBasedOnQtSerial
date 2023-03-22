@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pgsbSum->setMaximum(samplePointSum);
 
     /* 采集仪表盘 */
+    ui->collectPanel_Dtm->setYAxisFormat("f", 0);
     ui->collectPanel_Std->setCheckWaveState(true);
     ui->collectPanel_Std->setCheckWaveNum(ui->spbxWaveNum->value());
     ui->collectPanel_Std->setCheckWaveRange(ui->spbxWaveRange->value());

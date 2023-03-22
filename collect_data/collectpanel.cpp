@@ -62,6 +62,12 @@ void CollectPanel::setDeviceName(QString name)
     ui->chart->graph()->setName(name);
 }
 
+void CollectPanel::setYAxisFormat(const QString &format, const int precision)
+{
+    ui->chart->yAxis->setNumberFormat(format);
+    ui->chart->yAxis->setNumberPrecision(precision);
+}
+
 void CollectPanel::slCollectData(const serialAnalyseCell &cell)
 {
     // 更新最后示数
@@ -236,7 +242,7 @@ void CollectPanel::checkDataWave(const double &data)
     laseStableState = stableState;
 }
 
-Bll_Average::Bll_Average(QObject *parent): QObject(parent)
+Bll_Average::Bll_Average(QObject *parent) : QObject(parent)
 {
 }
 

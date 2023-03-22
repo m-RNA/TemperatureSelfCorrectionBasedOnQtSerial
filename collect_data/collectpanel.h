@@ -36,6 +36,8 @@ public:
     ~CollectPanel();
 
     void setDeviceName(QString name);
+    void setYAxisFormat(const QString &format, const int precision);
+
     void setOnlineState(bool state);
     void setCheckWaveState(bool check);
     void setCheckWaveNum(int num);
@@ -89,7 +91,5 @@ private:
     void setState(int state);
     void checkDataWave(const double &data);
 };
-
-
 
 #endif // COLLECTPANEL_H

@@ -21,6 +21,8 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	this->yAxis->setRange(-5, 5);
 	this->xAxis->setLabel("x轴");
 	this->yAxis->setLabel("y轴");
+	this->xAxis->setNumberFormat("f"); // 设置坐标轴格式
+	this->xAxis->setNumberPrecision(0); // 设置坐标轴精度
 
 	this->axisRect()->setupFullAxesBox();
 	this->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft | Qt::AlignTop); // 设置图例位置为左上角
