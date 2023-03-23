@@ -14,6 +14,14 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	tracer->setSize(10);
 	tracer->setVisible(false); // 暂时不显示
 
+	verifyTracer = new QCPItemTracer(this);
+	verifyTracer->setInterpolating(false);				// 不插值
+	verifyTracer->setStyle(QCPItemTracer::tsCrosshair); // 十字线
+	verifyTracer->setPen(QPen(QColor(23, 111, 217, 200)));
+	verifyTracer->setBrush(Qt::blue);
+	verifyTracer->setSize(6);
+	verifyTracer->setVisible(false); // 暂时不显示
+
 	// 设置交互方式
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
@@ -87,18 +95,11 @@ void FitChart::setVerifyTracerVisible(const bool visible)
 {
 	if (visible)
 	{
-		verifyTracer = new QCPItemTracer(this);
-		verifyTracer->setInterpolating(false);				// 不插值
-		verifyTracer->setStyle(QCPItemTracer::tsCrosshair); // 十字线
-		verifyTracer->setPen(QPen(QColor(23, 111, 217, 200)));
-		verifyTracer->setBrush(Qt::blue);
-		verifyTracer->setSize(6);
 		verifyTracer->setVisible(true);
 	}
 	else
 	{
 		verifyTracer->setVisible(false); // 不显示
-		verifyTracer->deleteLater();
 	}
 	replot();
 }
