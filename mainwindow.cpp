@@ -767,6 +767,7 @@ void MainWindow::on_actionWizard_triggered()
                 ui->start_Std->on_btnSerialSwitch_clicked();
                 ui->start_Dtm->on_btnSerialSwitch_clicked(); });
     wizard.exec();
+    ui->tabMain->setCurrentIndex(2);
 }
 
 void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
