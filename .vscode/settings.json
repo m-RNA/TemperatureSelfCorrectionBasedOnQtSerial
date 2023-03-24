@@ -46,7 +46,8 @@
         "config.h": "c",
         "iosfwd": "cpp",
         "condition_variable": "cpp",
-        "fft": "cpp"
+        "fft": "cpp",
+        "initializer_list": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

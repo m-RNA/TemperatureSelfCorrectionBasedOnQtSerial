@@ -138,6 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
     threadXlsx->start();
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
+
+    pictureInit();
 }
 
 MainWindow::~MainWindow()
@@ -165,6 +167,33 @@ void MainWindow::setDeviceName_Dtm(QString name)
 {
     ui->start_Dtm->setDeviceName(name);
     ui->collectPanel_Dtm->setDeviceName(name);
+}
+
+void MainWindow::pictureInit()
+{
+    QPixmap pix("://picture/NUC_day_heart.jpg");
+    // QPixmap temp(pix.size());
+    // temp.fill(Qt::transparent);
+
+    // QPainter p1(&temp);
+    // p1.setCompositionMode(QPainter::CompositionMode_Source);
+    // p1.drawPixmap(0, 0, pix);
+    // p1.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    // p1.fillRect(temp.rect(), QColor(0, 0, 0, 255)); // 这里设置透明度
+    // p1.end();
+    // pix = temp;
+
+    // ui->lbPicture->setScaledContents(true);
+    // ui->lbPicture->setStyleSheet("background-color:white");
+    // ui->lbPicture->setAlignment(Qt::AlignCenter);
+    // pix.scaled(ui->lbPicture->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    ui->lbPicture->setPixmap(pix);
+
+    // QPalette background = ui->lbPicture->palette();
+    // QImage img("://picture/NUC_day.jpg");
+    // QImage fitImg = img.scaled(ui->lbPicture->width(), ui->lbPicture->height(), Qt::IgnoreAspectRatio);
+    // background.setBrush(QPalette::Window, QBrush(fitImg));
+    // ui->lbPicture->setPalette(background);
 }
 
 void MainWindow::soundInit()
@@ -767,4 +796,9 @@ void MainWindow::on_btnVerify_clicked()
         ui->btnVerify->setText("开启检验");
         ui->chartFit->setVerifyTracerVisible(false);
     }
+}
+
+void MainWindow::on_btnWizard_clicked()
+{
+    on_actionWizard_triggered();
 }

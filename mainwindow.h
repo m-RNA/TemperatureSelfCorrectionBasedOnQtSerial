@@ -72,6 +72,8 @@ private slots:
 
     void on_btnVerify_clicked();
 
+    void on_btnWizard_clicked();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxNextPoint();
@@ -115,6 +117,7 @@ private:
     void setDeviceName_Dtm(QString name);
     void setCollectBtnState(const CollectBtnState &state);
 
+    void pictureInit();
     void soundInit();
 
     unsigned long long order; // 最小二乘法多项式阶数

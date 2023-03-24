@@ -44,5 +44,7 @@
         <file>icon/target.ico</file>
         <file>icon/NUC.ico</file>
         <file>icon/appColor.ico</file>
+        <file>picture/NUC_day.jpg</file>
+        <file>picture/NUC_day_heart.jpg</file>
     </qresource>
 </RCC>
