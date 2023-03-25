@@ -268,7 +268,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
             waitingStdStable = false;
             pgsbSingleInit();
             setCollectBtnState(CollectBtnState_Start);
-            return;
+            goto JUDGE_FIRST_COLLECT;
         }
 
         // 两个串口是否同时打开
@@ -332,6 +332,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         ui->btnCollectRestart->setEnabled(false);
 
         // 如果一点都没采集，就可以重新设置采集参数
+    JUDGE_FIRST_COLLECT:
         if (collectCounter == 0)
         {
             ui->spbxSamplePointSum->setEnabled(true);
