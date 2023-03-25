@@ -46,6 +46,7 @@ public:
     bool isStable(void);
     double getRange(void);
     QCPAxis *getXAxis(void);
+    InteractChart *getChartAddr(void);
 
     void collectStart(void);
     void collectStop(void);

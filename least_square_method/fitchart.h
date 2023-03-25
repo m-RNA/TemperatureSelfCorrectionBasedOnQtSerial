@@ -19,6 +19,7 @@ public:
     ~FitChart();
 
     void setVerifyTracerVisible(const bool visible); // 设置是否有验证游标
+    void setColorStyle(const int style);
 
 public slots:
     void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
@@ -60,6 +61,8 @@ private:
     double yVerify = 0;
 
     int x_default = 0;
+
+    void setAxisColor(const QColor &color);
 };
 
 #endif // CUSTOMCHART_H

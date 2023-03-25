@@ -29,6 +29,7 @@ public:
     void chartRefresh(void);
 
     void setXAxisToTimelineState(bool state);
+    void setColorStyle(const int style);
 
 public slots:
     void clear();
@@ -70,6 +71,8 @@ private:
     bool timelineState = false;
     timeb t1, t2;
     int nowTime, oldTime;
+
+    void setAxisColor(const QColor &color);
 };
 
 #endif // INTERACTCHART_H

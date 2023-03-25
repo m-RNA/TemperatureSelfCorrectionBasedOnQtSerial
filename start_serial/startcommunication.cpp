@@ -55,6 +55,11 @@ void StartCommunication::setDeviceName(QString s)
     ui->chart->replot();
 }
 
+InteractChart *StartCommunication::getChartAddr(void)
+{
+    return ui->chart;
+}
+
 // 设置编码格式
 void StartCommunication::setEncodeMode(EncodingFormat encodeMode)
 {

@@ -173,6 +173,11 @@ QCPAxis *CollectPanel::getXAxis(void)
     return ui->chart->xAxis;
 }
 
+InteractChart *CollectPanel::getChartAddr(void)
+{
+    return ui->chart;
+}
+
 void CollectPanel::setCheckWaveRange(const double range)
 {
     commandRange = range;

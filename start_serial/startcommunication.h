@@ -31,6 +31,7 @@ public:
     {
         return serialPortState;
     }
+    InteractChart *getChartAddr(void);
 
     void setEncodeMode(EncodingFormat encodeMode);
     void setAnalyseMode(int type);

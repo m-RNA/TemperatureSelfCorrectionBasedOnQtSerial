@@ -444,3 +444,65 @@ void FitChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	QString message = QString("Clicked on graph '%1' at data point #%2 with value %3.").arg(plottable->name()).arg(dataIndex).arg(dataValue);
 	// ui->statusBar->showMessage(message, 2500);
 }
+
+void FitChart::setAxisColor(const QColor &color)
+{
+	xAxis->setBasePen(QPen(color));
+	yAxis->setBasePen(QPen(color));
+	xAxis->setTickPen(QPen(color));
+	yAxis->setTickPen(QPen(color));
+	xAxis->setSubTickPen(QPen(color));
+	yAxis->setSubTickPen(QPen(color));
+	xAxis->setLabelColor(color);
+	yAxis->setLabelColor(color);
+	xAxis->setTickLabelColor(color);
+	yAxis->setTickLabelColor(color);
+
+	xAxis2->setBasePen(QPen(color));
+	yAxis2->setBasePen(QPen(color));
+	xAxis2->setTickPen(QPen(color));
+	yAxis2->setTickPen(QPen(color));
+	xAxis2->setSubTickPen(QPen(color));
+	yAxis2->setSubTickPen(QPen(color));
+	xAxis2->setLabelColor(color);
+	yAxis2->setLabelColor(color);
+	xAxis2->setTickLabelColor(color);
+	yAxis2->setTickLabelColor(color);
+}
+
+void FitChart::setColorStyle(const int style)
+{
+	switch (style)
+	{
+	case 0:
+		setAxisColor(Qt::black);
+		setBackground(QBrush(QColor(255, 255, 255)));
+		legend->setBrush(QBrush(QColor(255, 255, 255)));
+		legend->setTextColor(Qt::black);
+		legend->setBorderPen(QPen(Qt::black));
+		replot();
+		break;
+
+	case 1:
+		setAxisColor(Qt::black);
+		setBackground(QBrush(QColor(234, 247, 255)));
+		legend->setBrush(QBrush(QColor(234, 247, 255)));
+		legend->setTextColor(Qt::black);
+		legend->setBorderPen(QPen(Qt::black));
+		replot();
+		break;
+
+	case 2:
+		setAxisColor(Qt::white);
+		setBackground(QBrush(QColor(68, 68, 68)));
+		legend->setBrush(QBrush(QColor(68, 68, 68)));
+		legend->setTextColor(Qt::white);
+		legend->setBorderPen(QPen(Qt::white));
+		replot();
+		break;
+
+	default:
+        setColorStyle(0);
+		break;
+	}
+}

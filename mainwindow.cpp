@@ -807,6 +807,15 @@ void MainWindow::on_btnWizard_clicked()
 
 // QSS主题来自开源项目：https://github.com/feiyangqingyun/QWidgetDemo
 
+void MainWindow::setChartColorStyle(int style)
+{
+    ui->chartFit->setColorStyle(style);
+    ui->collectPanel_Std->getChartAddr()->setColorStyle(style);
+    ui->collectPanel_Dtm->getChartAddr()->setColorStyle(style);
+    ui->start_Std->getChartAddr()->setColorStyle(style);
+    ui->start_Dtm->getChartAddr()->setColorStyle(style);
+}
+
 void MainWindow::on_actionLightStyle_triggered()
 {
     ui->actionLightStyle->setChecked(true);
@@ -814,9 +823,9 @@ void MainWindow::on_actionLightStyle_triggered()
     ui->actionGrayStyle->setChecked(false);
     ui->actionDarkStyle->setChecked(false);
 
-    // 这里不知道怎么弄，只能先这样了
-    loadStyle(":/qss/flatgray.css");
+    loadStyle(":/qss/flatgray.css"); // 这里不知道怎么弄，只能先这样了
     qApp->setStyleSheet("");
+    setChartColorStyle(0);
 }
 
 void MainWindow::on_actionBlueStyle_triggered()
@@ -827,6 +836,7 @@ void MainWindow::on_actionBlueStyle_triggered()
     ui->actionDarkStyle->setChecked(false);
 
     loadStyle(":/qss/lightblue.css");
+    setChartColorStyle(1);
 }
 
 void MainWindow::on_actionGrayStyle_triggered()
@@ -837,6 +847,7 @@ void MainWindow::on_actionGrayStyle_triggered()
     ui->actionDarkStyle->setChecked(false);
 
     loadStyle(":/qss/flatgray.css");
+    setChartColorStyle(0);
 }
 
 void MainWindow::on_actionDarkStyle_triggered()
@@ -847,6 +858,7 @@ void MainWindow::on_actionDarkStyle_triggered()
     ui->actionDarkStyle->setChecked(true);
 
     loadStyle(":/qss/blacksoft.css");
+    setChartColorStyle(2);
 
     // QFile f("://qdarkstyle/dark/blacksoft.css");
     // if (!f.exists())

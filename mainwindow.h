@@ -124,6 +124,7 @@ private:
     void setDeviceName_Std(QString name);
     void setDeviceName_Dtm(QString name);
     void setCollectBtnState(const CollectBtnState &state);
+    void setChartColorStyle(int style);
 
     void pictureInit();
     void soundInit();
