@@ -803,3 +803,92 @@ void MainWindow::on_btnWizard_clicked()
 {
     on_actionWizard_triggered();
 }
+
+// QSS主题来自开源项目：https://github.com/feiyangqingyun/QWidgetDemo
+
+void MainWindow::on_actionLightStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(true);
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    // 这里不知道怎么弄，只能先这样了
+    loadStyle(":/qss/flatgray.css");
+    qApp->setStyleSheet("");
+}
+
+void MainWindow::on_actionBlueStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(true);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    loadStyle(":/qss/lightblue.css");
+}
+
+void MainWindow::on_actionGrayStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(true);
+    ui->actionDarkStyle->setChecked(false);
+
+    loadStyle(":/qss/flatgray.css");
+}
+
+void MainWindow::on_actionDarkStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(true);
+
+    loadStyle(":/qss/blacksoft.css");
+
+    // QFile f("://qdarkstyle/dark/blacksoft.css");
+    // if (!f.exists())
+    // {
+    //     printf("Unable to set stylesheet, file not found\n");
+    // }
+    // else
+    // {
+    //     f.open(QFile::ReadOnly | QFile::Text);
+    //     QTextStream ts(&f);
+    //     setStyleSheet(ts.readAll());
+    // }
+}
+
+void MainWindow::loadStyle(const QString &qssFile)
+{
+    // 开启计时
+    QElapsedTimer time;
+    time.start();
+
+    // 加载样式表
+    QString qss;
+    QFile file(qssFile);
+    if (file.open(QFile::ReadOnly))
+    {
+        // 用QTextStream读取样式文件不用区分文件编码 带bom也行
+        QStringList list;
+        QTextStream in(&file);
+        // in.setCodec("utf-8");
+        while (!in.atEnd())
+        {
+            QString line;
+            in >> line;
+            list << line;
+        }
+
+        file.close();
+        qss = list.join("\n");
+        QString paletteColor = qss.mid(20, 7);
+        qApp->setPalette(QPalette(paletteColor));
+        // 用时主要在下面这句
+        qApp->setStyleSheet(qss);
+    }
+
+    qDebug() << "用时:" << time.elapsed();
+}

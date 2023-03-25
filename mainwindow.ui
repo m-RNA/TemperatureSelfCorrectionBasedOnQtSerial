@@ -52,7 +52,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -1221,8 +1221,18 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuStyleSwitch">
+    <property name="title">
+     <string>切换皮肤</string>
+    </property>
+    <addaction name="actionLightStyle"/>
+    <addaction name="actionBlueStyle"/>
+    <addaction name="actionGrayStyle"/>
+    <addaction name="actionDarkStyle"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuAbout"/>
+   <addaction name="menuStyleSwitch"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout">
@@ -1293,6 +1303,41 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionLightStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>原生主题</string>
+   </property>
+  </action>
+  <action name="actionDarkStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>深色主题</string>
+   </property>
+  </action>
+  <action name="actionGrayStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>灰色主题</string>
+   </property>
+  </action>
+  <action name="actionBlueStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>清凉主题</string>
    </property>
   </action>
  </widget>

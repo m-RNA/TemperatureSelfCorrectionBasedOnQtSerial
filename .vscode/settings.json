@@ -50,6 +50,7 @@
         "initializer_list": "cpp"
     },
     "cSpell.words": [
+        "blacksoft",
         "CODECONVERTER",
         "collectcomplete",
         "COLLECTPANEL",
@@ -57,6 +58,7 @@
         "collectwait",
         "Eigen",
         "fitchart",
+        "flatgray",
         "INTERACTCHART",
         "leastssquare",
         "pgsb",

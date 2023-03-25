@@ -74,6 +74,14 @@ private slots:
 
     void on_btnWizard_clicked();
 
+    void on_actionLightStyle_triggered();
+
+    void on_actionBlueStyle_triggered();
+
+    void on_actionGrayStyle_triggered();
+
+    void on_actionDarkStyle_triggered();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxNextPoint();
@@ -139,5 +147,6 @@ private:
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);
+    void loadStyle(const QString &qssFile);
 };
 #endif // MAINWINDOW_H
