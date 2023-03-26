@@ -134,8 +134,15 @@ void CVTable::pasteSelectedCells()
     int currentIndexColumn = this->selectedRanges()[0].leftColumn();
 
     // 计算可以粘贴的最大行数和列数
-    int maxRows = qMin(this->rowCount() - currentIndexRow, tableRowDataList.length() - 1);
-    int maxCols = qMin(this->columnCount() - currentIndexColumn, tableRowDataList.at(0).split("\t").length());
+    int maxRows = currentIndex().row() - currentIndexRow + 1;
+    if (maxRows == 1)
+        maxRows = this->rowCount() - currentIndexRow;
+    maxRows = qMin(maxRows, tableRowDataList.length() - 1);
+
+    int maxCols = currentIndex().column() - currentIndexColumn + 1;
+    if (maxCols == 1)
+        maxCols = this->columnCount() - currentIndexColumn;
+    maxCols = qMin(maxCols, tableRowDataList.at(0).split("\t").length());
 
     for (int i = 0; i < maxRows; ++i)
     {
