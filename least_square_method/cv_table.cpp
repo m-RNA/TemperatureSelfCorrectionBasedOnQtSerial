@@ -124,26 +124,29 @@ void CVTable::copySelectedCells()
 
 void CVTable::pasteSelectedCells()
 {
-    const QString &text_to_past = QApplication::clipboard()->text();
-    if (text_to_past.isEmpty())
+    const QString &textToPast = QApplication::clipboard()->text();
+    if (textToPast.isEmpty())
         return;
-    QStringList table_row_data_list = text_to_past.split("\n"); //, QString::SkipEmptyParts);
-    QModelIndex current_index = this->currentIndex();
+    QStringList tableRowDataList = textToPast.split("\n"); //, QString::SkipEmptyParts);
+
+    // 获取当前选中的左上角单元格的索引
+    int currentIndexRow = this->selectedRanges()[0].topRow();
+    int currentIndexColumn = this->selectedRanges()[0].leftColumn();
 
     // 计算可以粘贴的最大行数和列数
-    int maxRows = qMin(this->rowCount() - current_index.row(), table_row_data_list.length() - 1);
-    int maxCols = qMin(this->columnCount() - current_index.column(), table_row_data_list.at(0).split("\t").length());
+    int maxRows = qMin(this->rowCount() - currentIndexRow, tableRowDataList.length() - 1);
+    int maxCols = qMin(this->columnCount() - currentIndexColumn, tableRowDataList.at(0).split("\t").length());
 
     for (int i = 0; i < maxRows; ++i)
     {
-        QStringList row_data_list = table_row_data_list.at(i).split("\t");
+        QStringList rowDataList = tableRowDataList.at(i).split("\t");
         for (int k = 0; k < maxCols; k++)
         {
-            QTableWidgetItem *item = this->item(i + current_index.row(), k + current_index.column());
+            QTableWidgetItem *item = this->item(i + currentIndexRow, k + currentIndexColumn);
             if (item)
-                item->setText(row_data_list.at(k));
+                item->setText(rowDataList.at(k));
             else
-                this->setItem(i + current_index.row(), k + current_index.column(), new QTableWidgetItem(row_data_list.at(k)));
+                this->setItem(i + currentIndexRow, k + currentIndexColumn, new QTableWidgetItem(rowDataList.at(k)));
         }
     }
 }
