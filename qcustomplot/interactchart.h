@@ -73,6 +73,7 @@ private:
     int nowTime, oldTime;
 
     void setAxisColor(const QColor &color);
+    void setColor(const QColor &background, const QColor &foreground);
 };
 
 #endif // INTERACTCHART_H

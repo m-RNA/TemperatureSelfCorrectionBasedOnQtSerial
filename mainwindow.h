@@ -76,9 +76,9 @@ private slots:
 
     void on_actionLightStyle_triggered();
 
-    void on_actionBlueStyle_triggered();
-
     void on_actionGrayStyle_triggered();
+
+    void on_actionBlueStyle_triggered();
 
     void on_actionDarkStyle_triggered();
 

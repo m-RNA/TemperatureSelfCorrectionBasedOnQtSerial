@@ -828,17 +828,6 @@ void MainWindow::on_actionLightStyle_triggered()
     setChartColorStyle(0);
 }
 
-void MainWindow::on_actionBlueStyle_triggered()
-{
-    ui->actionLightStyle->setChecked(false);
-    ui->actionBlueStyle->setChecked(true);
-    ui->actionGrayStyle->setChecked(false);
-    ui->actionDarkStyle->setChecked(false);
-
-    loadStyle(":/qss/lightblue.css");
-    setChartColorStyle(1);
-}
-
 void MainWindow::on_actionGrayStyle_triggered()
 {
     ui->actionLightStyle->setChecked(false);
@@ -847,7 +836,18 @@ void MainWindow::on_actionGrayStyle_triggered()
     ui->actionDarkStyle->setChecked(false);
 
     loadStyle(":/qss/flatgray.css");
-    setChartColorStyle(0);
+    setChartColorStyle(1);
+}
+
+void MainWindow::on_actionBlueStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(true);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    loadStyle(":/qss/lightblue.css");
+    setChartColorStyle(2);
 }
 
 void MainWindow::on_actionDarkStyle_triggered()
@@ -858,7 +858,7 @@ void MainWindow::on_actionDarkStyle_triggered()
     ui->actionDarkStyle->setChecked(true);
 
     loadStyle(":/qss/blacksoft.css");
-    setChartColorStyle(2);
+    setChartColorStyle(3);
 
     // QFile f("://qdarkstyle/dark/blacksoft.css");
     // if (!f.exists())
@@ -903,5 +903,5 @@ void MainWindow::loadStyle(const QString &qssFile)
         qApp->setStyleSheet(qss);
     }
 
-    qDebug() << "用时:" << time.elapsed();
+    qDebug() << "切换主题用时:" << time.elapsed() << "ms";
 }

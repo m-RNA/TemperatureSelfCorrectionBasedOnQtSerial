@@ -470,39 +470,57 @@ void FitChart::setAxisColor(const QColor &color)
 	yAxis2->setTickLabelColor(color);
 }
 
+void FitChart::setColor(const QColor &background, const QColor &foreground)
+{
+	setBackground(QBrush(background));
+	legend->setBrush(QBrush(background));
+
+	setAxisColor(foreground);
+	legend->setTextColor(foreground);
+	legend->setBorderPen(QPen(foreground));
+}
+
 void FitChart::setColorStyle(const int style)
 {
+	if (style < 0 || style > 3)
+		return;
+
 	switch (style)
 	{
-	case 0:
-		setAxisColor(Qt::black);
-		setBackground(QBrush(QColor(255, 255, 255)));
-		legend->setBrush(QBrush(QColor(255, 255, 255)));
-		legend->setTextColor(Qt::black);
-		legend->setBorderPen(QPen(Qt::black));
-		replot();
+	case 0: // 白色
+		setColor(QColor("#FFFFFF"), Qt::black);
 		break;
 
-	case 1:
-		setAxisColor(Qt::black);
-		setBackground(QBrush(QColor(234, 247, 255)));
-		legend->setBrush(QBrush(QColor(234, 247, 255)));
-		legend->setTextColor(Qt::black);
-		legend->setBorderPen(QPen(Qt::black));
-		replot();
+	case 1: // 灰色
+		setColor(QColor("#FFFFFF"), QColor("#57595B"));
 		break;
 
-	case 2:
-		setAxisColor(Qt::white);
-		setBackground(QBrush(QColor(68, 68, 68)));
-		legend->setBrush(QBrush(QColor(68, 68, 68)));
-		legend->setTextColor(Qt::white);
-		legend->setBorderPen(QPen(Qt::white));
-		replot();
+	case 2: // 清凉
+		setColor(QColor("#EAF7FF"), QColor("#386487"));
+		break;
+
+	case 3: // 深色
+		setColor(QColor("#444444"), QColor("#DCDCDC"));
 		break;
 
 	default:
-        setColorStyle(0);
+		setColor(QColor("#FFFFFF"), Qt::black);
 		break;
 	}
+
+	QPen pen;
+	pen.setWidthF(2.5);
+	pen.setStyle(Qt::PenStyle::DotLine); // 虚线
+	if (style == 3)
+	{
+		pen.setColor(QColor("#2ECC71"));
+		graph(0)->setPen(pen);
+	}
+	else
+	{
+		pen.setColor(Qt::darkGreen);
+		graph(0)->setPen(pen);
+	}
+
+	replot();
 }

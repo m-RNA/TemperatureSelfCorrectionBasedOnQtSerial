@@ -1197,7 +1197,7 @@
      <x>0</x>
      <y>0</y>
      <width>1074</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
@@ -1226,8 +1226,8 @@
      <string>切换皮肤</string>
     </property>
     <addaction name="actionLightStyle"/>
-    <addaction name="actionBlueStyle"/>
     <addaction name="actionGrayStyle"/>
+    <addaction name="actionBlueStyle"/>
     <addaction name="actionDarkStyle"/>
    </widget>
    <addaction name="menu"/>

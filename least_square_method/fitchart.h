@@ -63,6 +63,7 @@ private:
     int x_default = 0;
 
     void setAxisColor(const QColor &color);
+    void setColor(const QColor &background, const QColor &foreground);
 };
 
 #endif // CUSTOMCHART_H
