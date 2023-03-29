@@ -64,6 +64,9 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 	this->graph()->setPen(pen);
 
+	selectedDec0 = new QCPSelectionDecorator;
+	selectedDec1 = new QCPSelectionDecorator;
+
 	// 连接将某些轴选择连接在一起的插槽（尤其是对面的轴）：
 	connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
 
@@ -89,6 +92,16 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 FitChart::~FitChart()
 {
+	if (selectedDec0 != nullptr)
+	{
+		delete selectedDec0;
+		selectedDec0 = nullptr;
+	}
+	if (selectedDec1 != nullptr)
+	{
+		delete selectedDec1;
+		selectedDec1 = nullptr;
+	}
 }
 
 void FitChart::setVerifyTracerVisible(const bool visible)
@@ -445,39 +458,74 @@ void FitChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	// ui->statusBar->showMessage(message, 2500);
 }
 
-void FitChart::setAxisColor(const QColor &color)
+void FitChart::setAxisColor(const QColor &color, const QColor &selectedColor = Qt::blue)
 {
-	xAxis->setBasePen(QPen(color));
-	yAxis->setBasePen(QPen(color));
-	xAxis->setTickPen(QPen(color));
-	yAxis->setTickPen(QPen(color));
-	xAxis->setSubTickPen(QPen(color));
-	yAxis->setSubTickPen(QPen(color));
+	QPen pen(color);
+
+	xAxis->setBasePen(pen);
+	yAxis->setBasePen(pen);
+	xAxis->setTickPen(pen);
+	yAxis->setTickPen(pen);
+	xAxis->setSubTickPen(pen);
+	yAxis->setSubTickPen(pen);
 	xAxis->setLabelColor(color);
 	yAxis->setLabelColor(color);
 	xAxis->setTickLabelColor(color);
 	yAxis->setTickLabelColor(color);
 
-	xAxis2->setBasePen(QPen(color));
-	yAxis2->setBasePen(QPen(color));
-	xAxis2->setTickPen(QPen(color));
-	yAxis2->setTickPen(QPen(color));
-	xAxis2->setSubTickPen(QPen(color));
-	yAxis2->setSubTickPen(QPen(color));
+	xAxis2->setBasePen(pen);
+	yAxis2->setBasePen(pen);
+	xAxis2->setTickPen(pen);
+	yAxis2->setTickPen(pen);
+	xAxis2->setSubTickPen(pen);
+	yAxis2->setSubTickPen(pen);
 	xAxis2->setLabelColor(color);
 	yAxis2->setLabelColor(color);
 	xAxis2->setTickLabelColor(color);
 	yAxis2->setTickLabelColor(color);
+
+	QPen selectedPen(selectedColor, 2);
+	xAxis->setSelectedBasePen(selectedPen);
+	yAxis->setSelectedBasePen(selectedPen);
+	xAxis->setSelectedTickPen(selectedPen);
+	yAxis->setSelectedTickPen(selectedPen);
+	xAxis->setSelectedSubTickPen(selectedPen);
+	yAxis->setSelectedSubTickPen(selectedPen);
+	xAxis->setSelectedLabelColor(selectedColor);
+	yAxis->setSelectedLabelColor(selectedColor);
+	xAxis->setSelectedTickLabelColor(selectedColor);
+	yAxis->setSelectedTickLabelColor(selectedColor);
+
+	xAxis2->setSelectedBasePen(selectedPen);
+	yAxis2->setSelectedBasePen(selectedPen);
+	xAxis2->setSelectedTickPen(selectedPen);
+	yAxis2->setSelectedTickPen(selectedPen);
+	xAxis2->setSelectedSubTickPen(selectedPen);
+	yAxis2->setSelectedSubTickPen(selectedPen);
+	xAxis2->setSelectedLabelColor(selectedColor);
+	yAxis2->setSelectedLabelColor(selectedColor);
+	xAxis2->setSelectedTickLabelColor(selectedColor);
+	yAxis2->setSelectedTickLabelColor(selectedColor);
 }
 
-void FitChart::setColor(const QColor &background, const QColor &foreground)
+void FitChart::setColor(const QColor &background, const QColor &foreground, const QColor &selectedColor = Qt::blue)
 {
 	setBackground(QBrush(background));
 	legend->setBrush(QBrush(background));
 
-	setAxisColor(foreground);
+	setAxisColor(foreground, selectedColor);
 	legend->setTextColor(foreground);
 	legend->setBorderPen(QPen(foreground));
+
+	QPen pen(selectedColor, 2);
+	legend->setSelectedIconBorderPen(pen);
+	legend->setSelectedTextColor(selectedColor);
+	legend->setSelectedBrush(QBrush(selectedColor));
+
+	selectedDec0->setPen(pen);
+	selectedDec1->setPen(pen);
+	graph(0)->setSelectionDecorator(selectedDec0);
+	graph(1)->setSelectionDecorator(selectedDec1);
 }
 
 void FitChart::setColorStyle(const int style)
@@ -500,7 +548,7 @@ void FitChart::setColorStyle(const int style)
 		break;
 
 	case 3: // 深色
-		setColor(QColor("#444444"), QColor("#DCDCDC"));
+		setColor(QColor("#444444"), QColor("#DCDCDC"), QColor("#DCDC00"));
 		break;
 
 	default:
@@ -508,18 +556,14 @@ void FitChart::setColorStyle(const int style)
 		break;
 	}
 
-	QPen pen;
-	pen.setWidthF(2.5);
-	pen.setStyle(Qt::PenStyle::DotLine); // 虚线
+	/* FitChart 独有*/
 	if (style == 3)
 	{
-		pen.setColor(QColor("#2ECC71"));
-		graph(0)->setPen(pen);
+		graph(0)->setPen(QPen(QColor("#2ECC71"), 2.5, Qt::PenStyle::DotLine));
 	}
 	else
 	{
-		pen.setColor(Qt::darkGreen);
-		graph(0)->setPen(pen);
+		graph(0)->setPen(QPen(Qt::darkGreen, 2.5, Qt::PenStyle::DotLine));
 	}
 
 	replot();

@@ -62,6 +62,8 @@ private slots:
     void yAxisAutoZoomNo() { yAxisAutoZoomState = false; } // 关闭Y轴自动缩放
 
 private:
+    QCPSelectionDecorator *selectedDec = nullptr; // 选中曲线0的装饰器
+
     QCPItemTracer *tracer = nullptr; // 坐标跟随鼠标.使用时创建
 
     QString deviceName = "未知仪器";
@@ -72,8 +74,8 @@ private:
     timeb t1, t2;
     int nowTime, oldTime;
 
-    void setAxisColor(const QColor &color);
-    void setColor(const QColor &background, const QColor &foreground);
+    void setAxisColor(const QColor &color, const QColor &selectedColor);
+    void setColor(const QColor &background, const QColor &foreground, const QColor &selectedColor);
 };
 
 #endif // INTERACTCHART_H

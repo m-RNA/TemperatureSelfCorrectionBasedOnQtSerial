@@ -55,6 +55,9 @@ private slots:
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
 private:
+    QCPSelectionDecorator *selectedDec0 = nullptr; // 选中曲线0的装饰器
+    QCPSelectionDecorator *selectedDec1 = nullptr; // 选中曲线1的装饰器
+
     QCPItemTracer *tracer = nullptr;       // 坐标跟随鼠标
     QCPItemTracer *verifyTracer = nullptr; // 坐标跟随采集数据
     double xVerify = 0;
@@ -62,8 +65,8 @@ private:
 
     int x_default = 0;
 
-    void setAxisColor(const QColor &color);
-    void setColor(const QColor &background, const QColor &foreground);
+    void setAxisColor(const QColor &color, const QColor &selectedColor);
+    void setColor(const QColor &background, const QColor &foreground, const QColor &selectedColor);
 };
 
 #endif // CUSTOMCHART_H

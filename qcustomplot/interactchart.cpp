@@ -41,6 +41,8 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 	this->graph()->setLineStyle(QCPGraph::lsLine); // 连线
 	this->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 
+	selectedDec = new QCPSelectionDecorator;
+
 	QPen pen;
 	pen.setWidthF(1.5);
 	pen.setColor(Qt ::red);
@@ -72,6 +74,11 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 
 InteractChart::~InteractChart()
 {
+	if (selectedDec != nullptr)
+	{
+		delete selectedDec;
+		selectedDec = nullptr;
+	}
 }
 
 /*
@@ -437,38 +444,72 @@ void InteractChart::chartRefresh(void)
 	// qDebug() << deviceName << "刷新" << QDateTime::currentDateTime().toString("mm:ss.zzz");
 }
 
-void InteractChart::setAxisColor(const QColor &color)
+void InteractChart::setAxisColor(const QColor &color, const QColor &selectedColor = Qt::blue)
 {
-	xAxis->setBasePen(QPen(color));
-	yAxis->setBasePen(QPen(color));
-	xAxis->setTickPen(QPen(color));
-	yAxis->setTickPen(QPen(color));
-	xAxis->setSubTickPen(QPen(color));
-	yAxis->setSubTickPen(QPen(color));
+	QPen pen(color);
+
+	xAxis->setBasePen(pen);
+	yAxis->setBasePen(pen);
+	xAxis->setTickPen(pen);
+	yAxis->setTickPen(pen);
+	xAxis->setSubTickPen(pen);
+	yAxis->setSubTickPen(pen);
 	xAxis->setLabelColor(color);
 	yAxis->setLabelColor(color);
 	xAxis->setTickLabelColor(color);
 	yAxis->setTickLabelColor(color);
 
-	xAxis2->setBasePen(QPen(color));
-	yAxis2->setBasePen(QPen(color));
-	xAxis2->setTickPen(QPen(color));
-	yAxis2->setTickPen(QPen(color));
-	xAxis2->setSubTickPen(QPen(color));
-	yAxis2->setSubTickPen(QPen(color));
+	xAxis2->setBasePen(pen);
+	yAxis2->setBasePen(pen);
+	xAxis2->setTickPen(pen);
+	yAxis2->setTickPen(pen);
+	xAxis2->setSubTickPen(pen);
+	yAxis2->setSubTickPen(pen);
 	xAxis2->setLabelColor(color);
 	yAxis2->setLabelColor(color);
 	xAxis2->setTickLabelColor(color);
 	yAxis2->setTickLabelColor(color);
+
+	QPen selectedPen(selectedColor, 2);
+	xAxis->setSelectedBasePen(selectedPen);
+	yAxis->setSelectedBasePen(selectedPen);
+	xAxis->setSelectedTickPen(selectedPen);
+	yAxis->setSelectedTickPen(selectedPen);
+	xAxis->setSelectedSubTickPen(selectedPen);
+	yAxis->setSelectedSubTickPen(selectedPen);
+	xAxis->setSelectedLabelColor(selectedColor);
+	yAxis->setSelectedLabelColor(selectedColor);
+	xAxis->setSelectedTickLabelColor(selectedColor);
+	yAxis->setSelectedTickLabelColor(selectedColor);
+
+	xAxis2->setSelectedBasePen(selectedPen);
+	yAxis2->setSelectedBasePen(selectedPen);
+	xAxis2->setSelectedTickPen(selectedPen);
+	yAxis2->setSelectedTickPen(selectedPen);
+	xAxis2->setSelectedSubTickPen(selectedPen);
+	yAxis2->setSelectedSubTickPen(selectedPen);
+	xAxis2->setSelectedLabelColor(selectedColor);
+	yAxis2->setSelectedLabelColor(selectedColor);
+	xAxis2->setSelectedTickLabelColor(selectedColor);
+	yAxis2->setSelectedTickLabelColor(selectedColor);
 }
-void InteractChart::setColor(const QColor &background, const QColor &foreground)
+
+void InteractChart::setColor(const QColor &background, const QColor &foreground, const QColor &selectedColor = Qt::blue)
 {
 	setBackground(QBrush(background));
 	legend->setBrush(QBrush(background));
 
-	setAxisColor(foreground);
+	setAxisColor(foreground, selectedColor);
 	legend->setTextColor(foreground);
 	legend->setBorderPen(QPen(foreground));
+
+	QPen pen(selectedColor, 2);
+	legend->setSelectedIconBorderPen(pen);
+	legend->setSelectedTextColor(selectedColor);
+	legend->setSelectedBrush(QBrush(selectedColor));
+
+	selectedDec->setPen(pen);
+	graph(0)->setSelectionDecorator(selectedDec);
 }
 
 void InteractChart::setColorStyle(const int style)
@@ -491,7 +532,7 @@ void InteractChart::setColorStyle(const int style)
 		break;
 
 	case 3: // 深色
-		setColor(QColor("#444444"), QColor("#DCDCDC"));
+		setColor(QColor("#444444"), QColor("#DCDCDC"), QColor("#DCDC00"));
 		break;
 
 	default:
