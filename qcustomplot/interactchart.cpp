@@ -42,6 +42,7 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 	this->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssNone));
 
 	selectedDec = new QCPSelectionDecorator;
+	graph(0)->setSelectionDecorator(selectedDec);
 
 	QPen pen;
 	pen.setWidthF(1.5);
@@ -509,7 +510,6 @@ void InteractChart::setColor(const QColor &background, const QColor &foreground,
 	legend->setSelectedBrush(QBrush(selectedColor));
 
 	selectedDec->setPen(pen);
-	graph(0)->setSelectionDecorator(selectedDec);
 }
 
 void InteractChart::setColorStyle(const int style)

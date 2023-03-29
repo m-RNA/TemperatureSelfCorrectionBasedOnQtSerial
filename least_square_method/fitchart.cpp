@@ -66,6 +66,8 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 	selectedDec0 = new QCPSelectionDecorator;
 	selectedDec1 = new QCPSelectionDecorator;
+	graph(0)->setSelectionDecorator(selectedDec0);
+	graph(1)->setSelectionDecorator(selectedDec1);
 
 	// 连接将某些轴选择连接在一起的插槽（尤其是对面的轴）：
 	connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
@@ -524,8 +526,6 @@ void FitChart::setColor(const QColor &background, const QColor &foreground, cons
 
 	selectedDec0->setPen(pen);
 	selectedDec1->setPen(pen);
-	graph(0)->setSelectionDecorator(selectedDec0);
-	graph(1)->setSelectionDecorator(selectedDec1);
 }
 
 void FitChart::setColorStyle(const int style)
@@ -557,11 +557,11 @@ void FitChart::setColorStyle(const int style)
 	}
 
 	/* FitChart 独有*/
-	if (style == 3)
+	if (style == 3) // 深色
 	{
 		graph(0)->setPen(QPen(QColor("#2ECC71"), 2.5, Qt::PenStyle::DotLine));
 	}
-	else
+	else // 浅色
 	{
 		graph(0)->setPen(QPen(Qt::darkGreen, 2.5, Qt::PenStyle::DotLine));
 	}
