@@ -75,11 +75,6 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 
 InteractChart::~InteractChart()
 {
-	if (selectedDec != nullptr)
-	{
-		delete selectedDec;
-		selectedDec = nullptr;
-	}
 }
 
 /*

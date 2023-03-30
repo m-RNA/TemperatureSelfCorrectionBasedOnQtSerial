@@ -94,16 +94,6 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 FitChart::~FitChart()
 {
-	if (selectedDec0 != nullptr)
-	{
-		delete selectedDec0;
-		selectedDec0 = nullptr;
-	}
-	if (selectedDec1 != nullptr)
-	{
-		delete selectedDec1;
-		selectedDec1 = nullptr;
-	}
 }
 
 void FitChart::setVerifyTracerVisible(const bool visible)
