@@ -118,7 +118,7 @@ void CVTable::pasteSelectedCells()
     QModelIndex current_index = this->currentIndex();
 
     // 计算可以粘贴的最大行数和列数
-    int maxRows = qMin(this->rowCount() - current_index.row(), table_row_data_list.length());
+    int maxRows = qMin(this->rowCount() - current_index.row(), table_row_data_list.length() - 1);
     int maxCols = qMin(this->columnCount() - current_index.column(), table_row_data_list.at(0).split("\t").length());
 
     for (int i = 0; i < maxRows; ++i)
