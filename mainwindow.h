@@ -136,6 +136,7 @@ private:
     QRegExp rx;
     QString old_text = "";
     int soundIndex = 0;
+    int themeIndex = 0;
     bool verifyState = false;
 
     // 任务类对象

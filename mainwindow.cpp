@@ -819,6 +819,9 @@ void MainWindow::setChartColorStyle(int style)
 void MainWindow::on_actionLightStyle_triggered()
 {
     ui->actionLightStyle->setChecked(true);
+    if (themeIndex == 0)
+        return;
+    themeIndex = 0;
     ui->actionBlueStyle->setChecked(false);
     ui->actionGrayStyle->setChecked(false);
     ui->actionDarkStyle->setChecked(false);
@@ -831,9 +834,12 @@ void MainWindow::on_actionLightStyle_triggered()
 
 void MainWindow::on_actionGrayStyle_triggered()
 {
+    ui->actionGrayStyle->setChecked(true);
+    if (themeIndex == 1)
+        return;
+    themeIndex = 1;
     ui->actionLightStyle->setChecked(false);
     ui->actionBlueStyle->setChecked(false);
-    ui->actionGrayStyle->setChecked(true);
     ui->actionDarkStyle->setChecked(false);
 
     loadStyle(":/qss/flatgray.css");
@@ -842,8 +848,11 @@ void MainWindow::on_actionGrayStyle_triggered()
 
 void MainWindow::on_actionBlueStyle_triggered()
 {
-    ui->actionLightStyle->setChecked(false);
     ui->actionBlueStyle->setChecked(true);
+    if (themeIndex == 2)
+        return;
+    themeIndex = 2;
+    ui->actionLightStyle->setChecked(false);
     ui->actionGrayStyle->setChecked(false);
     ui->actionDarkStyle->setChecked(false);
 
@@ -853,44 +862,47 @@ void MainWindow::on_actionBlueStyle_triggered()
 
 void MainWindow::on_actionDarkStyle_triggered()
 {
+    ui->actionDarkStyle->setChecked(true);
+    if (themeIndex == 3)
+        return;
+    themeIndex = 3;
     ui->actionLightStyle->setChecked(false);
     ui->actionBlueStyle->setChecked(false);
     ui->actionGrayStyle->setChecked(false);
-    ui->actionDarkStyle->setChecked(true);
 
     loadStyle(":/qss/blacksoft.css");
     setChartColorStyle(3);
 }
 
- void MainWindow::loadStyle(const QString &qssFile)
- {
-     // 开启计时
-     QElapsedTimer time;
-     time.start();
+void MainWindow::loadStyle(const QString &qssFile)
+{
+    // 开启计时
+    QElapsedTimer time;
+    time.start();
 
-     // 加载样式表
-     QString qss;
-     QFile file(qssFile);
-     if (file.open(QFile::ReadOnly))
-     {
-         // 用QTextStream读取样式文件，逐行读取文件内容
-         QTextStream in(&file);
-         // in.setCodec("UTF-8");
-         while (!in.atEnd())
-         {
-             QString line = in.readLine();
-             qss += line + "\n";
-         }
+    // 加载样式表
+    QString qss;
+    QFile file(qssFile);
+    if (file.open(QFile::ReadOnly))
+    {
+        // 用QTextStream读取样式文件，逐行读取文件内容
+        QTextStream in(&file);
+        // in.setCodec("UTF-8");
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+            qss += line + "\n";
+        }
 
-         file.close();
+        file.close();
 
-         QString paletteColor = qss.mid(20, 7);
-         qApp->setPalette(QPalette(paletteColor));
+        QString paletteColor = qss.mid(20, 7);
+        qApp->setPalette(QPalette(paletteColor));
 
-         // 先设置窗口的样式表，再设置应用程序的样式表
-         this->setStyleSheet(qss);
-         qApp->setStyleSheet(qss);
-     }
+        // 先设置窗口的样式表，再设置应用程序的样式表
+        this->setStyleSheet(qss);
+        qApp->setStyleSheet(qss);
+    }
 
-     qDebug() << "切换主题用时:" << time.elapsed() << "ms";
- }
+    qDebug() << "切换主题用时:" << time.elapsed() << "ms";
+}
