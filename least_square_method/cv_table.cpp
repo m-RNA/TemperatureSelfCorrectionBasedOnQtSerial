@@ -28,10 +28,11 @@ void CVTable::contextMenuEvent(QContextMenuEvent *event)
 
 void CVTable::keyPressEvent(QKeyEvent *event)
 {
+    // 表格不可编辑
     if (this->editTriggers() == QAbstractItemView::NoEditTriggers)
     {
-        // 表格不可编辑
-        if (event->matches(QKeySequence::Copy))
+        if (event->modifiers() == Qt::ControlModifier &&
+            ((event->key() == Qt::Key_C) || (event->key() == Qt::Key_X)))
         {
             // 复制选中的单元格内容
             copySelectedCells();
@@ -45,28 +46,40 @@ void CVTable::keyPressEvent(QKeyEvent *event)
     }
 
     // 表格可编辑
-    if (event->matches(QKeySequence::Cut))
+    // 修饰键是Ctrl
+    if (event->modifiers() == Qt::ControlModifier)
     {
-        // 剪切选中的单元格内容
-        cutSelectedCells();
-        event->accept();
+        switch (event->key())
+        {
+        case Qt::Key_X:
+            // 剪切选中的单元格内容
+            cutSelectedCells();
+            event->accept();
+            break;
+
+        case Qt::Key_C:
+            // 复制选中的单元格内容
+            copySelectedCells();
+            event->accept();
+            break;
+
+        case Qt::Key_V:
+            // 粘贴剪贴板中的内容
+            pasteSelectedCells();
+            event->accept();
+            break;
+        }
+        return;
     }
-    else if (event->matches(QKeySequence::Paste))
-    {
-        // 粘贴剪贴板中的内容
-        pasteSelectedCells();
-        event->accept();
-    }
-    else if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete)
+
+    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete)
     {
         // 清空选中的单元格内容
         removeSelectedCells();
         event->accept();
+        return;
     }
-    else
-    {
-        QTableWidget::keyPressEvent(event);
-    }
+    QTableWidget::keyPressEvent(event);
 }
 
 void CVTable::cutSelectedCells()
