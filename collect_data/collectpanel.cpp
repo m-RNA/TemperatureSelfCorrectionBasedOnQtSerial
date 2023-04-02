@@ -201,19 +201,27 @@ void CollectPanel::checkDataWave(const double &data)
     {
         dataWave.push_back(data);
         stableState = false;
+        setState(onlineState);
         qDebug() << deviceName << "dataWave.size() < " << checkWaveNum;
         return;
     }
-    else
+
+    // 考虑检查点数有可能变小
+    while (dataWave.size() > checkWaveNum)
     {
         dataWave.pop_front();
-        dataWave.push_back(data);
+        stableState = false;
+        setState(onlineState);
+        qDebug() << deviceName << "dataWave.size() > " << checkWaveNum;
     }
+
+    dataWave.pop_front();
+    dataWave.push_back(data);
 
     // 检查数据波动
     double max = dataWave.at(0);
     double min = dataWave.at(0);
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < checkWaveNum; ++i)
     {
         if (dataWave.at(i) > max)
             max = dataWave.at(i);
