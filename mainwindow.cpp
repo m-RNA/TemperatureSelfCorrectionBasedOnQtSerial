@@ -760,11 +760,11 @@ void MainWindow::on_actionWizard_triggered()
                 if(ui->start_Std->state() == true)
                     ui->start_Std->on_btnSerialSwitch_clicked();
                 if(ui->start_Dtm->state() == true)
-                    ui->start_Dtm->on_btnSerialSwitch_clicked(); 
+                    ui->start_Dtm->on_btnSerialSwitch_clicked();
                 emit sgXlsxSaveInfo(info.baseInfo);
 
                 ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
-                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
+                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm);
                 ui->start_Std->on_btnSerialSwitch_clicked();
                 ui->start_Dtm->on_btnSerialSwitch_clicked(); });
     wizard.exec();
@@ -823,8 +823,9 @@ void MainWindow::on_actionLightStyle_triggered()
     ui->actionGrayStyle->setChecked(false);
     ui->actionDarkStyle->setChecked(false);
 
-    loadStyle(":/qss/flatgray.css"); // 这里不知道怎么弄，只能先这样了
+    this->setStyleSheet("");
     qApp->setStyleSheet("");
+    qApp->setPalette(QPalette(QColor("#F0F0F0")));
     setChartColorStyle(0);
 }
 
@@ -859,49 +860,37 @@ void MainWindow::on_actionDarkStyle_triggered()
 
     loadStyle(":/qss/blacksoft.css");
     setChartColorStyle(3);
-
-    // QFile f("://qdarkstyle/dark/blacksoft.css");
-    // if (!f.exists())
-    // {
-    //     printf("Unable to set stylesheet, file not found\n");
-    // }
-    // else
-    // {
-    //     f.open(QFile::ReadOnly | QFile::Text);
-    //     QTextStream ts(&f);
-    //     setStyleSheet(ts.readAll());
-    // }
 }
 
-void MainWindow::loadStyle(const QString &qssFile)
-{
-    // 开启计时
-    QElapsedTimer time;
-    time.start();
+ void MainWindow::loadStyle(const QString &qssFile)
+ {
+     // 开启计时
+     QElapsedTimer time;
+     time.start();
 
-    // 加载样式表
-    QString qss;
-    QFile file(qssFile);
-    if (file.open(QFile::ReadOnly))
-    {
-        // 用QTextStream读取样式文件不用区分文件编码 带bom也行
-        QStringList list;
-        QTextStream in(&file);
-        // in.setCodec("utf-8");
-        while (!in.atEnd())
-        {
-            QString line;
-            in >> line;
-            list << line;
-        }
+     // 加载样式表
+     QString qss;
+     QFile file(qssFile);
+     if (file.open(QFile::ReadOnly))
+     {
+         // 用QTextStream读取样式文件，逐行读取文件内容
+         QTextStream in(&file);
+         // in.setCodec("UTF-8");
+         while (!in.atEnd())
+         {
+             QString line = in.readLine();
+             qss += line + "\n";
+         }
 
-        file.close();
-        qss = list.join("\n");
-        QString paletteColor = qss.mid(20, 7);
-        qApp->setPalette(QPalette(paletteColor));
-        // 用时主要在下面这句
-        qApp->setStyleSheet(qss);
-    }
+         file.close();
 
-    qDebug() << "切换主题用时:" << time.elapsed() << "ms";
-}
+         QString paletteColor = qss.mid(20, 7);
+         qApp->setPalette(QPalette(paletteColor));
+
+         // 先设置窗口的样式表，再设置应用程序的样式表
+         this->setStyleSheet(qss);
+         qApp->setStyleSheet(qss);
+     }
+
+     qDebug() << "切换主题用时:" << time.elapsed() << "ms";
+ }
