@@ -58,7 +58,7 @@ private slots:
 signals:
     void serialStateChange(bool);
     void sgSerialPortSendData(const QByteArray &);
-    void sgStartAnalyseFinish(const serialAnalyseCell &);
+    void sgStartAnalyseFinish(const SerialAnalyseCell &);
 
 private:
     Ui::StartCommunication *ui;

@@ -317,7 +317,7 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 	this->replot(); // 刷新画图
 }
 
-void FitChart::updateVerifyTracerX(const serialAnalyseCell &x)
+void FitChart::updateVerifyTracerX(const SerialAnalyseCell &x)
 {
 	// qDebug() << "更新验证锚点的x坐标";
 	xVerify = x.value;
@@ -333,7 +333,7 @@ void FitChart::updateVerifyTracerX(const serialAnalyseCell &x)
 	// 				   this, this->rect());
 }
 
-void FitChart::updateVerifyTracerY(const serialAnalyseCell &y)
+void FitChart::updateVerifyTracerY(const SerialAnalyseCell &y)
 {
 	// qDebug() << "更新验证锚点的y坐标";
 	yVerify = y.value;

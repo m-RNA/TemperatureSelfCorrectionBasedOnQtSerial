@@ -64,7 +64,7 @@ bool Bll_SerialRecvAnalyse::canIntoNum(const QString data)
 // 12.3456
 void Bll_SerialRecvAnalyse::analyseNum()
 {
-    serialAnalyseCell cell;
+    SerialAnalyseCell cell;
 
     while (1)
     {
@@ -97,7 +97,7 @@ void Bll_SerialRecvAnalyse::analyseNum()
 // $T=019.1263 ;
 void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 {
-    serialAnalyseCell cell;
+    SerialAnalyseCell cell;
     // qDebug() << id << "buffer:" << buffer;
 
     while (1)

@@ -53,7 +53,7 @@ public:
     void collectRestart(void);
 
 public slots:
-    void slCollectData(const serialAnalyseCell &cell);
+    void slCollectData(const SerialAnalyseCell &cell);
 
 signals:
     void sgCollectDataAverage(const string &average);

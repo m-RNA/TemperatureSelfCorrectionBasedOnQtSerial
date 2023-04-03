@@ -24,8 +24,8 @@ public slots:
     void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
     void updateFitPlot(const QVector<double> &x, const QVector<double> &y);     // 更新折线图
 
-    void updateVerifyTracerX(const serialAnalyseCell &x); // 更新验证游标的x坐标
-    void updateVerifyTracerY(const serialAnalyseCell &y); // 更新验证游标的y坐标
+    void updateVerifyTracerX(const SerialAnalyseCell &x); // 更新验证游标的x坐标
+    void updateVerifyTracerY(const SerialAnalyseCell &y); // 更新验证游标的y坐标
 
     void clear();
 

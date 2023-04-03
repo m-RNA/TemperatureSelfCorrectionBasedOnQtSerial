@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<vector<double>>("vector<double>");             // 添加不支持的类型
     qRegisterMetaType<QVector<long double>>("QVector<long double>"); // 添加不支持的类型
     qRegisterMetaType<vector<long double>>("vector<long double>");   // 添加不支持的类型
-    qRegisterMetaType<serialAnalyseCell>("serialAnalyseCell");       // 添加不支持的类型
+    qRegisterMetaType<SerialAnalyseCell>("SerialAnalyseCell");       // 添加不支持的类型
     qRegisterMetaType<WizardInfo>("WizardInfo");                     // 添加不支持的类型
     qRegisterMetaType<SoundIndex>("SoundIndex");                     // 添加不支持的类型
     qRegisterMetaType<string>("string");                             // 添加不支持的类型

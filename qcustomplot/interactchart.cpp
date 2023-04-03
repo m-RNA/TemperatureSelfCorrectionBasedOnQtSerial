@@ -387,7 +387,7 @@ void InteractChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 	// ui->statusBar->showMessage(message, 2500);
 }
 
-void InteractChart::addYPoint(const serialAnalyseCell &cell)
+void InteractChart::addYPoint(const SerialAnalyseCell &cell)
 {
 	if (pauseState == true) // 暂停时退出
 		return;
@@ -402,7 +402,7 @@ void InteractChart::addYPoint(const serialAnalyseCell &cell)
 	chartRefresh();
 }
 
-void InteractChart::addYPointBaseOnTime(const serialAnalyseCell &cell)
+void InteractChart::addYPointBaseOnTime(const SerialAnalyseCell &cell)
 {
 	if (pauseState == true) // 暂停时退出
 		return;

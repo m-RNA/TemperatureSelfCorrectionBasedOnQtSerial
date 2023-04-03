@@ -68,7 +68,7 @@ void CollectPanel::setYAxisFormat(const QString &format, const int precision)
     ui->chart->yAxis->setNumberPrecision(precision);
 }
 
-void CollectPanel::slCollectData(const serialAnalyseCell &cell)
+void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
 {
     // 更新最后示数
     ui->leastData->setText(QString::number(cell.value));

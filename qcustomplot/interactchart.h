@@ -33,8 +33,8 @@ public:
 public slots:
     void clear();
 
-    void addYPoint(const serialAnalyseCell &cell);
-    void addYPointBaseOnTime(const serialAnalyseCell &cell);
+    void addYPoint(const SerialAnalyseCell &cell);
+    void addYPointBaseOnTime(const SerialAnalyseCell &cell);
 
 protected:
     // 鼠标滚轮事件
