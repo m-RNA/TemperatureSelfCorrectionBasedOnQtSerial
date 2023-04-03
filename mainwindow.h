@@ -7,6 +7,7 @@
 #include "bll_leastssquare.h"
 #include "bll_save_data_to_xlsx.h"
 #include "bll_sound.h"
+#include "bll_data_wave.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -85,6 +86,8 @@ signals:
     void sgSoundPlay2(const SoundIndex &index);
     void sgSoundStop();
 
+    void sgSetDataWaveRange(const double range);
+    void sgSetDataWaveInterval(const int ms);
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
@@ -119,6 +122,8 @@ private:
 
     void pictureInit();
     void soundInit();
+    void listenDataWaveInit();
+    void listenDataWaveQuit();
 
     unsigned long long order; // 最小二乘法多项式阶数
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
@@ -136,6 +141,8 @@ private:
     QThread *threadXlsx = nullptr;
     Bll_Sound *taskSound = nullptr;
     QThread *threadSound = nullptr;
+    Bll_DataWave *taskDataWave = nullptr;
+    QThread *threadDataWave = nullptr;
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);

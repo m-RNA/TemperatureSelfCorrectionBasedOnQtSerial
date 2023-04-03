@@ -24,6 +24,15 @@ void CollectPanel::setOnlineState(bool state)
         setState(0);
 }
 
+void CollectPanel::setStableState(bool state)
+{
+    stableState = state;
+    if (stableState)
+        setState(4);
+    else
+        setState(3);
+}
+
 void CollectPanel::setState(int state)
 {
     uiLedState = state;

@@ -32,6 +32,7 @@ INCLUDEPATH +=  \
 
 SOURCES += \
     about.cpp \
+    collect_data/bll_data_wave.cpp \
     collect_data/bll_save_data_to_xlsx.cpp \
     collect_data/collectpanel.cpp \
     config.c \
@@ -52,6 +53,7 @@ SOURCES += \
 
 HEADERS += \
     big_float/BigFloat.h \
+    collect_data/bll_data_wave.h \
     collect_data/bll_save_data_to_xlsx.h \
     config.h \
     about.h \

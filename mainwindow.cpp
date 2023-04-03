@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* 采集仪表盘 */
     ui->collectPanel_Dtm->setYAxisFormat("f", 0);
-    ui->collectPanel_Std->setCheckWaveState(true);
+    // ui->collectPanel_Std->setCheckWaveState(true);
     ui->collectPanel_Std->setCheckWaveNum(ui->spbxWaveNum->value());
     ui->collectPanel_Std->setCheckWaveRange(ui->spbxWaveRange->value());
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent)
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
     pictureInit();
+
+    listenDataWaveInit();
 }
 
 MainWindow::~MainWindow()
@@ -154,6 +156,8 @@ MainWindow::~MainWindow()
         threadSound->quit();
         threadSound->wait();
     }
+
+    listenDataWaveQuit();
     delete ui;
 }
 
@@ -194,6 +198,42 @@ void MainWindow::pictureInit()
     // QImage fitImg = img.scaled(ui->lbPicture->width(), ui->lbPicture->height(), Qt::IgnoreAspectRatio);
     // background.setBrush(QPalette::Window, QBrush(fitImg));
     // ui->lbPicture->setPalette(background);
+}
+
+void MainWindow::listenDataWaveInit()
+{
+    listenDataWaveQuit();
+    taskDataWave = new Bll_DataWave;
+    taskDataWave->setInterval(3000);
+    taskDataWave->setRange(ui->spbxWaveRange->value());
+    threadDataWave = new QThread;
+    taskDataWave->moveToThread(threadDataWave);
+    connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);
+    connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
+    connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);
+    connect(this, &MainWindow::sgSetDataWaveInterval, taskDataWave, &Bll_DataWave::setInterval);
+
+    // 标准仪器稳定后，开始采集数据
+    connect(taskDataWave, &Bll_DataWave ::sgTurnToStable, [=]()
+            {
+                if (waitingStdStable)
+                {
+                    waitingStdStable = false;
+                    goOnCollect();
+                } });
+
+    threadDataWave->start();
+}
+
+void MainWindow::listenDataWaveQuit()
+{
+    if (threadDataWave)
+    {
+        threadDataWave->quit();
+        threadDataWave->wait();
+        threadDataWave = nullptr;
+    }
 }
 
 void MainWindow::soundInit()
@@ -461,12 +501,17 @@ void Bll_CollectBtn::startCollect()
     ui->collectPanel_Dtm->collectStart();
 
     qDebug() << "开始采集" << collectCounter;
+
+    listenDataWaveQuit();
 }
 
 void Bll_CollectBtn::stopCollect()
 {
     ui->collectPanel_Std->collectStop();
     ui->collectPanel_Dtm->collectStop();
+
+    listenDataWaveInit();
+
     ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
     ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
 
@@ -477,6 +522,9 @@ void Bll_CollectBtn::finishCollect()
 {
     ui->collectPanel_Std->collectFinish();
     ui->collectPanel_Dtm->collectFinish();
+
+    listenDataWaveInit();
+
     ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
     ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
 
@@ -491,6 +539,8 @@ void Bll_CollectBtn::resetCollect()
     ui->collectPanel_Dtm->collectRestart();
 
     qDebug() << "重采本点" << collectCounter;
+
+    listenDataWaveQuit();
 }
 
 void Bll_CollectBtn::nextCollect()
@@ -499,6 +549,8 @@ void Bll_CollectBtn::nextCollect()
     emit sgXlsxNextPoint();
 
     qDebug() << "采集下点" << collectCounter;
+
+    listenDataWaveQuit();
 }
 
 // 更新单点进度条显示时间
@@ -779,6 +831,7 @@ void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 void MainWindow::on_spbxWaveRange_valueChanged(double arg1)
 {
     ui->collectPanel_Std->setCheckWaveRange(arg1);
+    emit sgSetDataWaveRange(arg1);
 }
 
 void MainWindow::on_btnVerify_clicked()

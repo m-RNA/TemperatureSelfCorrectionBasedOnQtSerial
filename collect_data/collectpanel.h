@@ -39,6 +39,7 @@ public:
     void setYAxisFormat(const QString &format, const int precision);
 
     void setOnlineState(bool state);
+    void setStableState(bool state);
     void setCheckWaveState(bool check);
     void setCheckWaveNum(int num);
     void setCheckWaveRange(const double range);
