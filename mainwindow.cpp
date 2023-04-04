@@ -823,9 +823,9 @@ void MainWindow::on_actionWizard_triggered()
                 ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
                 ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
                 ui->start_Std->on_btnSerialSwitch_clicked();
-                ui->start_Dtm->on_btnSerialSwitch_clicked(); });
+                ui->start_Dtm->on_btnSerialSwitch_clicked();
+                ui->tabMain->setCurrentIndex(2); });
     wizard.exec();
-    ui->tabMain->setCurrentIndex(2);
 }
 
 void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
