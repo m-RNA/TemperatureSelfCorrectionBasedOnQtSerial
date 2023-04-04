@@ -1,7 +1,13 @@
 #include "bll_data_wave.h"
+#include <QDebug>
 
 Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
 {
+    timerWatchDog = new QTimer(this);
+    timerWatchDog->setInterval(5000);
+    connect(timerWatchDog, &QTimer::timeout, [=]()
+            { emit sgReceiveNull(); });
+    timerWatchDog->start();
 }
 
 void Bll_DataWave::setRange(const double r)
@@ -17,6 +23,7 @@ void Bll_DataWave::setInterval(const int ms)
 // 一定时间范围的波动范围检测
 void Bll_DataWave::addData(const SerialAnalyseCell &cell)
 {
+    timerWatchDog->start();
     data.push_back(cell);
 
     // 第一个数据
