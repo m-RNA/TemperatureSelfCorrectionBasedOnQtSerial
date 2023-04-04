@@ -114,14 +114,21 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
+    connect(ui->start_Std, &StartCommunication::serialStateChange, [=](bool state)
+            {
+                if(state)    
+                    listenDataWaveInit();
+                else
+                    listenDataWaveQuit(); });
+
     // 标准仪器稳定后，开始采集数据
     connect(ui->collectPanel_Std, &CollectPanel::sgTurnToStable, [=]()
             {
-        if (waitingStdStable)
-        {
-            waitingStdStable = false;
-            goOnCollect();
-        } });
+                if (waitingStdStable)
+                {
+                    waitingStdStable = false;
+                    goOnCollect();
+                } });
 
     /* Xlsx 文件记录保存 */
     taskXlsxData = new Bll_SaveDataToXlsx;
@@ -140,8 +147,6 @@ MainWindow::MainWindow(QWidget *parent)
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
     pictureInit();
-
-    listenDataWaveInit();
 }
 
 MainWindow::~MainWindow()
