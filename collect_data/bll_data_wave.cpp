@@ -6,7 +6,7 @@ Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
     timerWatchDog = new QTimer(this);
     timerWatchDog->setInterval(5000);
     connect(timerWatchDog, &QTimer::timeout, [=]()
-            { emit sgReceiveNull(); });
+            {stableState = 2; autoSendStableState(); });
     timerWatchDog->start();
 }
 
@@ -18,6 +18,11 @@ void Bll_DataWave::setRange(const double r)
 void Bll_DataWave::setInterval(const int ms)
 {
     interval = ms;
+}
+
+void Bll_DataWave::setCheckNum(const int num)
+{
+    checkNum = num;
 }
 
 // 一定时间范围的波动范围检测
@@ -61,30 +66,45 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
     if (data.length() == 1)
         goto FIRST;
 
+    if (data.length() < checkNum)
+    {
+        stableState = 0;
+        qDebug() << "data.length() < " << checkNum;
+        goto CHECK_STABLE;
+    }
+
     if (cell.value > max.value)
     {
         max = cell;
-        goto CHECK_STABLE;
+        goto CHECK_MIN_MAX;
     }
     else if (cell.value < min.value)
     {
         min = cell;
-        goto CHECK_STABLE;
+        goto CHECK_MIN_MAX;
     }
 
     return;
 
-CHECK_STABLE:
+CHECK_MIN_MAX:
     if (max.value - min.value > range)
-        stableState = false;
+        stableState = 0;
     else
-        stableState = true;
+        stableState = 1;
 
+CHECK_STABLE:
+    autoSendStableState();
+}
+
+void Bll_DataWave::autoSendStableState(void)
+{
     if (stableState ^ lastStableState)
     {
-        if (stableState)
-            emit sgTurnToStable();
         emit sgStableState(stableState);
+        if (stableState == 1)
+            emit sgTurnToStable();
+        else if (stableState == 2)
+            emit sgReceiveTimeout();
     }
     lastStableState = stableState;
 }

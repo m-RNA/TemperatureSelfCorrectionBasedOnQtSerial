@@ -86,6 +86,7 @@ signals:
     void sgSoundPlay2(const SoundIndex &index);
     void sgSoundStop();
 
+    void sgSetDataWaveNum(const int num);
     void sgSetDataWaveRange(const double range);
     void sgSetDataWaveInterval(const int ms);
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);

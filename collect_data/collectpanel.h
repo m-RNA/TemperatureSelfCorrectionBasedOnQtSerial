@@ -39,10 +39,11 @@ public:
     void setYAxisFormat(const QString &format, const int precision);
 
     void setOnlineState(bool state);
-    void setStableState(bool state);
+    void setStableState(const char state);
     void setCheckWaveState(bool check);
     void setCheckWaveNum(int num);
     void setCheckWaveRange(const double range);
+    void setReceiveTimeout(void);
 
     bool isStable(void);
     double getRange(void);
@@ -83,8 +84,8 @@ private:
 
     bool onlineState = false;
     bool checkWaveState = false;
-    bool stableState = false;
-    bool laseStableState = false;
+    char stableState = false;
+    char laseStableState = false;
     QVector<double> dataWave;
     Bll_Average *taskAverage = nullptr;
     QThread *threadAverage = nullptr;

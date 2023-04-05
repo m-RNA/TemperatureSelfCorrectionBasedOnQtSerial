@@ -114,21 +114,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
+    // 标准仪器稳定后，开始采集数据
+    connect(ui->collectPanel_Std, &CollectPanel::sgTurnToStable, this, &MainWindow::goOnCollect);
+
+    // 监听数据波动
     connect(ui->start_Std, &StartCommunication::serialStateChange, [=](bool state)
             {
-                if(state)    
+                if(state)
                     listenDataWaveInit();
                 else
                     listenDataWaveQuit(); });
-
-    // 标准仪器稳定后，开始采集数据
-    connect(ui->collectPanel_Std, &CollectPanel::sgTurnToStable, [=]()
-            {
-                if (waitingStdStable)
-                {
-                    waitingStdStable = false;
-                    goOnCollect();
-                } });
 
     /* Xlsx 文件记录保存 */
     taskXlsxData = new Bll_SaveDataToXlsx;
@@ -215,20 +210,17 @@ void MainWindow::listenDataWaveInit()
     taskDataWave->moveToThread(threadDataWave);
     connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);
+    connect(taskDataWave, &Bll_DataWave::sgReceiveTimeout, ui->collectPanel_Std, &CollectPanel::setReceiveTimeout);
     connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
     connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);
     connect(this, &MainWindow::sgSetDataWaveInterval, taskDataWave, &Bll_DataWave::setInterval);
+    connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);
 
     // 标准仪器稳定后，开始采集数据
-    connect(taskDataWave, &Bll_DataWave ::sgTurnToStable, [=]()
-            {
-                if (waitingStdStable)
-                {
-                    waitingStdStable = false;
-                    goOnCollect();
-                } });
-
+    connect(taskDataWave, &Bll_DataWave::sgTurnToStable, this, &MainWindow::goOnCollect);
     threadDataWave->start();
+
+    qDebug() << "threadDataWave start";
 }
 
 void MainWindow::listenDataWaveQuit()
@@ -238,6 +230,7 @@ void MainWindow::listenDataWaveQuit()
         threadDataWave->quit();
         threadDataWave->wait();
         threadDataWave = nullptr;
+        qDebug() << "threadDataWave quit";
     }
 }
 
@@ -352,10 +345,10 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         }
 
         // 检查数据波动是否超过阈值
+        waitingStdStable = true;
         if (ui->collectPanel_Std->isStable() == false)
         {
             ui->pgsbSingle->setMaximum(0);
-            waitingStdStable = true;
             if (btnSwitchState == CollectBtnState_Next)
                 ui->btnCollectRestart->setEnabled(false);
             setCollectBtnState(CollectBtnState_Wait);
@@ -390,6 +383,12 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
 
 void Bll_CollectBtn::on_btnCollectRestart_clicked()
 {
+    // 两个串口是否同时打开
+    if (!(ui->start_Dtm->state() && ui->start_Std->state()))
+    {
+        QMessageBox::critical(this, "错误", "请同时连接两个仪器");
+        return;
+    }
     isCollecting = true;
     ui->pgsbSum->setValue(collectCounter);
 
@@ -489,13 +488,19 @@ void Bll_CollectBtn::timerCollectTimeOut()
 // 接着开始采集
 void Bll_CollectBtn::goOnCollect()
 {
-    pgsbSingleInit();
-    setCollectBtnState(CollectBtnState_Stop);
-    ui->btnCollectRestart->setEnabled(true);
+    if (waitingStdStable)
+    {
+        waitingStdStable = false;
+        pgsbSingleInit();
+        setCollectBtnState(CollectBtnState_Stop);
+        ui->btnCollectRestart->setEnabled(true);
 
-    isCollecting = true;
-    timerCollect->start();
-    startCollect();
+        isCollecting = true;
+        timerCollect->start();
+        startCollect();
+
+        listenDataWaveQuit();
+    }
 }
 
 void Bll_CollectBtn::startCollect()
@@ -554,8 +559,6 @@ void Bll_CollectBtn::nextCollect()
     emit sgXlsxNextPoint();
 
     qDebug() << "采集下点" << collectCounter;
-
-    listenDataWaveQuit();
 }
 
 // 更新单点进度条显示时间
@@ -831,6 +834,7 @@ void MainWindow::on_actionWizard_triggered()
 void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 {
     ui->collectPanel_Std->setCheckWaveNum(arg1);
+    emit sgSetDataWaveNum(arg1);
 }
 
 void MainWindow::on_spbxWaveRange_valueChanged(double arg1)

@@ -17,20 +17,14 @@ CollectPanel::~CollectPanel()
 void CollectPanel::setOnlineState(bool state)
 {
     onlineState = state;
-
-    if (onlineState)
-        setState(1);
-    else
-        setState(0);
+    setState(onlineState);
+    stableState = 0;
 }
 
-void CollectPanel::setStableState(bool state)
+void CollectPanel::setStableState(const char state)
 {
     stableState = state;
-    if (stableState)
-        setState(4);
-    else
-        setState(3);
+    setState(3 + state);
 }
 
 void CollectPanel::setState(int state)
@@ -61,6 +55,11 @@ void CollectPanel::setState(int state)
     case 4:
         ui->ledText->setText("波动稳定");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);"); // 绿色
+        break;
+
+    case 5:
+        ui->ledText->setText("解析超时");
+        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(255, 176, 5);"); // 黄色
         break;
     }
 }
@@ -185,6 +184,12 @@ QCPAxis *CollectPanel::getXAxis(void)
 void CollectPanel::setCheckWaveRange(const double range)
 {
     commandRange = range;
+}
+
+void CollectPanel::setReceiveTimeout(void)
+{
+    stableState = false;
+    setState(5);
 }
 
 void CollectPanel::setCheckWaveState(bool check)
