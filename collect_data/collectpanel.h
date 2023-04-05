@@ -40,9 +40,6 @@ public:
 
     void setOnlineState(bool state);
     void setStableState(const char state);
-    void setCheckWaveState(bool check);
-    void setCheckWaveNum(int num);
-    void setCheckWaveRange(const double range);
     void setReceiveTimeout(void);
 
     bool isStable(void);
@@ -62,36 +59,26 @@ signals:
 
     void sgCollectDataGet(const vector<double> &data);
 
-    void sgTurnToStable();
-
     void sgDataAverage(const vector<double> &data);
 
-private slots:
 
 private:
     Ui::CollectPanel *ui;
     QString deviceName;
     vector<double> data;
     bool collectState = false;
-    int uiLedState = 0;
 
     double min = 0;
     double max = 0;
     double currentRange = 0;
-    double commandRange = 0.01;
-    double checkWaveNum = 10;
     bool resetRange = true;
 
     bool onlineState = false;
-    bool checkWaveState = false;
-    char stableState = false;
-    char laseStableState = false;
-    QVector<double> dataWave;
+    char stableState = 0;
     Bll_Average *taskAverage = nullptr;
     QThread *threadAverage = nullptr;
 
-    void setState(int state);
-    void checkDataWave(const double &data);
+    void setLEDState(int state);
 };
 
 #endif // COLLECTPANEL_H

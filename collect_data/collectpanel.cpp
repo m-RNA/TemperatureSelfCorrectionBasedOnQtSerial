@@ -17,19 +17,18 @@ CollectPanel::~CollectPanel()
 void CollectPanel::setOnlineState(bool state)
 {
     onlineState = state;
-    setState(onlineState);
+    setLEDState(onlineState);
     stableState = 0;
 }
 
 void CollectPanel::setStableState(const char state)
 {
     stableState = state;
-    setState(3 + state);
+    setLEDState(3 + state);
 }
 
-void CollectPanel::setState(int state)
+void CollectPanel::setLEDState(int state)
 {
-    uiLedState = state;
     switch (state)
     {
     case 0:
@@ -89,7 +88,6 @@ void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
     {
         min = cell.value;
         max = cell.value;
-        dataWave.clear();
         resetRange = false;
     }
 
@@ -113,8 +111,6 @@ void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
             ui->lbRange->setText(QString::number(currentRange));
         }
     }
-    else if (checkWaveState) // 是否检查数据波动
-        checkDataWave(cell.value);
 }
 
 void CollectPanel::collectStart(void)
@@ -123,7 +119,7 @@ void CollectPanel::collectStart(void)
     collectState = true;
     stableState = false; // 设置为不稳定，防止采集完成后，波动检查还没完成，就开始采集下一组数据
     data.clear();
-    setState(2);
+    setLEDState(2);
 
     // 关闭线程，应该可以早点关闭的
     if (threadAverage)
@@ -181,87 +177,15 @@ QCPAxis *CollectPanel::getXAxis(void)
     return ui->chart->xAxis;
 }
 
-void CollectPanel::setCheckWaveRange(const double range)
-{
-    commandRange = range;
-}
-
 void CollectPanel::setReceiveTimeout(void)
 {
     stableState = false;
-    setState(5);
-}
-
-void CollectPanel::setCheckWaveState(bool check)
-{
-    checkWaveState = check;
-}
-
-void CollectPanel::setCheckWaveNum(int num)
-{
-    checkWaveNum = num;
+    setLEDState(5);
 }
 
 bool CollectPanel::isStable(void)
 {
     return stableState;
-}
-
-// 以滑动窗口的方式检查数据波动
-void CollectPanel::checkDataWave(const double &data)
-{
-    // 滑动窗口
-    if (dataWave.size() < checkWaveNum)
-    {
-        dataWave.push_back(data);
-        stableState = false;
-        setState(onlineState);
-        qDebug() << deviceName << "dataWave.size() < " << checkWaveNum;
-        return;
-    }
-
-    // 考虑检查点数有可能变小
-    while (dataWave.size() > checkWaveNum)
-    {
-        dataWave.pop_front();
-        stableState = false;
-        setState(onlineState);
-        qDebug() << deviceName << "dataWave.size() > " << checkWaveNum;
-    }
-
-    dataWave.pop_front();
-    dataWave.push_back(data);
-
-    // 检查数据波动
-    double max = dataWave.at(0);
-    double min = dataWave.at(0);
-    for (int i = 0; i < checkWaveNum; ++i)
-    {
-        if (dataWave.at(i) > max)
-            max = dataWave.at(i);
-        if (dataWave.at(i) < min)
-            min = dataWave.at(i);
-    }
-
-    if (max - min > commandRange)
-        stableState = false;
-    else
-        stableState = true;
-
-    // 如果和上一次的状态不一样，就更新状态
-    if (uiLedState == 1 || laseStableState ^ stableState)
-    {
-        if (stableState)
-        {
-            setState(4);
-            emit sgTurnToStable();
-        }
-        else
-            setState(3);
-
-        qDebug() << deviceName << "StableState:" << stableState;
-    }
-    laseStableState = stableState;
 }
 
 Bll_Average::Bll_Average(QObject *parent) : QObject(parent)

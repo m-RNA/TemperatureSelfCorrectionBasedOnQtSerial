@@ -96,9 +96,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* 采集仪表盘 */
     ui->collectPanel_Dtm->setYAxisFormat("f", 0);
-    // ui->collectPanel_Std->setCheckWaveState(true);
-    ui->collectPanel_Std->setCheckWaveNum(ui->spbxWaveNum->value());
-    ui->collectPanel_Std->setCheckWaveRange(ui->spbxWaveRange->value());
     connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
     connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
 
@@ -113,9 +110,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::setOnlineState);
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
-
-    // 标准仪器稳定后，开始采集数据
-    connect(ui->collectPanel_Std, &CollectPanel::sgTurnToStable, this, &MainWindow::goOnCollect);
 
     // 监听数据波动
     connect(ui->start_Std, &StartCommunication::serialStateChange, [=](bool state)
@@ -206,6 +200,8 @@ void MainWindow::listenDataWaveInit()
     taskDataWave = new Bll_DataWave;
     taskDataWave->setInterval(3000);
     taskDataWave->setRange(ui->spbxWaveRange->value());
+    taskDataWave->setCheckNum(ui->spbxWaveNum->value());
+
     threadDataWave = new QThread;
     taskDataWave->moveToThread(threadDataWave);
     connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
@@ -783,7 +779,6 @@ void MainWindow::setAverageTableItem_Dtm(const string &data)
 
 void MainWindow::on_cbSound_currentIndexChanged(int index)
 {
-
     if (index <= 0)
     {
         if (threadSound)
@@ -833,13 +828,11 @@ void MainWindow::on_actionWizard_triggered()
 
 void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 {
-    ui->collectPanel_Std->setCheckWaveNum(arg1);
     emit sgSetDataWaveNum(arg1);
 }
 
 void MainWindow::on_spbxWaveRange_valueChanged(double arg1)
 {
-    ui->collectPanel_Std->setCheckWaveRange(arg1);
     emit sgSetDataWaveRange(arg1);
 }
 
