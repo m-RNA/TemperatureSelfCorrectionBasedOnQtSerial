@@ -164,7 +164,7 @@ void CollectPanel::collectFinish(void)
 void CollectPanel::collectRestart(void)
 {
     collectStart();
-    ui->lbRange->setText("NULL");
+    ui->lbRange->setText("0");
 }
 
 double CollectPanel::getRange(void)
