@@ -139,9 +139,6 @@ void CollectPanel::collectFinish(void)
     // 最新几个数据点可能卡在软件定时器里了，更新一下
     ui->chart->chartRefresh();
 
-    // 将数据发送给主线程中的xlsx表格保存数据
-    emit sgCollectDataGet(data);
-
     // 启动计算平均值线程
     // 局部线程的创建的创建
     if (threadAverage)
@@ -154,11 +151,14 @@ void CollectPanel::collectFinish(void)
     taskAverage->moveToThread(threadAverage);
     connect(threadAverage, &QThread::finished, [=]()
             {taskAverage->deleteLater(); qDebug() << "threadAverage finished"; });
-    connect(this, &CollectPanel::sgDataAverage, taskAverage, &Bll_Average::slAverage);
+    connect(this, &CollectPanel::sgCollectDataGet, taskAverage, &Bll_Average::slAverage);
     connect(taskAverage, &Bll_Average::sgAverage, [=](const string &str)
             { emit sgCollectDataAverage(str); });
     threadAverage->start();
-    emit sgDataAverage(data);
+
+    // 将数据发送给主线程中的xlsx表格保存数据, 同时用于计算平均值
+    emit sgCollectDataGet(data);
+
     collectStop();
 }
 void CollectPanel::collectRestart(void)

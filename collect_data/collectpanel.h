@@ -59,9 +59,6 @@ signals:
 
     void sgCollectDataGet(const vector<double> &data);
 
-    void sgDataAverage(const vector<double> &data);
-
-
 private:
     Ui::CollectPanel *ui;
     QString deviceName;
