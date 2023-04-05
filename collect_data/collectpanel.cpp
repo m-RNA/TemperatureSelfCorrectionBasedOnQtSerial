@@ -83,19 +83,18 @@ void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
     // 将Y轴数据添加到曲线图上
     ui->chart->addYPointBaseOnTime(cell);
 
-    // 如果是刚刚打开采集状态，就要重置最大值和最小值,并清空数据
-    if (resetRange == true)
-    {
-        min = cell.value;
-        max = cell.value;
-        resetRange = false;
-    }
-
     // 如果是采集状态，将数据添加到data中
     if (collectState == true)
     {
         // 采集数据
         data.push_back(cell.value);
+
+        // 如果是刚刚打开采集状态，就要重置最大值和最小值
+        if (data.size() == 1)
+        {
+            min = cell.value;
+            max = cell.value;
+        }
 
         // 计算采集过程中的极差
         if (cell.value > max)
@@ -115,7 +114,6 @@ void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
 
 void CollectPanel::collectStart(void)
 {
-    resetRange = true;
     collectState = true;
     stableState = false; // 设置为不稳定，防止采集完成后，波动检查还没完成，就开始采集下一组数据
     data.clear();

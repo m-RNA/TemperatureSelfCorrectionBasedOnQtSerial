@@ -68,7 +68,6 @@ private:
     double min = 0;
     double max = 0;
     double currentRange = 0;
-    bool resetRange = true;
 
     bool onlineState = false;
     char stableState = 0;
