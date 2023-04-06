@@ -47,9 +47,9 @@ bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
 
 /// @brief 设置设备名称
 /// @param s 名称
-void StartCommunication::setDeviceName(QString s)
+void StartCommunication::setDeviceName(const QString &name)
 {
-    deviceName = s;
+    deviceName = name;
     ui->gbxSerialSetting->setTitle(deviceName);
     ui->chart->setDeviceName(deviceName);
     ui->chart->replot();

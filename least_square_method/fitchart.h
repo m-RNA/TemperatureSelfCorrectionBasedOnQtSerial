@@ -16,7 +16,6 @@ class FitChart : public QCustomPlot
 
 public:
     explicit FitChart(QWidget *parent = nullptr);
-    ~FitChart();
 
     void setVerifyTracerVisible(const bool visible); // 设置是否有验证游标
 

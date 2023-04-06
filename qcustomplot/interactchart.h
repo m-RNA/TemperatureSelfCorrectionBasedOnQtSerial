@@ -18,13 +18,7 @@ class InteractChart : public QCustomPlot
 public:
     explicit InteractChart(QWidget *parent = nullptr);
 
-    ~InteractChart();
-
-    void setDeviceName(QString name)
-    {
-        deviceName = name;
-        this->graph()->setName(QString(deviceName));
-    }
+    void setDeviceName(const QString &name);
 
     void chartRefresh(void);
 

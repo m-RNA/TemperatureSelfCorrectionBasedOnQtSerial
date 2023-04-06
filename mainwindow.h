@@ -33,6 +33,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void setDeviceName_Std(const QString &name);
+    void setDeviceName_Dtm(const QString &name);
+
 private slots:
     void on_btnCollectSwitch_clicked();
 
@@ -122,8 +125,6 @@ private:
     void nextCollect();
     void goOnCollect();
 
-    void setDeviceName_Std(QString name);
-    void setDeviceName_Dtm(QString name);
     void setCollectBtnState(const CollectBtnState &state);
 
     void pictureInit();

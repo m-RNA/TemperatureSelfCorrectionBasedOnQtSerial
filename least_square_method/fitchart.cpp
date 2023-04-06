@@ -87,10 +87,6 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 }
 
-FitChart::~FitChart()
-{
-}
-
 void FitChart::setVerifyTracerVisible(const bool visible)
 {
 	if (visible)

@@ -154,13 +154,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setDeviceName_Std(QString name)
+void MainWindow::setDeviceName_Std(const QString &name)
 {
     ui->start_Std->setDeviceName(name);
     ui->collectPanel_Std->setDeviceName(name);
 }
 
-void MainWindow::setDeviceName_Dtm(QString name)
+void MainWindow::setDeviceName_Dtm(const QString &name)
 {
     ui->start_Dtm->setDeviceName(name);
     ui->collectPanel_Dtm->setDeviceName(name);
@@ -850,7 +850,7 @@ void MainWindow::on_actionAutoSave_triggered(bool checked)
 void MainWindow::on_actionWizard_triggered()
 {
     Wizard wizard(this);
-    connect(&wizard, &Wizard::wizardInfoFinish,[&](const WizardInfo &info)
+    connect(&wizard, &Wizard::wizardInfoFinish, [&](const WizardInfo &info)
             {
                 qDebug() << "向导结束";
                 if(ui->start_Std->state() == true)
@@ -863,6 +863,8 @@ void MainWindow::on_actionWizard_triggered()
                 ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
                 ui->start_Std->on_btnSerialSwitch_clicked();
                 ui->start_Dtm->on_btnSerialSwitch_clicked();
+                setDeviceName_Std(info.baseInfo[5]);
+                setDeviceName_Dtm(info.baseInfo[6]);
                 ui->tabMain->setCurrentIndex(2); });
     wizard.exec();
 }

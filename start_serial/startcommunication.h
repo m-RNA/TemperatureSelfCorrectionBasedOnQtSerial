@@ -25,7 +25,7 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *event);
 
-    void setDeviceName(QString s);
+    void setDeviceName(const QString &name);
 
     bool state()
     {

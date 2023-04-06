@@ -70,8 +70,10 @@ InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 }
 
-InteractChart::~InteractChart()
+void InteractChart::setDeviceName(const QString &name)
 {
+	deviceName = name;
+	this->graph()->setName(QString(deviceName));
 }
 
 /*
@@ -276,7 +278,7 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 		if (timelineState)
 		{
 			QToolTip::showText(ev->globalPos(),
-                               tr("<h5><table><tr><td align='right'>%1:</td><td>%2</td></tr><tr><td align='right'>时间:<td>%3</td></tr></h5>")
+							   tr("<h5><table><tr><td align='right'>%1:</td><td>%2</td></tr><tr><td align='right'>时间:<td>%3</td></tr></h5>")
 								   .arg(selectedGraph->name())
 								   .arg(QString::number(coords.y(), 'g', 6))
 								   .arg(QTime::fromMSecsSinceStartOfDay(coords.x() * 1000).toString("hh:mm:ss.zzz")), // 将x轴的值转换为时间

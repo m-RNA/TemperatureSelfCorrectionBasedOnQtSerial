@@ -47,7 +47,8 @@
         "iosfwd": "cpp",
         "condition_variable": "cpp",
         "fft": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "typeinfo": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

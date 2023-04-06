@@ -96,7 +96,7 @@
          <string/>
         </property>
         <property name="text">
-         <string>DaoWanTech</string>
+         <string>道万</string>
         </property>
         <property name="maxLength">
          <number>32767</number>
@@ -144,7 +144,7 @@
       <item>
        <widget class="QLineEdit" name="leID_Dtm">
         <property name="text">
-         <string>Pt_Test</string>
+         <string>待定</string>
         </property>
         <property name="placeholderText">
          <string>名称或编号</string>
