@@ -329,7 +329,6 @@ void MainWindow::pgsbSingleReset()
 
 void Bll_CollectBtn::on_btnCollectSwitch_clicked()
 {
-    qDebug() << "切换采集状态" << isCollecting;
     if (isCollecting == false) // 开始采集
     {
         // 取消等待标准仪器稳定
@@ -626,7 +625,6 @@ void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
 
     // 设置采集点数
     samplePointSum = arg1;
-    qDebug() << "samplePointSum:" << samplePointSum;
 }
 
 /*
@@ -650,6 +648,7 @@ void LeastSquare::updateCollectDataXY(void)
     DECIMAL_TYPE temp;
     collectDataX.clear(); // 重置x容器
     collectDataY.clear(); // 重置y容器
+    qDebug() << "LeastSquare::updateCollectDataXY ";
     for (int i = 0; i < samplePointSum; i++)
     {
         QString qsX, qsY;
@@ -660,7 +659,7 @@ void LeastSquare::updateCollectDataXY(void)
         // qDebug() << "counter" << counter;
 
         temp = BigFloat::toLongDouble(qsX.toStdString());
-        qDebug() << "\nLeastSquare::updateCollectDataXY ";
+        qDebug() << i;
         qDebug() << "BigFloat x =" << BigFloat(qsX.toStdString());
         collectDataX.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
@@ -671,8 +670,6 @@ void LeastSquare::updateCollectDataXY(void)
         collectDataY.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         qDebug() << globalStringBuffer;
-
-        qDebug() << i << ":" << qsX << qsY;
     }
 }
 
@@ -701,7 +698,6 @@ void LeastSquare::on_spbxOrder_valueChanged(int arg1)
 {
     order = arg1;
     ui->twFactor->setRowCount(arg1 + 1);
-    qDebug() << "order:" << order;
 
     // tryUpdateFitChart(false);
 }
@@ -755,7 +751,6 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
     QString str = item->text();
     if (str == "")
     {
-        qDebug() << "空字符";
         if (old_text == "")
             return;
 
@@ -766,7 +761,6 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
     while (str[str.length() - 1] == ' ' || str[str.length() - 1] == '\n' || str[str.length() - 1] == '\r')
     {
         str = str.left(str.length() - 1);
-        qDebug() << "去除空格";
         if (str == "")
             break;
     }
@@ -774,7 +768,6 @@ void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
     // 完全匹配
     if (reg.exactMatch(str))
     {
-        qDebug() << "正则匹配成功";
         item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
         // qDebug() << ui->twAverage->currentRow(); // 没选择单元格 值为-1

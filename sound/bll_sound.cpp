@@ -1,5 +1,4 @@
 #include "bll_sound.h"
-#include <QDebug>
 
 Bll_Sound::Bll_Sound(QObject *parent) : QObject(parent)
 {
@@ -17,7 +16,6 @@ Bll_Sound::~Bll_Sound()
 
 void Bll_Sound::play1(const SoundIndex &index)
 {
-    qDebug() << "Bll_Sound::play1";
     if (index <= Off || index > ShaanXi)
         return;
 
@@ -33,7 +31,6 @@ void Bll_Sound::play1(const SoundIndex &index)
 
 void Bll_Sound::play2(const SoundIndex &index)
 {
-    qDebug() << "Bll_Sound::play2";
     if (index <= Off || index > ShaanXi)
         return;
 
@@ -49,12 +46,10 @@ void Bll_Sound::play2(const SoundIndex &index)
 
 void Bll_Sound::stop()
 {
-    qDebug() << "Bll_Sound::stop";
-
     if (bells)
     {
         bells->stop();
-        delete bells;
+        bells->deleteLater();
         bells = nullptr;
     }
 }

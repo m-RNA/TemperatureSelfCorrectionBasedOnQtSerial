@@ -21,7 +21,6 @@ void Bll_GenerateData::run()
 {
     QElapsedTimer eTimer;
     eTimer.start();
-    qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
     vector<DECIMAL_TYPE> x, y;
 
@@ -73,7 +72,6 @@ void Bll_LeastSquareMethod::run()
 {
     QElapsedTimer eTimer;
     eTimer.start();
-    qDebug() << "生成拟合数据线程ID：" << QThread::currentThread();
 
     // 这里默认格式正确，就不检查了
     // vector<DECIMAL_TYPE> method00(int N, vector<DECIMAL_TYPE> x, vector<DECIMAL_TYPE> y)

@@ -1,5 +1,4 @@
 #include "bll_data_wave.h"
-#include <QDebug>
 
 Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
 {
@@ -69,7 +68,6 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
     if (data.length() < checkNum)
     {
         stableState = 0;
-        qDebug() << "data.length() < " << checkNum;
         goto CHECK_STABLE;
     }
 
