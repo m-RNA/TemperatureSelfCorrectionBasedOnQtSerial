@@ -3,8 +3,6 @@
 #include "config.h"
 
 #include <QWidget>
-#include <vector>
-#include <string>
 #include "interactchart.h"
 #include "bll_serialrecvanalyse.h"
 using namespace std;
@@ -13,19 +11,6 @@ namespace Ui
 {
     class CollectPanel;
 }
-
-class Bll_Average : public QObject
-{
-    Q_OBJECT
-public:
-    explicit Bll_Average(QObject *parent = nullptr);
-
-public slots:
-    void slAverage(const vector<double> &data);
-
-signals:
-    void sgAverage(const string &average);
-};
 
 class CollectPanel : public QWidget
 {
@@ -54,25 +39,13 @@ public:
 public slots:
     void slCollectData(const SerialAnalyseCell &cell);
 
-signals:
-    void sgCollectDataAverage(const string &average);
-
-    void sgCollectDataGet(const vector<double> &data);
+    void slSetRange(const double &range);
 
 private:
     Ui::CollectPanel *ui;
     QString deviceName;
-    vector<double> data;
-    bool collectState = false;
-
-    double min = 0;
-    double max = 0;
-    double currentRange = 0;
-
-    bool onlineState = false;
+    double range = 0;
     char stableState = 0;
-    Bll_Average *taskAverage = nullptr;
-    QThread *threadAverage = nullptr;
 
     void setLEDState(int state);
 };

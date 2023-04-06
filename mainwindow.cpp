@@ -96,8 +96,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* 采集仪表盘 */
     ui->collectPanel_Dtm->setYAxisFormat("f", 0);
-    connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Std);
-    connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataAverage, this, &MainWindow::setAverageTableItem_Dtm);
 
     // 互连主轴和底轴矩形的x轴范围：
     connect(ui->collectPanel_Std->getXAxis(), static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged),
@@ -129,8 +127,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::sgXlsxSaveReport, taskXlsxData, &Bll_SaveDataToXlsx::saveReport);
     connect(this, &MainWindow::sgXlsxSetAutoSave, taskXlsxData, &Bll_SaveDataToXlsx::setAutoSave);
     connect(this, &MainWindow::sgXlsxSaveInfo, taskXlsxData, &Bll_SaveDataToXlsx::saveInfo);
-    connect(ui->collectPanel_Std, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
-    connect(ui->collectPanel_Dtm, &CollectPanel::sgCollectDataGet, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
     threadXlsx->start();
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
@@ -152,6 +148,7 @@ MainWindow::~MainWindow()
     }
 
     listenDataWaveQuit();
+    collectDataQuit();
     delete ui;
 }
 
@@ -227,6 +224,43 @@ void MainWindow::listenDataWaveQuit()
         threadDataWave->wait();
         threadDataWave = nullptr;
         qDebug() << "threadDataWave quit";
+    }
+}
+
+void MainWindow::collectDataInit()
+{
+    taskDataCollect_Std = new Bll_DataCollect;
+    taskDataCollect_Dtm = new Bll_DataCollect;
+    threadDataCollect = new QThread;
+    taskDataCollect_Std->moveToThread(threadDataCollect);
+    taskDataCollect_Dtm->moveToThread(threadDataCollect);
+    connect(threadDataCollect, &QThread::finished, [=]()
+            {taskDataCollect_Std->deleteLater(); taskDataCollect_Dtm->deleteLater(); });
+
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataCollect_Std, &Bll_DataCollect::slAddData);
+    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, taskDataCollect_Dtm, &Bll_DataCollect::slAddData);
+    connect(taskDataCollect_Std, &Bll_DataCollect::sgRange, ui->collectPanel_Std, &CollectPanel::slSetRange);
+    connect(taskDataCollect_Dtm, &Bll_DataCollect::sgRange, ui->collectPanel_Dtm, &CollectPanel::slSetRange);
+    connect(this, &MainWindow::sgCollectDataFinish_Std, taskDataCollect_Std, &Bll_DataCollect::slCollectFinish);
+    connect(this, &MainWindow::sgCollectDataFinish_Dtm, taskDataCollect_Dtm, &Bll_DataCollect::slCollectFinish);
+    connect(taskDataCollect_Std, &Bll_DataCollect::sgAverage, this, &MainWindow::setAverageTableItem_Std);
+    connect(taskDataCollect_Dtm, &Bll_DataCollect::sgAverage, this, &MainWindow::setAverageTableItem_Dtm);
+
+    connect(taskDataCollect_Std, &Bll_DataCollect::sgCollectData, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Std);
+    connect(taskDataCollect_Dtm, &Bll_DataCollect::sgCollectData, taskXlsxData, &Bll_SaveDataToXlsx::saveData_Dtm);
+
+    threadDataCollect->start();
+    qDebug() << "threadDataCollect start";
+}
+
+void MainWindow::collectDataQuit()
+{
+    if (threadDataCollect)
+    {
+        threadDataCollect->quit();
+        threadDataCollect->wait();
+        threadDataCollect = nullptr;
+        qDebug() << "threadDataCollect quit";
     }
 }
 
@@ -494,25 +528,25 @@ void Bll_CollectBtn::goOnCollect()
         isCollecting = true;
         timerCollect->start();
         startCollect();
-
-        listenDataWaveQuit();
     }
 }
 
 void Bll_CollectBtn::startCollect()
 {
+    listenDataWaveQuit();
+
     emit sgXlsxStartPoint();
 
+    collectDataInit();
     ui->collectPanel_Std->collectStart();
     ui->collectPanel_Dtm->collectStart();
 
     qDebug() << "开始采集" << collectCounter;
-
-    listenDataWaveQuit();
 }
 
 void Bll_CollectBtn::stopCollect()
 {
+    collectDataQuit();
     ui->collectPanel_Std->collectStop();
     ui->collectPanel_Dtm->collectStop();
 
@@ -526,8 +560,11 @@ void Bll_CollectBtn::stopCollect()
 
 void Bll_CollectBtn::finishCollect()
 {
+    emit sgCollectDataFinish_Std();
+    emit sgCollectDataFinish_Dtm();
     ui->collectPanel_Std->collectFinish();
     ui->collectPanel_Dtm->collectFinish();
+    collectDataQuit();
 
     listenDataWaveInit();
 
@@ -539,14 +576,16 @@ void Bll_CollectBtn::finishCollect()
 
 void Bll_CollectBtn::resetCollect()
 {
+    listenDataWaveQuit();
+    collectDataQuit();
+    collectDataInit();
+
     emit sgXlsxStartPoint();
 
     ui->collectPanel_Std->collectRestart();
     ui->collectPanel_Dtm->collectRestart();
 
     qDebug() << "重采本点" << collectCounter;
-
-    listenDataWaveQuit();
 }
 
 void Bll_CollectBtn::nextCollect()

@@ -16,8 +16,7 @@ CollectPanel::~CollectPanel()
 
 void CollectPanel::setOnlineState(bool state)
 {
-    onlineState = state;
-    setLEDState(onlineState);
+    setLEDState(state);
     stableState = 0;
 }
 
@@ -82,81 +81,21 @@ void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
 
     // 将Y轴数据添加到曲线图上
     ui->chart->addYPointBaseOnTime(cell);
-
-    // 如果是采集状态，将数据添加到data中
-    if (collectState == true)
-    {
-        // 采集数据
-        data.push_back(cell.value);
-
-        // 如果是刚刚打开采集状态，就要重置最大值和最小值
-        if (data.size() == 1)
-        {
-            min = cell.value;
-            max = cell.value;
-        }
-
-        // 计算采集过程中的极差
-        if (cell.value > max)
-        {
-            max = cell.value;
-            currentRange = max - min;
-            ui->lbRange->setText(QString::number(currentRange));
-        }
-        else if (cell.value < min)
-        {
-            min = cell.value;
-            currentRange = max - min;
-            ui->lbRange->setText(QString::number(currentRange));
-        }
-    }
 }
 
 void CollectPanel::collectStart(void)
 {
-    collectState = true;
-    stableState = false; // 设置为不稳定，防止采集完成后，波动检查还没完成，就开始采集下一组数据
-    data.clear();
     setLEDState(2);
-
-    // 关闭线程，应该可以早点关闭的
-    if (threadAverage)
-    {
-        threadAverage->quit();
-        threadAverage->wait();
-        threadAverage = nullptr;
-    }
 }
+
 void CollectPanel::collectStop(void)
 {
-    collectState = false;
     ui->lbRange->setText("NULL");
 }
 void CollectPanel::collectFinish(void)
 {
     // 最新几个数据点可能卡在软件定时器里了，更新一下
     ui->chart->chartRefresh();
-
-    // 启动计算平均值线程
-    // 局部线程的创建的创建
-    if (threadAverage)
-    {
-        threadAverage->quit();
-        threadAverage->wait();
-    }
-    taskAverage = new Bll_Average;
-    threadAverage = new QThread;
-    taskAverage->moveToThread(threadAverage);
-    connect(threadAverage, &QThread::finished, [=]()
-            {taskAverage->deleteLater(); qDebug() << "threadAverage finished"; });
-    connect(this, &CollectPanel::sgCollectDataGet, taskAverage, &Bll_Average::slAverage);
-    connect(taskAverage, &Bll_Average::sgAverage, [=](const string &str)
-            { emit sgCollectDataAverage(str); });
-    threadAverage->start();
-
-    // 将数据发送给主线程中的xlsx表格保存数据, 同时用于计算平均值
-    emit sgCollectDataGet(data);
-
     collectStop();
 }
 void CollectPanel::collectRestart(void)
@@ -167,7 +106,7 @@ void CollectPanel::collectRestart(void)
 
 double CollectPanel::getRange(void)
 {
-    return currentRange;
+    return range;
 }
 
 QCPAxis *CollectPanel::getXAxis(void)
@@ -177,31 +116,19 @@ QCPAxis *CollectPanel::getXAxis(void)
 
 void CollectPanel::setReceiveTimeout(void)
 {
-    stableState = false;
+    stableState = 0;
     setLEDState(5);
+}
+
+void CollectPanel::slSetRange(const double &range)
+{
+    this->range = range;
+    ui->lbRange->setText(QString::number(range));
 }
 
 bool CollectPanel::isStable(void)
 {
-    return stableState;
-}
-
-Bll_Average::Bll_Average(QObject *parent) : QObject(parent)
-{
-}
-
-void Bll_Average::slAverage(const vector<double> &data)
-{
-    qDebug() << "Bll_Average::slAverage" << QThread::currentThread();
-
-    // BigFloat计算平均值，模拟笔算，精度更高
-    BigFloat sum("0");
-    size_t size = data.size();
-
-    for (size_t i = 0; i < size; ++i)
-    {
-        sum += data[i];
-    }
-
-    emit sgAverage((sum / (double)size).toString(10));
+    if (stableState != 1)
+        return false;
+    return true;
 }
