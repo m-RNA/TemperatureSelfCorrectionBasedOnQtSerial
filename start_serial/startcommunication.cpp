@@ -109,6 +109,11 @@ void StartCommunication::setSerialSettingIndex(const Ui_SerialSettingIndex &uiIn
     ui->cbAnalyse->setCurrentIndex(uiIndex.analyseModeIndex);
 }
 
+void StartCommunication::setCbxSerialIndex(int index)
+{
+    ui->cbSerial->setCurrentIndex(index);
+}
+
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息
 void StartCommunication::updateSerialPortInfo()
 {
@@ -251,7 +256,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
         connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, this, [&](SerialAnalyseCell cell)
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, [&](SerialAnalyseCell cell)
                 { emit sgStartAnalyseFinish(cell); });
     }
     else // 打开-->关闭

@@ -17,7 +17,7 @@
 using LeastSquare = MainWindow;
 using Bll_CollectBtn = MainWindow;
 
-#define PGSB_REFRESH_MS 50
+#define PGSB_REFRESH_MS 500
 #define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,7 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     setDeviceName_Dtm("待定仪器");
     setDeviceName_Std("标准仪器");
-    ui->start_Std->setAnalyseMode(2);
+    // ui->start_Std->setAnalyseMode(2);
+    ui->start_Std->setCbxSerialIndex(1);
+    ui->start_Dtm->setCbxSerialIndex(3);
 
     /*** LeastSquare Begin ***/
 
@@ -110,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
     // 监听数据波动
-    connect(ui->start_Std, &StartCommunication::serialStateChange, [=](bool state)
+    connect(ui->start_Std, &StartCommunication::serialStateChange, [&](bool state)
             {
                 if(state)
                     listenDataWaveInit();
@@ -234,7 +236,7 @@ void MainWindow::collectDataInit()
     threadDataCollect = new QThread;
     taskDataCollect_Std->moveToThread(threadDataCollect);
     taskDataCollect_Dtm->moveToThread(threadDataCollect);
-    connect(threadDataCollect, &QThread::finished, [=]()
+    connect(threadDataCollect, &QThread::finished, [&]()
             {taskDataCollect_Std->deleteLater(); taskDataCollect_Dtm->deleteLater(); });
 
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataCollect_Std, &Bll_DataCollect::slAddData);
@@ -848,7 +850,7 @@ void MainWindow::on_actionAutoSave_triggered(bool checked)
 void MainWindow::on_actionWizard_triggered()
 {
     Wizard wizard(this);
-    connect(&wizard, &Wizard::wizardInfoFinish, this, [&](const WizardInfo &info)
+    connect(&wizard, &Wizard::wizardInfoFinish,[&](const WizardInfo &info)
             {
                 qDebug() << "向导结束";
                 if(ui->start_Std->state() == true)

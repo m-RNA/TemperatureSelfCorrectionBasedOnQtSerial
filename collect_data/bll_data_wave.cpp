@@ -5,7 +5,7 @@ Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
 {
     timerWatchDog = new QTimer(this);
     timerWatchDog->setInterval(5000);
-    connect(timerWatchDog, &QTimer::timeout, [=]()
+    connect(timerWatchDog, &QTimer::timeout, [&]()
             {stableState = 2; autoSendStableState(); });
     timerWatchDog->start();
 }

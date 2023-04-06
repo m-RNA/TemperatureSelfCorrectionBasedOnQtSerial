@@ -14,8 +14,8 @@ Wizard::Wizard(QWidget *parent) : QWizard(parent),
 
     // 设置串口设置的默认值
     ui->ss_Std->setSerialIndex(1);
-    ui->ss_Dtm->setSerialIndex(0);
-    ui->ss_Std->setAnalyseIndex(2);
+    ui->ss_Dtm->setSerialIndex(3);
+    ui->ss_Std->setAnalyseIndex(1);
     ui->ss_Dtm->setAnalyseIndex(1);
 
     // 从串口设置中获取串口名，设置到Tab标签名上

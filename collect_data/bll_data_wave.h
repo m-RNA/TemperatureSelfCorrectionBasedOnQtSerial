@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QObject>
 #include <QTimer>
 #include "bll_serialrecvanalyse.h"
 

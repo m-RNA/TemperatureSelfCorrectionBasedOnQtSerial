@@ -37,6 +37,8 @@ public:
 
     void setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex);
 
+    void setCbxSerialIndex(int index);
+
 public slots:
     void on_btnSerialSwitch_clicked();
 
