@@ -558,7 +558,7 @@
      <property name="handleWidth">
       <number>5</number>
      </property>
-     <widget class="QTabWidget" name="tabWidget_3">
+     <widget class="QTabWidget" name="tabReceive">
       <property name="styleSheet">
        <string notr="true"/>
       </property>

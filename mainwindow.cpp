@@ -111,6 +111,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
+    connect(ui->collectPanel_Std, &CollectPanel::sgShowData, [&](){ui->tabMain->setCurrentIndex(1); ui->start_Std->showTextEditRx();});
+    connect(ui->collectPanel_Dtm, &CollectPanel::sgShowData, [&](){ui->tabMain->setCurrentIndex(1); ui->start_Dtm->showTextEditRx();});
+
     // 监听数据波动
     connect(ui->start_Std, &StartCommunication::serialStateChange, [&](bool state)
             {

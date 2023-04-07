@@ -39,6 +39,8 @@ public:
 
     void setCbxSerialIndex(int index);
 
+    void showTextEditRx();
+
 public slots:
     void on_btnSerialSwitch_clicked();
 

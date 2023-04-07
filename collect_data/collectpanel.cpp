@@ -132,3 +132,8 @@ bool CollectPanel::isStable(void)
         return false;
     return true;
 }
+
+void CollectPanel::on_btnShowData_clicked()
+{
+    emit sgShowData();
+}

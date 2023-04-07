@@ -41,6 +41,12 @@ public slots:
 
     void slSetRange(const double &range);
 
+signals:
+    void sgShowData();
+
+private slots:
+    void on_btnShowData_clicked();
+
 private:
     Ui::CollectPanel *ui;
     QString deviceName;

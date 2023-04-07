@@ -114,6 +114,11 @@ void StartCommunication::setCbxSerialIndex(int index)
     ui->cbSerial->setCurrentIndex(index);
 }
 
+void StartCommunication::showTextEditRx()
+{
+    ui->tabReceive->setCurrentIndex(0);
+}
+
 /// @brief 初始化 串口combo box 扫描更新界面串口端口信息
 void StartCommunication::updateSerialPortInfo()
 {
