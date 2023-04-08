@@ -242,13 +242,14 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         bll_SerialPort->init(setting, res);
         if (res.returnCode < 0) // 串口打开异常
         {
+            bll_SerialPort->deleteLater();
+
             QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
 - 线缆是否松动?\n\
 - 串口是否被占用?\n\
 - 串口配置是否正确?\n\
 - 是否有串口读写权限?");
 
-            bll_SerialPort->deleteLater();
             return;
         }
 
