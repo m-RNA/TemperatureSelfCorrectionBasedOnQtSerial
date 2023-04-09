@@ -161,5 +161,8 @@ private:
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);
+
+    void loadUiSettings();
+    void saveUiSetting();
 };
 #endif // MAINWINDOW_H

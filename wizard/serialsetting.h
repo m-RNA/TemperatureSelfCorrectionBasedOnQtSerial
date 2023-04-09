@@ -29,9 +29,9 @@ class SerialSetting : public QWidget
 public:
     explicit SerialSetting(QWidget *parent = nullptr);
     ~SerialSetting();
+
     void getSettingIndex(Ui_SerialSettingIndex &uiIndex);
-    void setSerialIndex(const int index);
-    void setAnalyseIndex(const int index);
+    void setSettingIndex(const Ui_SerialSettingIndex &uiIndex);
 
 protected:
     virtual bool eventFilter(QObject *obj, QEvent *event);

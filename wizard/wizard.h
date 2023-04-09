@@ -21,8 +21,10 @@ class Wizard : public QWizard
     Q_OBJECT
 
 public:
-    explicit Wizard(QWidget *parent = nullptr);
+    explicit Wizard(const Ui_SerialSettingIndex &settings_Std, const Ui_SerialSettingIndex &settings_Dtm, QWidget *parent = nullptr);
     ~Wizard();
+    void loadUiSettings();
+    void saveUiSettings();
 
     void setTabName_Std(const QString &portName);
     void setTabName_Dtm(const QString &portName);

@@ -1,28 +1,77 @@
 #include "startcommunication.h"
 #include "ui_startcommunication.h"
 #include <QSerialPortInfo>
+#include <QSettings>
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::StartCommunication)
 {
     ui->setupUi(this);
-    // qDebug() << "主线程ID：" << QThread::currentThread();
-    // bll_SerialPort = new Bll_SerialPort(deviceName); // , setting, res); // 创建任务对象
+    updateSerialPortInfo();        // 更新串口列表
+    setSerialPortCtrlState(false); // 串口是没打开的状态
 
-    updateSerialPortInfo();
-    setSerialPortCtrlState(serialPortState);
-
-    // 串口显示列表 安装事件过滤
-    ui->cbSerial->installEventFilter(this);
-
-    // qDebug() << deviceName << "Start";
+    ui->cbSerial->installEventFilter(this); // 串口显示列表 安装事件过滤
 }
 
 StartCommunication::~StartCommunication()
 {
+    saveUiSettings();
+
     if (bll_SerialPort)
         bll_SerialPort->deleteLater();
     delete ui;
+}
+
+void StartCommunication::loadUiSettings(const QString &fileName)
+{
+    settingFileName = fileName;
+
+    // 如果文件不存在，就退出
+    if (!QFile::exists(settingFileName))
+        return;
+
+    QSettings setting(settingFileName, QSettings::IniFormat);
+    setting.beginGroup("SerialSetting");
+    // 找出对应的串口号，然后设置
+    int index = ui->cbSerial->findText(setting.value("PortName").toString());
+    if (index != -1)
+        ui->cbSerial->setCurrentIndex(index);
+    ui->cbBaudrate->setCurrentText(setting.value("BaudRate").toString());
+    ui->cbDataBit->setCurrentIndex(setting.value("DataBits").toInt());
+    ui->cbCheckBit->setCurrentIndex(setting.value("Parity").toInt());
+    ui->cbStopBit->setCurrentIndex(setting.value("StopBits").toInt());
+    ui->cbFlowCtrl->setCurrentIndex(setting.value("FlowControl").toInt());
+    ui->cbAnalyse->setCurrentIndex(setting.value("Analyse").toInt());
+    ui->spbxRegularTime->setValue(setting.value("SendRegularTime").toInt());
+    setting.endGroup();
+}
+
+void StartCommunication::saveUiSettings()
+{
+    QSettings setting(settingFileName, QSettings::IniFormat);
+    setting.beginGroup("SerialSetting");
+    setting.setValue("PortName", ui->cbSerial->currentText());
+    setting.setValue("BaudRate", ui->cbBaudrate->currentText());
+    setting.setValue("DataBits", ui->cbDataBit->currentIndex());
+    setting.setValue("Parity", ui->cbCheckBit->currentIndex());
+    setting.setValue("StopBits", ui->cbStopBit->currentIndex());
+    setting.setValue("FlowControl", ui->cbFlowCtrl->currentIndex());
+    setting.setValue("Analyse", ui->cbAnalyse->currentIndex());
+    setting.setValue("SendRegularTime", ui->spbxRegularTime->value());
+    setting.endGroup();
+}
+
+void StartCommunication::getSettingIndex(Ui_SerialSettingIndex &uiIndex)
+{
+    uiIndex.portName = ui->cbSerial->currentText().left(ui->cbSerial->currentText().indexOf(" "));
+    uiIndex.portNameIndex = ui->cbSerial->currentIndex();
+    uiIndex.baudRate = ui->cbBaudrate->currentText();
+    uiIndex.dataBitsIndex = ui->cbDataBit->currentIndex();
+    uiIndex.parityIndex = ui->cbCheckBit->currentIndex();
+    uiIndex.stopBitsIndex = ui->cbStopBit->currentIndex();
+    uiIndex.flowControlIndex = ui->cbFlowCtrl->currentIndex();
+    uiIndex.encodeModeIndex = ui->cbEncode->currentIndex();
+    uiIndex.analyseModeIndex = ui->cbAnalyse->currentIndex();
 }
 
 /// @brief 事件过滤器

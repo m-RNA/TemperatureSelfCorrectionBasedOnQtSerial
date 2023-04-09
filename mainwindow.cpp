@@ -6,18 +6,22 @@
 #include "fitchart.h"
 #include "about.h"
 #include "wizard.h"
-
 #include <QSerialPortInfo>
 #include <QSerialPort>
 // #include <QMessageBox>
 #include <QInputDialog>
 #include <QTimer>
 #include <QStringList>
+#include <QSettings>
 using LeastSquare = MainWindow;
 using Bll_CollectBtn = MainWindow;
 
-#define PGSB_REFRESH_MS 500
-#define TIMESTAMP_FACTOR (1000.0f / PGSB_REFRESH_MS)
+const int PGSB_REFRESH_MS = 500;                             // 进度条刷新间隔
+const double TIMESTAMP_FACTOR = (1000.0f / PGSB_REFRESH_MS); // 时间戳因子，用于计算时间戳
+
+const QString mainWindowUiSettingFile = "config.ini";
+const QString startUiSettingsFile_Std = "configSerial_Std.ini";
+const QString startUiSettingsFile_Dtm = "configSerial_Dtm.ini";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -32,9 +36,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     setDeviceName_Dtm("待定仪器");
     setDeviceName_Std("标准仪器");
-    // ui->start_Std->setAnalyseMode(2);
     ui->start_Std->setCbxSerialIndex(1);
-    ui->start_Dtm->setCbxSerialIndex(3);
+    ui->start_Dtm->setCbxSerialIndex(0);
+    // 读取串口设置
+    ui->start_Std->loadUiSettings(startUiSettingsFile_Std);
+    ui->start_Dtm->loadUiSettings(startUiSettingsFile_Dtm);
+    loadUiSettings();
 
     /*** LeastSquare Begin ***/
 
@@ -143,6 +150,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    saveUiSetting();
+
     // 释放线程
     threadXlsx->quit();
     threadXlsx->wait();
@@ -157,6 +166,95 @@ MainWindow::~MainWindow()
     listenDataWaveQuit();
     collectDataQuit();
     delete ui;
+}
+
+void MainWindow::loadUiSettings()
+{
+    // 如果文件不存在，就退出
+    if (!QFile::exists(mainWindowUiSettingFile))
+        return;
+
+    QSettings setting(mainWindowUiSettingFile, QSettings::IniFormat);
+
+    // 1. 读取窗口大小和位置
+    setting.beginGroup("MainWindow");
+    resize(setting.value("size", QSize(800, 600)).toSize());
+    move(setting.value("pos", QPoint(200, 200)).toPoint());
+    setting.endGroup();
+
+    // 2.读取启动时是否显示欢迎界面
+    setting.beginGroup("Welcome");
+    bool showWelcome = setting.value("show", true).toBool();
+    ui->ckbxWelcome->setChecked(showWelcome);
+    if (showWelcome)
+        ui->tabMain->setCurrentIndex(0);
+    else
+        ui->tabMain->setCurrentIndex(1);
+    setting.endGroup();
+
+    // 3.读取采集设置
+    setting.beginGroup("Collect");
+    ui->spbxSamplePointSum->setValue(setting.value("sampleTime").toInt());
+    ui->spbxSampleTime->setValue(setting.value("samplePointSum").toDouble());
+    ui->spbxWaveNum->setValue(setting.value("waveNum").toInt());
+    ui->spbxWaveRange->setValue(setting.value("waveRange").toDouble());
+    setting.endGroup();
+
+    // 4. 读取声音设置
+    setting.beginGroup("Sound");
+    ui->cbSound->setCurrentIndex(setting.value("sound").toInt());
+    setting.endGroup();
+
+    // 5. 读取最小二乘法设置
+    setting.beginGroup("LeastSquareMethod");
+    ui->spbxOrder->setValue(setting.value("order").toInt());
+    setting.endGroup();
+
+    // 6. 读取其他设置
+    setting.beginGroup("Other");
+    bool autoSave = setting.value("autoSave").toBool();
+    ui->actionAutoSave->setChecked(autoSave);
+    emit sgXlsxSetAutoSave(autoSave);
+    setting.endGroup();
+}
+
+void MainWindow::saveUiSetting()
+{
+    QSettings setting(mainWindowUiSettingFile, QSettings::IniFormat);
+
+    // 1. 保存窗口大小和位置
+    setting.beginGroup("MainWindow");
+    setting.setValue("size", size());
+    setting.setValue("pos", pos());
+    setting.endGroup();
+
+    // 2.保存启动时是否显示欢迎界面
+    setting.beginGroup("Welcome");
+    setting.setValue("show", ui->ckbxWelcome->isChecked());
+    setting.endGroup();
+
+    // 3.保存采集设置
+    setting.beginGroup("Collect");
+    setting.setValue("sampleTime", ui->spbxSamplePointSum->value());
+    setting.setValue("samplePointSum", ui->spbxSampleTime->value());
+    setting.setValue("waveNum", ui->spbxWaveNum->value());
+    setting.setValue("waveRange", ui->spbxWaveRange->value());
+    setting.endGroup();
+
+    // 4. 保存声音设置
+    setting.beginGroup("Sound");
+    setting.setValue("sound", ui->cbSound->currentIndex());
+    setting.endGroup();
+
+    // 5. 保存最小二乘法设置
+    setting.beginGroup("LeastSquareMethod");
+    setting.setValue("order", ui->spbxOrder->value());
+    setting.endGroup();
+
+    // 6. 保存其他设置
+    setting.beginGroup("Other");
+    setting.setValue("autoSave", ui->actionAutoSave->isChecked());
+    setting.endGroup();
 }
 
 void MainWindow::setDeviceName_Std(const QString &name)
@@ -849,7 +947,12 @@ void MainWindow::on_actionAutoSave_triggered(bool checked)
 
 void MainWindow::on_actionWizard_triggered()
 {
-    Wizard wizard(this);
+    Ui_SerialSettingIndex serialSettings_Std;
+    Ui_SerialSettingIndex serialSettings_Dtm;
+    ui->start_Std->getSettingIndex(serialSettings_Std);
+    ui->start_Dtm->getSettingIndex(serialSettings_Dtm);
+
+    Wizard wizard(serialSettings_Std, serialSettings_Dtm, this);
     connect(&wizard, &Wizard::wizardInfoFinish, [&](const WizardInfo &info)
             {
                 qDebug() << "向导结束";
@@ -865,7 +968,11 @@ void MainWindow::on_actionWizard_triggered()
                 ui->start_Dtm->on_btnSerialSwitch_clicked();
                 setDeviceName_Std(info.baseInfo[5]);
                 setDeviceName_Dtm(info.baseInfo[6]);
-                ui->tabMain->setCurrentIndex(2); });
+                ui->tabMain->setCurrentIndex(2);
+                ui->btnWizard->setEnabled(false);
+                ui->actionWizard->setEnabled(false); 
+                ui->btnWizardEdit->setEnabled(true); 
+                wizard.saveUiSettings();});
     wizard.exec();
 }
 

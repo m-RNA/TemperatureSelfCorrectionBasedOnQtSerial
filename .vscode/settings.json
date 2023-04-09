@@ -55,7 +55,9 @@
         "pardisosupport": "cpp",
         "adolcforward": "cpp",
         "eulerangles": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "qsettings": "cpp",
+        "qstring": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

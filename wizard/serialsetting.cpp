@@ -28,6 +28,18 @@ SerialSetting::~SerialSetting()
     delete ui;
 }
 
+void SerialSetting::setSettingIndex(const Ui_SerialSettingIndex &uiIndex)
+{
+    ui->cbSerial->setCurrentText(uiIndex.portName);
+    ui->cbBaudrate->setCurrentText(uiIndex.baudRate);
+    ui->cbDataBit->setCurrentIndex(uiIndex.dataBitsIndex);
+    ui->cbCheckBit->setCurrentIndex(uiIndex.parityIndex);
+    ui->cbStopBit->setCurrentIndex(uiIndex.stopBitsIndex);
+    ui->cbFlowCtrl->setCurrentIndex(uiIndex.flowControlIndex);
+    ui->cbEncode->setCurrentIndex(uiIndex.encodeModeIndex);
+    ui->cbAnalyse->setCurrentIndex(uiIndex.analyseModeIndex);
+}
+
 void SerialSetting::getSettingIndex(Ui_SerialSettingIndex &uiIndex)
 {
     uiIndex.portName = ui->cbSerial->currentText();
@@ -65,14 +77,4 @@ void SerialSetting::on_cbSerial_activated(int index)
     Q_UNUSED(index);
     // qDebug() << ui->cbSerial->currentText();
     emit serialPortChanged(ui->cbSerial->currentText());
-}
-
-void SerialSetting::setSerialIndex(const int index)
-{
-    ui->cbSerial->setCurrentIndex(index);
-}
-
-void SerialSetting::setAnalyseIndex(const int index)
-{
-    ui->cbAnalyse->setCurrentIndex(index);
 }

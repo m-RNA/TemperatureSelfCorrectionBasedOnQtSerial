@@ -23,6 +23,11 @@ public:
 
     ~StartCommunication();
 
+    void loadUiSettings(const QString &fileName); // 加载UI设置
+    void saveUiSettings();                        // 保存UI设置
+
+    void getSettingIndex(Ui_SerialSettingIndex &uiIndex); // 获取串口设置索引
+
     bool eventFilter(QObject *obj, QEvent *event);
 
     void setDeviceName(const QString &name);
@@ -66,6 +71,7 @@ signals:
 
 private:
     Ui::StartCommunication *ui;
+    QString settingFileName = "";
 
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QTimer *timerSendRegular = nullptr;
@@ -77,8 +83,8 @@ private:
     QByteArray (*decode)(QByteArray const &qByteArray) = nullptr;
     QByteArray (*encode)(QByteArray const &qByteArray) = nullptr;
 
-    void updateSerialPortInfo(void);
-    void setSerialPortCtrlState(bool state);
+    void updateSerialPortInfo(void);         // 更新串口信息
+    void setSerialPortCtrlState(bool state); // 设置串口控制状态
     int getSerialPortSetting(Bll_SerialPortSetting &setting);
 };
 

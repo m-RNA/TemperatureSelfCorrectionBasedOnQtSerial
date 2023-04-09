@@ -2,9 +2,13 @@
 #include "ui_wizard.h"
 #include <QDate>
 #include <QDebug>
+#include <QSettings>
+#include <QFile>
 
-Wizard::Wizard(QWidget *parent) : QWizard(parent),
-                                  ui(new Ui::Wizard)
+const QString settingFileName = "configWizard.ini";
+
+Wizard::Wizard(const Ui_SerialSettingIndex &settings_Std, const Ui_SerialSettingIndex &settings_Dtm, QWidget *parent) : QWizard(parent),
+                                                                                                                        ui(new Ui::Wizard)
 {
     ui->setupUi(this);
     // 设置为当前日期
@@ -12,29 +16,55 @@ Wizard::Wizard(QWidget *parent) : QWizard(parent),
     // 去掉问号，只保留关闭
     this->setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    // 设置串口设置的默认值
-    ui->ss_Std->setSerialIndex(1);
-    ui->ss_Dtm->setSerialIndex(3);
-    ui->ss_Std->setAnalyseIndex(1);
-    ui->ss_Dtm->setAnalyseIndex(1);
+    // 设置界面
+    loadUiSettings();
+    ui->ss_Std->setSettingIndex(settings_Std);
+    ui->ss_Dtm->setSettingIndex(settings_Dtm);
 
     // 从串口设置中获取串口名，设置到Tab标签名上
-    ui->ss_Std->getSettingIndex(wizardInfo.ssIndex_Std);
-    ui->ss_Dtm->getSettingIndex(wizardInfo.ssIndex_Dtm);
-    setTabName_Std(wizardInfo.ssIndex_Std.portName);
-    setTabName_Dtm(wizardInfo.ssIndex_Dtm.portName);
+    setTabName_Std(settings_Std.portName);
+    setTabName_Dtm(settings_Dtm.portName);
 
     // 实时改变Tab标签名
     connect(ui->ss_Std, &SerialSetting::serialPortChanged, this, &Wizard::setTabName_Std);
     connect(ui->ss_Dtm, &SerialSetting::serialPortChanged, this, &Wizard::setTabName_Dtm);
 
-    // 当向导关闭时，从向导界面获取配置信息
+    // 当向导完成时，从向导界面获取配置信息
     connect(this, &Wizard::accepted, this, &Wizard::getInfo);
 }
 
 Wizard::~Wizard()
 {
     delete ui;
+}
+
+void Wizard::loadUiSettings()
+{
+    if (!QFile::exists(settingFileName))
+        return;
+
+    QSettings settings(settingFileName, QSettings::IniFormat);
+    settings.beginGroup("BaseInfo");
+    ui->lePlace->setText(settings.value("Place").toString());
+    ui->spbxTemp->setValue(settings.value("Temp").toInt());
+    ui->spbxRH->setValue(settings.value("RH").toInt());
+    ui->leOperator->setText(settings.value("Operator").toString());
+    ui->leID_Std->setText(settings.value("ID_Std").toString());
+    ui->leID_Dtm->setText(settings.value("ID_Dtm").toString());
+    settings.endGroup();
+}
+
+void Wizard::saveUiSettings()
+{
+    QSettings settings(settingFileName, QSettings::IniFormat);
+    settings.beginGroup("BaseInfo");
+    settings.setValue("Place", ui->lePlace->text());
+    settings.setValue("Temp", ui->spbxTemp->value());
+    settings.setValue("RH", ui->spbxRH->value());
+    settings.setValue("Operator", ui->leOperator->text());
+    settings.setValue("ID_Std", ui->leID_Std->text());
+    settings.setValue("ID_Dtm", ui->leID_Dtm->text());
+    settings.endGroup();
 }
 
 void Wizard::setTabName_Std(const QString &portName)
