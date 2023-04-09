@@ -19,10 +19,6 @@ using Bll_CollectBtn = MainWindow;
 const int PGSB_REFRESH_MS = 500;                             // 进度条刷新间隔
 const double TIMESTAMP_FACTOR = (1000.0f / PGSB_REFRESH_MS); // 时间戳因子，用于计算时间戳
 
-const QString mainWindowUiSettingFile = "config.ini";
-const QString startUiSettingsFile_Std = "configSerial_Std.ini";
-const QString startUiSettingsFile_Dtm = "configSerial_Dtm.ini";
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -39,8 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->start_Std->setCbxSerialIndex(1);
     ui->start_Dtm->setCbxSerialIndex(0);
     // 读取串口设置
-    ui->start_Std->loadUiSettings(startUiSettingsFile_Std);
-    ui->start_Dtm->loadUiSettings(startUiSettingsFile_Dtm);
+    ui->start_Std->loadUiSettings("_Std");
+    ui->start_Dtm->loadUiSettings("_Dtm");
     loadUiSettings();
 
     /*** LeastSquare Begin ***/
@@ -171,10 +167,10 @@ MainWindow::~MainWindow()
 void MainWindow::loadUiSettings()
 {
     // 如果文件不存在，就退出
-    if (!QFile::exists(mainWindowUiSettingFile))
+    if (!QFile::exists(CONFIG_FILE_NAME))
         return;
 
-    QSettings setting(mainWindowUiSettingFile, QSettings::IniFormat);
+    QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
 
     // 1. 读取窗口大小和位置
     setting.beginGroup("MainWindow");
@@ -220,7 +216,7 @@ void MainWindow::loadUiSettings()
 
 void MainWindow::saveUiSetting()
 {
-    QSettings setting(mainWindowUiSettingFile, QSettings::IniFormat);
+    QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
 
     // 1. 保存窗口大小和位置
     setting.beginGroup("MainWindow");
@@ -972,7 +968,7 @@ void MainWindow::on_actionWizard_triggered()
                 ui->btnWizard->setEnabled(false);
                 ui->actionWizard->setEnabled(false); 
                 ui->btnWizardEdit->setEnabled(true); 
-                wizard.saveUiSettings();});
+                wizard.saveUiSettings(); });
     wizard.exec();
 }
 

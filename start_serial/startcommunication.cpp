@@ -2,6 +2,7 @@
 #include "ui_startcommunication.h"
 #include <QSerialPortInfo>
 #include <QSettings>
+#include "config.h"
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::StartCommunication)
@@ -22,16 +23,15 @@ StartCommunication::~StartCommunication()
     delete ui;
 }
 
-void StartCommunication::loadUiSettings(const QString &fileName)
+void StartCommunication::loadUiSettings(const QString &id)
 {
-    settingFileName = fileName;
-
+    settingID = id;
     // 如果文件不存在，就退出
-    if (!QFile::exists(settingFileName))
+    if (!QFile::exists(CONFIG_FILE_NAME))
         return;
 
-    QSettings setting(settingFileName, QSettings::IniFormat);
-    setting.beginGroup("SerialSetting");
+    QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.beginGroup("SerialSetting" + settingID);
     // 找出对应的串口号，然后设置
     int index = ui->cbSerial->findText(setting.value("PortName").toString());
     if (index != -1)
@@ -48,8 +48,8 @@ void StartCommunication::loadUiSettings(const QString &fileName)
 
 void StartCommunication::saveUiSettings()
 {
-    QSettings setting(settingFileName, QSettings::IniFormat);
-    setting.beginGroup("SerialSetting");
+    QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.beginGroup("SerialSetting" + settingID);
     setting.setValue("PortName", ui->cbSerial->currentText());
     setting.setValue("BaudRate", ui->cbBaudrate->currentText());
     setting.setValue("DataBits", ui->cbDataBit->currentIndex());

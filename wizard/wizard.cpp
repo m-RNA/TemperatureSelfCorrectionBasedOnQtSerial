@@ -4,8 +4,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QFile>
-
-const QString settingFileName = "configWizard.ini";
+#include "config.h"
 
 Wizard::Wizard(const Ui_SerialSettingIndex &settings_Std, const Ui_SerialSettingIndex &settings_Dtm, QWidget *parent) : QWizard(parent),
                                                                                                                         ui(new Ui::Wizard)
@@ -40,24 +39,21 @@ Wizard::~Wizard()
 
 void Wizard::loadUiSettings()
 {
-    if (!QFile::exists(settingFileName))
-        return;
-
-    QSettings settings(settingFileName, QSettings::IniFormat);
-    settings.beginGroup("BaseInfo");
-    ui->lePlace->setText(settings.value("Place").toString());
-    ui->spbxTemp->setValue(settings.value("Temp").toInt());
-    ui->spbxRH->setValue(settings.value("RH").toInt());
-    ui->leOperator->setText(settings.value("Operator").toString());
-    ui->leID_Std->setText(settings.value("ID_Std").toString());
-    ui->leID_Dtm->setText(settings.value("ID_Dtm").toString());
+    QSettings settings(CONFIG_FILE_NAME, QSettings::IniFormat);
+    settings.beginGroup("WizardBaseInfo");
+    ui->lePlace->setText(settings.value("Place", "中北大学工程训练中心").toString());
+    ui->spbxTemp->setValue(settings.value("Temp", 21).toInt());
+    ui->spbxRH->setValue(settings.value("RH", 52).toInt());
+    ui->leOperator->setText(settings.value("Operator", "老陈皮").toString());
+    ui->leID_Std->setText(settings.value("ID_Std", "道万").toString());
+    ui->leID_Dtm->setText(settings.value("ID_Dtm", "待定").toString());
     settings.endGroup();
 }
 
 void Wizard::saveUiSettings()
 {
-    QSettings settings(settingFileName, QSettings::IniFormat);
-    settings.beginGroup("BaseInfo");
+    QSettings settings(CONFIG_FILE_NAME, QSettings::IniFormat);
+    settings.beginGroup("WizardBaseInfo");
     settings.setValue("Place", ui->lePlace->text());
     settings.setValue("Temp", ui->spbxTemp->value());
     settings.setValue("RH", ui->spbxRH->value());

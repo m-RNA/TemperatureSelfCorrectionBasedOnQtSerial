@@ -5,4 +5,6 @@
 // xlsx文件的读写
 #define MAX_THREAD_COUNT 3
 
+#define CONFIG_FILE_NAME "config.ini"
+
 extern char globalStringBuffer[200];

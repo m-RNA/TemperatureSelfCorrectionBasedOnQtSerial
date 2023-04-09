@@ -23,8 +23,8 @@ public:
 
     ~StartCommunication();
 
-    void loadUiSettings(const QString &fileName); // 加载UI设置
-    void saveUiSettings();                        // 保存UI设置
+    void loadUiSettings(const QString &id); // 加载UI设置
+    void saveUiSettings();                  // 保存UI设置
 
     void getSettingIndex(Ui_SerialSettingIndex &uiIndex); // 获取串口设置索引
 
@@ -71,7 +71,7 @@ signals:
 
 private:
     Ui::StartCommunication *ui;
-    QString settingFileName = "";
+    QString settingID = "";
 
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QTimer *timerSendRegular = nullptr;
