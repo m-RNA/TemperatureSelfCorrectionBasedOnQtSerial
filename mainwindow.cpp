@@ -10,7 +10,7 @@
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
-#include <QMessageBox>
+// #include <QMessageBox>
 #include <QInputDialog>
 #include <QTimer>
 #include <QStringList>
@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    msg = new Message(this);
 
     timerCollect = new QTimer(this);
     timerCollect->setTimerType(Qt::PreciseTimer); // 设置为精准定时器
@@ -111,8 +112,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
 
-    connect(ui->collectPanel_Std, &CollectPanel::sgShowData, [&](){ui->tabMain->setCurrentIndex(1); ui->start_Std->showTextEditRx();});
-    connect(ui->collectPanel_Dtm, &CollectPanel::sgShowData, [&](){ui->tabMain->setCurrentIndex(1); ui->start_Dtm->showTextEditRx();});
+    connect(ui->collectPanel_Std, &CollectPanel::sgShowData, [&]()
+            {ui->tabMain->setCurrentIndex(1); ui->start_Std->showTextEditRx(); });
+    connect(ui->collectPanel_Dtm, &CollectPanel::sgShowData, [&]()
+            {ui->tabMain->setCurrentIndex(1); ui->start_Dtm->showTextEditRx(); });
 
     // 监听数据波动
     connect(ui->start_Std, &StartCommunication::serialStateChange, [&](bool state)
@@ -346,7 +349,8 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         // 两个串口是否同时打开
         if (!(ui->start_Dtm->state() && ui->start_Std->state()))
         {
-            QMessageBox::critical(this, "错误", "请同时连接两个仪器");
+            // QMessageBox::critical(this, "错误", "请同时连接两个仪器");
+            msg->error("请同时连接两个仪器");
             return;
         }
         ui->spbxSamplePointSum->setEnabled(false);
@@ -420,7 +424,8 @@ void Bll_CollectBtn::on_btnCollectRestart_clicked()
     // 两个串口是否同时打开
     if (!(ui->start_Dtm->state() && ui->start_Std->state()))
     {
-        QMessageBox::critical(this, "错误", "请同时连接两个仪器");
+        // QMessageBox::critical(this, "错误", "请同时连接两个仪器");
+        msg->error("请同时连接两个仪器");
         return;
     }
     isCollecting = true;
@@ -683,7 +688,8 @@ void LeastSquare::tryUpdateFitChart(bool man)
     if (collectDataX.size() < 2)
     {
         if (man) // 是人为的就要提醒一下
-            QMessageBox::critical(this, "错误", "正确格式的数据\n小于两组");
+            msg->error("正确格式的数据小于两组");
+        // QMessageBox::critical(this, "错误", "正确格式的数据\n小于两组");
         return;
     }
 
@@ -831,11 +837,12 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 void MainWindow::on_btnSaveReport_clicked()
 {
     emit sgXlsxSaveReport();
+    msg->success("文件保存成功");
 }
 
 void MainWindow::on_actionSaveReport_triggered()
 {
-    emit sgXlsxSaveReport();
+    on_btnSaveReport_clicked();
 }
 
 void MainWindow::on_actionAutoSave_triggered(bool checked)

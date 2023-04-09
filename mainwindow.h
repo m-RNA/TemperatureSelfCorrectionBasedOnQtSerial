@@ -9,6 +9,7 @@
 #include "bll_sound.h"
 #include "bll_data_wave.h"
 #include "bll_data_collect.h"
+#include "message.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -155,6 +156,8 @@ private:
     Bll_DataCollect *taskDataCollect_Std = nullptr;
     Bll_DataCollect *taskDataCollect_Dtm = nullptr;
     QThread *threadDataCollect = nullptr;
+
+    Message *msg = nullptr;
 
     void updateCollectDataXY(void);
     void tryUpdateFitChart(bool man);

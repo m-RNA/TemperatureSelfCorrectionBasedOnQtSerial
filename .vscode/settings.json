@@ -48,7 +48,13 @@
         "condition_variable": "cpp",
         "fft": "cpp",
         "initializer_list": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "exception": "cpp",
+        "iostream": "cpp",
+        "limits": "cpp",
+        "pardisosupport": "cpp",
+        "adolcforward": "cpp",
+        "eulerangles": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>skin/type_success.png</file>
+        <file>skin/type_error.png</file>
+        <file>skin/type_warning.png</file>
+        <file>skin/type_infomation.png</file>
+    </qresource>
+</RCC>

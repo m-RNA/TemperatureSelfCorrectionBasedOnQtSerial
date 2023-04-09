@@ -21,6 +21,7 @@ LIBS+=-lopengl32 -lglu32
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 INCLUDEPATH +=  \
+    message \
     big_float\
     wizard\
     sound \
@@ -41,6 +42,7 @@ SOURCES += \
     least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
     main.cpp \
+    message/message.cpp \
     sound/bll_sound.cpp \
     start_serial/bll_codeconverter.cpp \
     start_serial/bll_serial.cpp \
@@ -64,6 +66,7 @@ HEADERS += \
     least_square_method/cv_table.h \
     least_square_method/fitchart.h \
     mainwindow.h \
+    message/message.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
     sound/bll_sound.h \
@@ -91,4 +94,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    main.qrc
+    main.qrc \
+    message/Message.qrc
