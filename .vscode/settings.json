@@ -54,7 +54,8 @@
         "limits": "cpp",
         "pardisosupport": "cpp",
         "adolcforward": "cpp",
-        "eulerangles": "cpp"
+        "eulerangles": "cpp",
+        "regex": "cpp"
     },
     "cSpell.words": [
         "CODECONVERTER",

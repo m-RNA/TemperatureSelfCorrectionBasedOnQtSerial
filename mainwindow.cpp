@@ -6,7 +6,6 @@
 #include "fitchart.h"
 #include "about.h"
 #include "wizard.h"
-#include "BigFloat.h"
 
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -666,15 +665,13 @@ void LeastSquare::updateCollectDataXY(void)
             continue;
         // qDebug() << "counter" << counter;
 
-        temp = BigFloat::toLongDouble(qsX.toStdString());
         qDebug() << i;
-        qDebug() << "BigFloat x =" << BigFloat(qsX.toStdString());
+        temp = stold(qsX.toStdString());
         collectDataX.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         qDebug() << globalStringBuffer;
 
-        temp = BigFloat::toLongDouble(qsY.toStdString());
-        qDebug() << "BigFloat y =" << BigFloat(qsY.toStdString());
+        temp = stold(qsY.toStdString());
         collectDataY.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         qDebug() << globalStringBuffer;

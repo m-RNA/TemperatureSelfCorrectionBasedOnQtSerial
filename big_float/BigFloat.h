@@ -3,9 +3,10 @@
 #include <vector>
 #include <deque>
 #include <string>
-#include <algorithm>
 #include <cmath>
+#include <algorithm>
 #include <stdexcept>
+#include <regex>
 #include <QDebug>
 
 using std::deque;
@@ -66,18 +67,18 @@ public:
     BigFloat operator=(BigFloat &&) noexcept; // 移动赋值
 
     BigFloat abs() const;      // 取绝对值
-    BigFloat pow(int n) const; // 幂
+    BigFloat pow(int n) const; // 幂运算
 
-    string toString(size_t decimalNum, bool mode) const;
+    // 转换为字符串
+    string toString(size_t decimalNum = 0) const; // decimalNum 用于控制小数位数，赋值为0时小数部分全部输出
+
+    // 转换为低精度基本类型
     int toInt() const;
+    long toLong() const;
+    long long toLongLong() const;
     float toFloat() const;
     double toDouble() const;
     long double toLongDouble() const;
-
-    static int toInt(const BigFloat &);                // 静态函数，将高精度数转换为整数
-    static float toFloat(const BigFloat &);            // 静态函数，将高精度数转换为浮点数
-    static double toDouble(const BigFloat &);          // 静态函数，将高精度数转换为浮点数
-    static long double toLongDouble(const BigFloat &); // 静态函数，将高精度数转换为浮点数
 
     ~BigFloat() = default;
 
@@ -182,6 +183,18 @@ inline BigFloat::BigFloat(double num)
 
 inline BigFloat::BigFloat(const string &num) // 用字符串初始化，格式形如"-123.456"、"1.0"
 {
+    // 用正则表达式判断是否为合法的字符串
+    std::regex pattern("^[-+]?[0-9]+(.[0-9]+)?$");
+    if (!std::regex_match(num, pattern))
+    {
+        // 如果不是合法的字符串，就将值设为1
+        std::cout << "\033[31m"
+                  << "Invalid string! The value of BigFloat will be set to 1."
+                  << "\033[0m" << std::endl;
+        *this = BigFloat(1);
+        return;
+    }
+
     // 用于判断小数与整数部分交界
     bool type = num.find('.') == std::string::npos ? false : true;
 
@@ -265,17 +278,7 @@ inline BigFloat BigFloat::pow(int n) const
     return ans;
 }
 
-inline BigFloat operator-(const BigFloat &num) // 取负操作
-{
-    BigFloat temp(num);
-    temp.tag = !temp.tag;
-    return temp;
-}
-
-// 转换为字符串.可控制格式化输出
-// mode == false 默认输出, mode == true 科学计数法输出
-// 小数位数可控制，小数位数为0时不输出小数部分，默认为8位
-inline string BigFloat::toString(size_t decimalNum = 8, bool mode = false) const
+inline string BigFloat::toString(size_t decimalNum) const
 {
     string ans = "";
     BigFloat temp = *this;
@@ -283,121 +286,73 @@ inline string BigFloat::toString(size_t decimalNum = 8, bool mode = false) const
     {
         ans += '-';
     }
-    if (mode == false) // 默认输出
-    {
-        if (decimalNum > 0)
-        {
-            // 如果小数部分位数比要求输出位数多，就进行四舍五入
-            if (decimal.size() > decimalNum)
-            {
-                auto min = decimal[decimal.size() - decimalNum - 1];
-                if (min >= 5)
-                {
-                    BigFloat addNum("0.1");
-                    addNum = addNum.pow(decimalNum);
-                    temp += addNum;
-                }
-            }
-        }
 
-        for (auto iter = temp.integer.rbegin(); iter != temp.integer.rend(); iter++)
+    if (decimalNum > 0)
+    {
+        // 如果小数部分位数比要求输出位数多，就进行四舍五入
+        if (decimal.size() > decimalNum)
         {
-            ans += (char)((*iter) + '0');
-        }
-        ans += '.';
-        for (auto iter = temp.decimal.rbegin(); (iter != temp.decimal.rend()) && (decimalNum > 0); ++iter, --decimalNum)
-        {
-            ans += (char)((*iter) + '0');
+            auto min = decimal[decimal.size() - decimalNum - 1];
+            if (min >= 5)
+            {
+                BigFloat addNum("0.1");
+                addNum = addNum.pow(decimalNum);
+                temp += addNum;
+            }
         }
     }
     else
     {
-        // 暂未支持科学计数法
-        return toString();
+        decimalNum = decimal.size();
+    }
+
+    for (auto iter = temp.integer.rbegin(); iter != temp.integer.rend(); iter++)
+    {
+        ans += (char)((*iter) + '0');
+    }
+    ans += '.';
+    for (auto iter = temp.decimal.rbegin(); (iter != temp.decimal.rend()) && (decimalNum > 0); ++iter, --decimalNum)
+    {
+        ans += (char)((*iter) + '0');
     }
     return ans;
 }
 
 inline int BigFloat::toInt() const // 转换为int
 {
-    int ans = 0;
-    for (auto iter = integer.rbegin(); iter != integer.rend(); iter++)
-    {
-        ans *= 10;
-        ans += (*iter);
-    }
-    if (!tag)
-    {
-        ans *= -1;
-    }
-    return ans;
+    return stoi(toString());
 }
 
-inline float BigFloat::toFloat() const
+inline long BigFloat::toLong() const // 转换为long
 {
-    return (float)toDouble();
+    return stol(toString());
+}
+
+inline long long BigFloat::toLongLong() const // 转换为long long
+{
+    return stoll(toString());
+}
+
+inline float BigFloat::toFloat() const // 转换为float
+{
+    return stof(toString());
 }
 
 inline double BigFloat::toDouble() const // 转换为double
 {
-    double ans = 0;
-    for (auto iter = integer.rbegin(); iter != integer.rend(); iter++)
-    {
-        ans *= 10;
-        ans += (*iter);
-    }
-    double base = 0.1;
-    for (auto iter = decimal.rbegin(); iter != decimal.rend(); iter++)
-    {
-        ans += (double)((*iter) * base);
-        base *= 0.1;
-    }
-    if (!tag)
-    {
-        ans *= -1;
-    }
-    return ans;
+    return stod(toString());
 }
 
 inline long double BigFloat::toLongDouble() const // 转换为long double
 {
-    long double ans = 0;
-    for (auto iter = integer.rbegin(); iter != integer.rend(); iter++)
-    {
-        ans *= 10;
-        ans += (*iter);
-    }
-    long double base = 0.1;
-    for (auto iter = decimal.rbegin(); iter != decimal.rend(); iter++)
-    {
-        ans += (long double)((*iter) * base);
-        base *= 0.1;
-    }
-    if (!tag)
-    {
-        ans *= -1;
-    }
-    return ans;
+    return stold(toString());
 }
 
-inline int BigFloat::toInt(const BigFloat &num)
+inline BigFloat operator-(const BigFloat &num) // 取负操作
 {
-    return num.toInt();
-}
-
-inline float BigFloat::toFloat(const BigFloat &num)
-{
-    return num.toFloat();
-}
-
-inline double BigFloat::toDouble(const BigFloat &num)
-{
-    return num.toDouble();
-}
-
-inline long double BigFloat::toLongDouble(const BigFloat &num)
-{
-    return num.toLongDouble();
+    BigFloat temp(num);
+    temp.tag = !temp.tag;
+    return temp;
 }
 
 inline ostream &operator<<(ostream &out, const BigFloat &num) // 输出重载
@@ -838,7 +793,6 @@ inline BigFloat operator/=(BigFloat &num1, const BigFloat &num2) // 除等于重
         quotient.integer.push_back(0); // 整数部分为0
 
         quotient.decimal.clear();
-
         // 下面先补充前导0
         while (--Integer_Size)
         {
