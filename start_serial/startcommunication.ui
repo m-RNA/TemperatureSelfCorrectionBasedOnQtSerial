@@ -582,6 +582,9 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+        </item>
         <item row="1" column="0">
          <widget class="QTextEdit" name="teRecv">
           <property name="readOnly">
@@ -615,6 +618,9 @@
            </property>
            <item>
             <widget class="QPushButton" name="pushButton_21">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="whatsThis">
               <string>保存</string>
              </property>
@@ -648,6 +654,9 @@
            </item>
            <item>
             <widget class="QCheckBox" name="checkBox_6">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -661,6 +670,9 @@
            </item>
            <item>
             <widget class="QCheckBox" name="checkBox_8">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -706,44 +718,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_5"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_6">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <attribute name="title">
-        <string>波形</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_10">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="InteractChart" name="chart" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
          </widget>
         </item>
        </layout>
@@ -832,6 +806,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_4">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -897,7 +874,7 @@
              <x>0</x>
              <y>0</y>
              <width>573</width>
-             <height>184</height>
+             <height>265</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_7">
@@ -1146,14 +1123,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>InteractChart</class>
-   <extends>QWidget</extends>
-   <header location="global">interactchart.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../main.qrc"/>
  </resources>

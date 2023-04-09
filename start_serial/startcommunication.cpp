@@ -51,8 +51,6 @@ void StartCommunication::setDeviceName(const QString &name)
 {
     deviceName = name;
     ui->gbxSerialSetting->setTitle(deviceName);
-    ui->chart->setDeviceName(deviceName);
-    ui->chart->replot();
 }
 
 // 设置编码格式
@@ -261,8 +259,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
 
         connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
         connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, ui->chart, &InteractChart::addYPoint);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, [&](SerialAnalyseCell cell)
+        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, [&](const SerialAnalyseCell &cell)
                 { emit sgStartAnalyseFinish(cell); });
     }
     else // 打开-->关闭
