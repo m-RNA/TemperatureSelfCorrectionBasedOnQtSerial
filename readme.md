@@ -1,5 +1,16 @@
 # 笔记
 
+## 开发环境与依赖
+基于Qt 5.14.2开发  
+依赖的库有 Eigen、QXlsx  
+使用 QXlsx 需要安装 Strawberry Perl  
+
+下载链接：  
+Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page  
+QXlsx：https://github.com/QtExcel/QXlsx  
+Strawberry Perl：https://strawberryperl.com
+
+
 ## 多线程
 
 https://blog.csdn.net/zong596568821xp/article/details/78893360
