@@ -24,8 +24,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<SoundIndex>("SoundIndex");                     // 添加不支持的类型
     qRegisterMetaType<string>("string");                             // 添加不支持的类型
 
-    qDebug() << "主线程ID：" << QThread::currentThread();
-    QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
+    qDebug() << "主线程ID：" << QThread::currentThreadId();
 
     QApplication a(argc, argv);
     // StartCommunication w;

@@ -41,10 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*** LeastSquare Begin ***/
 
-    // 1. 创建任务类对象
-    taskGen = new Bll_GenerateData(this);
-    taskLeastSquare = new Bll_LeastSquareMethod(this);
-
     // 这里是根据表格的行数来设置采集点数的
     samplePointSum = ui->twAverage->rowCount();
     ui->spbxSamplePointSum->setValue(samplePointSum);
@@ -83,13 +79,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->twAverage, &QTableWidget::itemChanged, this, &LeastSquare::twAverage_itemChanged);
 
     connect(this, &LeastSquare::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
-
-    // 2. 链接子线程
-    connect(this, &LeastSquare::startGenerate, taskGen, &Bll_GenerateData::setGenerateFitData);
-    connect(taskGen, &Bll_GenerateData::generateFitDataFinish, ui->chartFit, &FitChart::updateFitPlot);
-
-    connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::setLeastSquareMethod);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setFitChartData);
 
     /*** LeastSquare End ***/
 
@@ -137,7 +126,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::sgXlsxSaveReport, taskXlsxData, &Bll_SaveDataToXlsx::saveReport);
     connect(this, &MainWindow::sgXlsxSetAutoSave, taskXlsxData, &Bll_SaveDataToXlsx::setAutoSave);
     connect(this, &MainWindow::sgXlsxSaveInfo, taskXlsxData, &Bll_SaveDataToXlsx::saveInfo);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
     threadXlsx->start();
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
@@ -263,6 +251,33 @@ void MainWindow::setDeviceName_Dtm(const QString &name)
 {
     ui->start_Dtm->setDeviceName(name);
     ui->collectPanel_Dtm->setDeviceName(name);
+}
+
+void MainWindow::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y)
+{
+    if (threadLeastSquare != nullptr)
+    {
+        threadLeastSquare->quit();
+        threadLeastSquare->wait();
+    }
+    taskLeastSquare = new Bll_LeastSquareMethod();
+    threadLeastSquare = new QThread();
+    taskLeastSquare->moveToThread(threadLeastSquare);
+    connect(threadLeastSquare, &QThread::finished, [&]()
+            {taskLeastSquare->deleteLater(); qDebug() << "threadLeastSquare quit"; });
+
+    connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::work);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setOrderData);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, ui->chartFit, &FitChart::updateFitPlot);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, this, [&]()
+            {
+                threadLeastSquare->quit();
+                threadLeastSquare->wait();
+                threadLeastSquare = nullptr; });
+
+    threadLeastSquare->start();
+    emit startLeastSquare(order, x, y);
 }
 
 void MainWindow::pictureInit()
@@ -728,22 +743,6 @@ void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
     samplePointSum = arg1;
 }
 
-/*
-    qt中获取容器Vector中的最大值和最小值：
-    https://blog.csdn.net/Littlehero_121/article/details/100565527
-*/
-DECIMAL_TYPE max(vector<DECIMAL_TYPE> &data)
-{
-    auto max = std::max_element(std::begin(data), std::end(data));
-    return *max;
-}
-
-DECIMAL_TYPE min(vector<DECIMAL_TYPE> &data)
-{
-    auto min = std::min_element(std::begin(data), std::end(data));
-    return *min;
-}
-
 void LeastSquare::updateCollectDataXY(void)
 {
     DECIMAL_TYPE temp;
@@ -790,8 +789,7 @@ void LeastSquare::tryUpdateFitChart(bool man)
         order = collectDataX.size() - 1;
 
     // 启动子线程
-    emit startLeastSquare(order, collectDataX, collectDataY);
-    QThreadPool::globalInstance()->start(taskLeastSquare);
+    leastSquareTaskStart(order, collectDataX, collectDataY);
 }
 
 void LeastSquare::on_spbxOrder_valueChanged(int arg1)
@@ -807,26 +805,17 @@ void LeastSquare::on_btnFit_clicked()
     tryUpdateFitChart(true);
 }
 
-void LeastSquare::setFitChartData(const vector<DECIMAL_TYPE> &factor)
+void LeastSquare::setOrderData(const vector<DECIMAL_TYPE> &factor)
 {
-    for (unsigned long long i = 0; i <= order; i++)
+    for (size_t i = 0; i <= order; i++)
     {
         // 通过setItem来改变条目
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%.8LE", factor.at(order - i));
-        // printf("LeastSquare::setFitChartData %s\r\n", buffer);
+        // printf("LeastSquare::setOrderData %s\r\n", buffer);
         QTableWidgetItem *temp = new QTableWidgetItem(globalStringBuffer); // QString::fromStdString(globalStringBuffer));
         ui->twFactor->setItem(i, 0, temp);
         ui->twFactor->item(i, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     }
-    collectDataX_Max = max(collectDataX);
-    collectDataX_Min = min(collectDataX);
-    DECIMAL_TYPE addRange = (collectDataX_Max - collectDataX_Min) / 1.0f;
-
-    // 启动子线程 生成曲线数据
-    emit startGenerate(collectDataX_Min - addRange, collectDataX_Max + addRange,
-                       (collectDataX_Max - collectDataX_Min) / (DECIMAL_TYPE)samplePointSum / 5000.0f,
-                       factor); // fitDataX, fitDataY);
-    QThreadPool::globalInstance()->start(taskGen);
 }
 
 void LeastSquare::on_twAverage_itemSelectionChanged()

@@ -52,7 +52,7 @@ private slots:
 
     void twAverage_itemChanged(QTableWidgetItem *item);
 
-    void setFitChartData(const vector<DECIMAL_TYPE> &factor);
+    void setOrderData(const vector<DECIMAL_TYPE> &factor);
 
     void setAverageTableItem_Std(const string &average);
 
@@ -101,8 +101,8 @@ signals:
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
-    void startGenerate(const DECIMAL_TYPE &t_left, const DECIMAL_TYPE &t_right, const DECIMAL_TYPE &t_step, const vector<DECIMAL_TYPE> &t_factor);
-    void startLeastSquare(const int &t_N, const vector<DECIMAL_TYPE> &t_x, const vector<DECIMAL_TYPE> &t_y);
+    void startGenerate(DECIMAL_TYPE t_left, DECIMAL_TYPE t_right, const DECIMAL_TYPE t_step, const vector<DECIMAL_TYPE> &t_factor);
+    void startLeastSquare(const int t_N, const vector<DECIMAL_TYPE> &t_x, const vector<DECIMAL_TYPE> &t_y);
 
 private:
     Ui::MainWindow *ui;
@@ -134,10 +134,10 @@ private:
     void listenDataWaveQuit();
     void collectDataInit();
     void collectDataQuit();
+    void leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y);
 
-    unsigned long long order; // 最小二乘法多项式阶数
+    size_t order; // 最小二乘法多项式阶数
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
-    DECIMAL_TYPE collectDataX_Max, collectDataX_Min;
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
     QRegExp rx;
     QString old_text = "";
@@ -145,14 +145,18 @@ private:
     bool verifyState = false;
 
     // 任务类对象
-    Bll_GenerateData *taskGen = nullptr;
     Bll_LeastSquareMethod *taskLeastSquare = nullptr;
+    QThread *threadLeastSquare = nullptr;
+
     Bll_SaveDataToXlsx *taskXlsxData = nullptr;
     QThread *threadXlsx = nullptr;
+
     Bll_Sound *taskSound = nullptr;
     QThread *threadSound = nullptr;
+
     Bll_DataWave *taskDataWave = nullptr;
     QThread *threadDataWave = nullptr;
+
     Bll_DataCollect *taskDataCollect_Std = nullptr;
     Bll_DataCollect *taskDataCollect_Dtm = nullptr;
     QThread *threadDataCollect = nullptr;
