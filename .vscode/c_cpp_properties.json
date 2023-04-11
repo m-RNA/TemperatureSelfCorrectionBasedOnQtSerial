@@ -7,7 +7,7 @@
                 "D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets/",
                 "F:/Senior_Part1/GraduationProject/UpperComputer/TemperatureSensorCalibration/",
                 "F:/Senior_Part1/GraduationProject/UpperComputer/buildTemperatureSensorCalibration/",
-                "D:/eigen-3.3.8/**",
+                "D:/eigen-3.4.0/**",
                 "${workspaceRoot}/**",
                 "${workspaceRoot}/qcustomplot/**",
                 "${workspaceFolder}/sound/**",

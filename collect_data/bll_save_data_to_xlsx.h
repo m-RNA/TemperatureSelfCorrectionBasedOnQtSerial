@@ -1,6 +1,7 @@
 #ifndef BLL_SAVEDATATOXLSX_H
 #define BLL_SAVEDATATOXLSX_H
-#include <QtXlsx>
+// #include <QtXlsx>
+#include "xlsxdocument.h"
 #include "config.h"
 using namespace QXlsx;
 using namespace std;

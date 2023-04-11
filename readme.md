@@ -10,6 +10,8 @@ Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page
 QXlsx：https://github.com/QtExcel/QXlsx  
 Strawberry Perl：https://strawberryperl.com
 
+QXlsx安装教程：  
+https://www.cnblogs.com/ybqjymy/p/17244317.html  
 
 ## 多线程
 

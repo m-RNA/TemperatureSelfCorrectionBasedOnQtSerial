@@ -1,4 +1,4 @@
-QT       += core gui printsupport serialport opengl xlsx multimedia
+QT       += core gui printsupport serialport opengl multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,6 +20,8 @@ LIBS+=-lopengl32 -lglu32
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+include(D:/QXlsx/QXlsx.pri)
+
 INCLUDEPATH +=  \
     message \
     big_float\
@@ -29,7 +31,8 @@ INCLUDEPATH +=  \
     least_square_method \
     collect_data \
     start_serial \
-    D:/eigen-3.3.8
+    D:/eigen-3.4.0 \
+    D:/QXlsx
 
 SOURCES += \
     about.cpp \
