@@ -1,5 +1,6 @@
 #include "wizard.h"
 #include "ui_wizard.h"
+#include <QSerialPortInfo>
 #include <QDate>
 #include <QDebug>
 #include <QSettings>
@@ -14,19 +15,17 @@ Wizard::Wizard(const Ui_SerialSettingIndex &settings_Std, const Ui_SerialSetting
     ui->dateEdit->setDate(QDate::currentDate());
     // 去掉问号，只保留关闭
     this->setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    // 更新串口信息
+    updateSerialPortInfo('a');
 
     // 设置界面
     loadUiSettings();
+    ui->cbSerial_Std->setCurrentIndex(settings_Std.portNameIndex);
+    ui->cbSerial_Dtm->setCurrentIndex(settings_Dtm.portNameIndex);
     ui->ss_Std->setSettingIndex(settings_Std);
     ui->ss_Dtm->setSettingIndex(settings_Dtm);
-
-    // 从串口设置中获取串口名，设置到Tab标签名上
-    setTabName_Std(settings_Std.portName);
-    setTabName_Dtm(settings_Dtm.portName);
-
-    // 实时改变Tab标签名
-    connect(ui->ss_Std, &SerialSetting::serialPortChanged, this, &Wizard::setTabName_Std);
-    connect(ui->ss_Dtm, &SerialSetting::serialPortChanged, this, &Wizard::setTabName_Dtm);
+    ui->ss_Std->setSerialPortName(settings_Std.portName);
+    ui->ss_Dtm->setSerialPortName(settings_Dtm.portName);
 
     // 当向导完成时，从向导界面获取配置信息
     connect(this, &Wizard::accepted, this, &Wizard::getInfo);
@@ -47,6 +46,10 @@ void Wizard::loadUiSettings()
     ui->leOperator->setText(settings.value("Operator", "老陈皮").toString());
     ui->leID_Std->setText(settings.value("ID_Std", "道万").toString());
     ui->leID_Dtm->setText(settings.value("ID_Dtm", "待定").toString());
+
+    bool autoSave = settings.value("AutoCollect", true).toBool();
+    ui->twTarget->setEnabled(autoSave);
+    ui->cbAutoCollect->setCurrentIndex(autoSave);
     settings.endGroup();
 }
 
@@ -60,28 +63,11 @@ void Wizard::saveUiSettings()
     settings.setValue("Operator", ui->leOperator->text());
     settings.setValue("ID_Std", ui->leID_Std->text());
     settings.setValue("ID_Dtm", ui->leID_Dtm->text());
+    settings.setValue("AutoCollect", ui->cbAutoCollect->currentIndex());
     settings.endGroup();
 }
 
-void Wizard::setTabName_Std(const QString &portName)
-{
-    QString s = "标准仪器";
-    s += "[";
-    s += portName;
-    s += "]";
-    qDebug() << s;
-    ui->tabWidget->setTabText(0, s);
-}
 
-void Wizard::setTabName_Dtm(const QString &portName)
-{
-    QString s = "待定仪器";
-    s += "[";
-    s += portName;
-    s += "]";
-    qDebug() << s;
-    ui->tabWidget->setTabText(1, s);
-}
 
 void Wizard::getInfo()
 {
@@ -98,8 +84,94 @@ void Wizard::getInfo()
     ui->ss_Std->getSettingIndex(wizardInfo.ssIndex_Std);
     ui->ss_Dtm->getSettingIndex(wizardInfo.ssIndex_Dtm);
 
+    wizardInfo.ssIndex_Std.portNameIndex = ui->cbSerial_Std->currentIndex();
+    wizardInfo.ssIndex_Dtm.portNameIndex = ui->cbSerial_Dtm->currentIndex();
+
     qDebug() << wizardInfo.ssIndex_Std.portName << wizardInfo.ssIndex_Std.portNameIndex << wizardInfo.ssIndex_Std.baudRate << wizardInfo.ssIndex_Std.dataBitsIndex << wizardInfo.ssIndex_Std.parityIndex << wizardInfo.ssIndex_Std.stopBitsIndex << wizardInfo.ssIndex_Std.flowControlIndex << wizardInfo.ssIndex_Std.encodeModeIndex << wizardInfo.ssIndex_Std.analyseModeIndex;
     qDebug() << wizardInfo.ssIndex_Dtm.portName << wizardInfo.ssIndex_Dtm.portNameIndex << wizardInfo.ssIndex_Dtm.baudRate << wizardInfo.ssIndex_Dtm.dataBitsIndex << wizardInfo.ssIndex_Dtm.parityIndex << wizardInfo.ssIndex_Dtm.stopBitsIndex << wizardInfo.ssIndex_Dtm.flowControlIndex << wizardInfo.ssIndex_Dtm.encodeModeIndex << wizardInfo.ssIndex_Dtm.analyseModeIndex;
 
     emit wizardInfoFinish(wizardInfo);
+}
+
+/// @brief 初始化 串口combo box 扫描更新界面串口端口信息
+void Wizard::updateSerialPortInfo(char who)
+{
+    QStringList serialNamePort;
+    // 查询串口端口信息
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        serialNamePort << info.portName();
+    }
+
+    switch (who)
+    {
+    case 's':
+        ui->cbSerial_Std->clear();
+        ui->cbSerial_Std->addItems(serialNamePort);
+        break;
+    case 'd':
+        ui->cbSerial_Dtm->clear();
+        ui->cbSerial_Dtm->addItems(serialNamePort);
+        break;
+
+    case 'a':
+        ui->cbSerial_Std->clear();
+        ui->cbSerial_Std->addItems(serialNamePort);
+        ui->cbSerial_Dtm->clear();
+        ui->cbSerial_Dtm->addItems(serialNamePort);
+        break;
+    }
+}
+
+/// @brief 事件过滤器
+/// @param obj
+/// @param event
+/// @return
+bool Wizard::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) // 鼠标点击事件
+    {
+        if (obj == ui->cbSerial_Std)
+        {
+            if (ui->cbSerial_Std->isEnabled())
+            {
+                updateSerialPortInfo('s');
+            }
+        }
+        else if (obj == ui->cbSerial_Dtm)
+        {
+            if (ui->cbSerial_Dtm->isEnabled())
+            {
+                updateSerialPortInfo('d');
+            }
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void Wizard::on_cbSerial_Std_activated(int index)
+{
+    Q_UNUSED(index);
+    ui->twSerial->setCurrentIndex(0);
+}
+
+void Wizard::on_cbSerial_Dtm_activated(int index)
+{
+    Q_UNUSED(index);
+    ui->twSerial->setCurrentIndex(1);
+}
+
+void Wizard::on_cbSerial_Std_currentIndexChanged(const QString &arg1)
+{
+    ui->ss_Std->setSerialPortName(arg1);
+}
+
+void Wizard::on_cbSerial_Dtm_currentIndexChanged(const QString &arg1)
+{
+    ui->ss_Dtm->setSerialPortName(arg1);
+}
+
+void Wizard::on_cbAutoCollect_currentIndexChanged(int index)
+{
+    ui->twTarget->setEnabled(index);
 }

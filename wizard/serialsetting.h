@@ -2,7 +2,6 @@
 #define SERIALSETTING_H
 
 #include <QWidget>
-#include <QSerialPort>
 
 typedef struct
 {
@@ -33,18 +32,10 @@ public:
     void getSettingIndex(Ui_SerialSettingIndex &uiIndex);
     void setSettingIndex(const Ui_SerialSettingIndex &uiIndex);
 
-protected:
-    virtual bool eventFilter(QObject *obj, QEvent *event);
-
-private slots:
-    void on_cbSerial_activated(int index);
-
-signals:
-    void serialPortChanged(const QString &);
+    void setSerialPortName(const QString &serialName);
 
 private:
     Ui::SerialSetting *ui;
-    void updateSerialPortInfo();
 };
 
 #endif // SERIALSETTING_H
