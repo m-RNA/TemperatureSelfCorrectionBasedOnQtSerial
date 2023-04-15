@@ -7,6 +7,8 @@
 
 static int nMessageItemMargin = 20;
 
+Message *Message::pMessage = nullptr; // 静态变量初始化
+
 Message::Message(QObject *parent) : QObject(parent)
 {
     if (parent == nullptr)
@@ -41,21 +43,31 @@ void Message::Push(MessageType type, const QString &content, int nDuration)
     pItem->Show();
 }
 
+void Message::setParent(QObject *parent)
+{
+    if (pMessage == nullptr && parent != nullptr)
+        pMessage = new Message(parent);
+}
+
+void Message::PushMessage(MessageType type, const QString &content, int nDuration)
+{
+    pMessage->Push(type, content, nDuration);
+}
 void Message::success(const QString &content, int nDuration)
 {
-    Push(MESSAGE_TYPE_SUCCESS, content, nDuration);
+    pMessage->Push(MESSAGE_TYPE_SUCCESS, content, nDuration);
 }
 void Message::error(const QString &content, int nDuration)
 {
-    Push(MESSAGE_TYPE_ERROR, content, nDuration);
+    pMessage->Push(MESSAGE_TYPE_ERROR, content, nDuration);
 }
 void Message::warning(const QString &content, int nDuration)
 {
-    Push(MESSAGE_TYPE_WARNING, content, nDuration);
+    pMessage->Push(MESSAGE_TYPE_WARNING, content, nDuration);
 }
 void Message::information(const QString &content, int nDuration)
 {
-    Push(MESSAGE_TYPE_INFORMATION, content, nDuration);
+    pMessage->Push(MESSAGE_TYPE_INFORMATION, content, nDuration);
 }
 
 void Message::adjustItemPos(MessageItem *pItem)

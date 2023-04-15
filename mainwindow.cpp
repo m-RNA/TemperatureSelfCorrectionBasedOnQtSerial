@@ -9,6 +9,7 @@
 #include <QSerialPortInfo>
 #include <QSerialPort>
 // #include <QMessageBox>
+#include "message.h"
 #include <QInputDialog>
 #include <QTimer>
 #include <QStringList>
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    msg = new Message(this);
+    Message::setParent(this);
 
     timerCollect = new QTimer(this);
     timerCollect->setTimerType(Qt::PreciseTimer); // 设置为精准定时器
@@ -549,7 +550,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
         if (!(ui->start_Dtm->state() && ui->start_Std->state()))
         {
             // QMessageBox::critical(this, "错误", "请同时连接两个仪器");
-            msg->error("请同时连接两个仪器");
+            Message::error("请同时连接两个仪器");
             return;
         }
         ui->spbxSamplePointSum->setEnabled(false);
@@ -624,7 +625,7 @@ void Bll_CollectBtn::on_btnCollectRestart_clicked()
     if (!(ui->start_Dtm->state() && ui->start_Std->state()))
     {
         // QMessageBox::critical(this, "错误", "请同时连接两个仪器");
-        msg->error("请同时连接两个仪器");
+        Message::error("请同时连接两个仪器");
         return;
     }
     isCollecting = true;
@@ -869,7 +870,7 @@ void LeastSquare::tryUpdateFitChart(bool man)
     if (collectDataX.size() < 2)
     {
         if (man) // 是人为的就要提醒一下
-            msg->error("正确格式的数据小于两组");
+            Message::error("正确格式的数据小于两组");
         // QMessageBox::critical(this, "错误", "正确格式的数据\n小于两组");
         return;
     }
@@ -1008,7 +1009,7 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 void MainWindow::on_btnSaveReport_clicked()
 {
     emit sgXlsxSaveReport();
-    msg->success("文件保存成功");
+    Message::success("文件保存成功");
 }
 
 void MainWindow::on_actionSaveReport_triggered()

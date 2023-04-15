@@ -32,47 +32,27 @@ public:
     void Push(MessageType type, const QString &content, int nDuration = 3000);
 
     /**
-     * @brief PushMessage 静态函数，供全局调用
+     * @brief setParent 设置父对象,静态函数，供全局调用
      * @param parent 父对象
-     * @param type 消息类型
-     * @param content 消息内容
-     * @param nDuration 显示时间，必须大于等于0，若等于0则不消失
-     */
-    static void PushMessage(QObject *parent, MessageType type, const QString &content, int nDuration = 3000)
-    {
-        static Message *pMessage = new Message(parent);
-        pMessage->Push(type, content, nDuration);
-    }
-    static void success(QObject *parent, const QString &content, int nDuration = 3000)
-    {
-        PushMessage(parent, MESSAGE_TYPE_SUCCESS, content, nDuration);
-    }
-    static void error(QObject *parent, const QString &content, int nDuration = 3000)
-    {
-        PushMessage(parent, MESSAGE_TYPE_ERROR, content, nDuration);
-    }
-    static void warning(QObject *parent, const QString &content, int nDuration = 3000)
-    {
-        PushMessage(parent, MESSAGE_TYPE_WARNING, content, nDuration);
-    }
-    static void information(QObject *parent, const QString &content, int nDuration = 3000)
-    {
-        PushMessage(parent, MESSAGE_TYPE_INFORMATION, content, nDuration);
-    }
+     * @note 该函数只能在主线程中调用
+     * @note 该函数只能调用一次
+    */
+    static void setParent(QObject *parent);
+    static void PushMessage(MessageType type, const QString &content, int nDuration = 3000);
+    static void success(const QString &content, int nDuration = 3000);
+    static void error(const QString &content, int nDuration = 3000);
+    static void warning(const QString &content, int nDuration = 3000);
+    static void information(const QString &content, int nDuration = 3000);
 
-    void success(const QString &content, int nDuration = 3000);
-    void error(const QString &content, int nDuration = 3000);
-    void warning(const QString &content, int nDuration = 3000);
-    void information(const QString &content, int nDuration = 3000);
+private slots:
+    void adjustItemPos(MessageItem *pItem);
+    void removeItem(MessageItem *pItem);
 
 private:
     std::vector<MessageItem *> m_vecMessage;
     std::mutex m_qMtx;
     int m_nWidth;
-
-private slots:
-    void adjustItemPos(MessageItem *pItem);
-    void removeItem(MessageItem *pItem);
+    static Message *pMessage;
 };
 
 class MessageItem : public QWidget

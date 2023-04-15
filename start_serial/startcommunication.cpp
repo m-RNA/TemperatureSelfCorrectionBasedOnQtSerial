@@ -3,6 +3,7 @@
 #include <QSerialPortInfo>
 #include <QSettings>
 #include "config.h"
+#include "message.h"
 
 StartCommunication::StartCommunication(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::StartCommunication)
@@ -285,7 +286,8 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         Bll_SerialPortSetting setting;
         if (getSerialPortSetting(setting) < 0) // 打开异常
         {
-            QMessageBox::critical(this, deviceName, "没有检测到串口\n打开失败!");
+            // QMessageBox::critical(this, deviceName, "没有检测到串口\n打开失败!");
+            Message::error(deviceName + "\n没有检测到串口\n打开失败!");
             return;
         }
 
@@ -296,12 +298,17 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         {
             bll_SerialPort->deleteLater();
             bll_SerialPort = nullptr;
-            QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
+            // QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
+// - 线缆是否松动?\n\
+// - 串口是否被占用?\n\
+// - 串口配置是否正确?\n\
+// - 是否有串口读写权限?");
+
+            Message::error(deviceName + "\n串口" + res.msg + "请检查:\n\
 - 线缆是否松动?\n\
 - 串口是否被占用?\n\
 - 串口配置是否正确?\n\
 - 是否有串口读写权限?");
-
             return;
         }
 
