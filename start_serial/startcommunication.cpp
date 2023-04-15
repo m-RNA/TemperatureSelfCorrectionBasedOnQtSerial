@@ -20,6 +20,9 @@ StartCommunication::~StartCommunication()
 
     if (bll_SerialPort)
         bll_SerialPort->deleteLater();
+
+    if (timerSendRegular)
+        timerSendRegular->deleteLater();
     delete ui;
 }
 
@@ -290,7 +293,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         if (res.returnCode < 0) // 串口打开异常
         {
             bll_SerialPort->deleteLater();
-
+            bll_SerialPort = nullptr;
             QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
 - 线缆是否松动?\n\
 - 串口是否被占用?\n\
@@ -315,6 +318,7 @@ void StartCommunication::on_btnSerialSwitch_clicked()
     {
         serialPortState = false; // 串口状态 置关
         bll_SerialPort->deleteLater();
+        bll_SerialPort = nullptr;
         // bll_SerialPort->close();
     }
     setSerialPortCtrlState(serialPortState);
@@ -408,6 +412,7 @@ void StartCommunication::on_cbSendRegular_toggled(bool checked)
     {
         timerSendRegular->stop();
         timerSendRegular->deleteLater();
+        timerSendRegular = nullptr;
 
         qDebug() << deviceName << "定时器 关闭" << checked;
     }

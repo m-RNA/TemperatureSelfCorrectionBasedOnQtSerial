@@ -1,5 +1,4 @@
 #include "bll_serial.h"
-#include <QElapsedTimer>
 
 Bll_SerialPort::Bll_SerialPort(QString name, QObject *parent) : QObject(parent)
 {
@@ -59,9 +58,9 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting &setting, RES &res)
     threadSerial->start();
 
     // 设置解码模式
-    recvAnalyse->setAnalyseMode(setting.analyseMode);
     if (setting.analyseMode != 0)
     {
+        recvAnalyse->setAnalyseMode(setting.analyseMode);
         // 创建串口接收数据分析线程
         threadAnalyse = new QThread();
         recvAnalyse->moveToThread(threadAnalyse);
@@ -71,12 +70,12 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting &setting, RES &res)
     res.returnCode = 0;
 }
 
+// 串口发送任务
 void Bll_SerialPort::slSendData(const QByteArray &data)
 {
     serial->write(data);
 
-    // qDebug() << deviceName << "串口发送线程ID" << QThread::currentThread();
-    // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
+    // qDebug() << deviceName << "串口发送线程ID" << QThread::currentThreadId();
 }
 
 //   串口接收任务
@@ -87,7 +86,5 @@ void Bll_SerialPort::slReadyRead()
 
     emit sgRecvData(rowRxBuf);
 
-    // qDebug() << "slReadyRead 线程ID：" << QThread::currentThread();
-    // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThread();
-    // qDebug() << deviceName << "活跃线程数" << QThreadPool::globalInstance()->activeThreadCount();
+    // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThreadId();
 }
