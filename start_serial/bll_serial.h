@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QThread>
 #include <QThreadPool>
-#include <QRunnable>
 #include <QSerialPort>
 #include <QDebug>
 #include "bll_serialrecvanalyse.h"
@@ -30,7 +29,7 @@ typedef struct
     int analyseMode = 0;
 } Bll_SerialPortSetting;
 
-class Bll_SerialPort : public QObject // , public QRunnable
+class Bll_SerialPort : public QObject
 {
     Q_OBJECT
 public:

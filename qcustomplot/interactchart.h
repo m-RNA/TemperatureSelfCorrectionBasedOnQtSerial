@@ -63,7 +63,8 @@ private:
     bool yAxisAutoZoomState = true;
     bool timelineState = false;
     timeb t1, t2;
-    int nowTime, oldTime;
+    qint64 nowTime, oldTime;
+    static qint64 CHART_REFRESH_TIME_MS;
 };
 
 #endif // INTERACTCHART_H

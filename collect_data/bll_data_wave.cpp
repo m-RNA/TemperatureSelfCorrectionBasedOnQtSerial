@@ -42,9 +42,9 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         return;
     }
 
-    while (data.begin()->moment + interval < data.rbegin()->moment)
+    while (data.begin()->timestamp + interval < data.rbegin()->timestamp)
     {
-        if (data.begin()->moment >= min.moment)
+        if (data.begin()->timestamp >= min.timestamp)
         {
             min = data.at(1);
             for (int i = 2; i < data.length(); ++i)
@@ -53,7 +53,7 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
                     min = data.at(i);
             }
         }
-        else if (data.begin()->moment >= max.moment)
+        else if (data.begin()->timestamp >= max.timestamp)
         {
             max = data.at(1);
             for (int i = 2; i < data.length(); ++i)

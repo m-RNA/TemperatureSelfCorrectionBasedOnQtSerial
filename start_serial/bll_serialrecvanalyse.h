@@ -2,15 +2,14 @@
 #define BLL_SERIALRECVANALYSE_H
 
 #include <QObject>
-// #include <QRunnable>
 
 typedef struct
 {
-    int moment;   // 时刻
-    double value; // 数据
+    qint64 timestamp; // 时间戳
+    double value;     // 数据
 } SerialAnalyseCell;
 
-class Bll_SerialRecvAnalyse : public QObject //, public QRunnable
+class Bll_SerialRecvAnalyse : public QObject
 {
     Q_OBJECT
 public:

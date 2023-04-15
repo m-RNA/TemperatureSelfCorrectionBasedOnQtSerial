@@ -1,12 +1,12 @@
 #include "bll_serialrecvanalyse.h"
 #include <QThread>
 #include <QDebug>
-#include <QTime>
+#include <QDateTime>
 
 // 全局静态变量，用于生成 id
 static unsigned globalId = 0;
 
-Bll_SerialRecvAnalyse::Bll_SerialRecvAnalyse(QObject *parent) : QObject(parent) // , QRunnable()
+Bll_SerialRecvAnalyse::Bll_SerialRecvAnalyse(QObject *parent) : QObject(parent)
 {
     globalId++;
     id = globalId;
@@ -83,8 +83,8 @@ void Bll_SerialRecvAnalyse::analyseNum()
         if (canIntoNum(rxFrame))
         {
             cell.value = rxFrame.toDouble();
-            cell.moment = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间;
-            // qDebug() << id << ":" << cell.value;
+            cell.timestamp = QDateTime::currentMSecsSinceEpoch(); // 记录此刻时间
+            // qDebug() << id << ":" << cell.timestamp << cell.value;
 
             emit sgBll_AnalyseFinish(cell);
         }
@@ -130,8 +130,8 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
         if (canIntoNum(rxFrame))
         {
             cell.value = rxFrame.toDouble();
-            cell.moment = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间;
-            // qDebug() << id << ":" << cell.value;
+            cell.timestamp = QDateTime::currentMSecsSinceEpoch(); // 记录此刻时间
+            // qDebug() << id << ":" << cell.timestamp << cell.value;
 
             emit sgBll_AnalyseFinish(cell);
         }

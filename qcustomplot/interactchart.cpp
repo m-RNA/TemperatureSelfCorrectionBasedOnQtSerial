@@ -2,8 +2,8 @@
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
 #include <QDateTime>
 
-// 宏定义刷新时间间隔
-#define CHART_REFRESH_TIME_MS 50
+// 刷新时间间隔
+qint64 InteractChart::CHART_REFRESH_TIME_MS = 50;
 
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
@@ -87,8 +87,8 @@ void InteractChart::setXAxisToTimelineState(bool state)
 	if (state == true)
 	{
 		// QCPAxisTickerDateTime 时间坐标轴 必须要用智能指针
-		QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-		timeTicker->setTimeFormat("%h:%m:%s.%z"); // 精确到毫秒
+		QSharedPointer<QCPAxisTickerDateTime> timeTicker(new QCPAxisTickerDateTime);
+		timeTicker->setDateTimeFormat("ddd hh:mm:ss"); // 精确到秒
 
 		// 设置时间轴 一共几格
 		timeTicker->setTickCount(3);
@@ -99,7 +99,7 @@ void InteractChart::setXAxisToTimelineState(bool state)
 
 		// 设置坐标轴
 		this->xAxis->setTicker(timeTicker);
-		oldTime = QTime::currentTime().msecsSinceStartOfDay(); // 记录此刻时间
+		oldTime = QDateTime::currentMSecsSinceEpoch(); // 记录此刻时间
 
 		this->xAxis->setRange(oldTime * 0.001, 60, Qt::AlignRight);
 		this->xAxis->setLabel("");
@@ -141,7 +141,7 @@ void InteractChart::axisXYDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart par
 	if (part == QCPAxis::spAxis)
 	{
 		bool ok;
-		double newRange = QInputDialog::getDouble(this, "设置范围", "新的坐标轴范围", range, 0, 99999, 4, &ok, Qt::WindowCloseButtonHint);
+		double newRange = QInputDialog::getDouble(this, "设置范围", "新的坐标轴范围", range, 0, 99999999, 4, &ok, Qt::WindowCloseButtonHint);
 
 		if (ok)
 		{
@@ -281,7 +281,7 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 							   tr("<h5><table><tr><td align='right'>%1:</td><td>%2</td></tr><tr><td align='right'>时间:<td>%3</td></tr></h5>")
 								   .arg(selectedGraph->name())
 								   .arg(QString::number(coords.y(), 'g', 6))
-								   .arg(QTime::fromMSecsSinceStartOfDay(coords.x() * 1000).toString("hh:mm:ss.zzz")), // 将x轴的值转换为时间
+								   .arg(QDateTime::fromMSecsSinceEpoch(coords.x() * 1000).toString("hh:mm:ss.zzz")), // 将x轴的值转换为时间
 							   this, this->rect());
 		}
 		else
@@ -410,10 +410,10 @@ void InteractChart::addYPointBaseOnTime(const SerialAnalyseCell &cell)
 		return;
 
 	// 这里似乎有点问题？？
-	nowTime = cell.moment;
+	nowTime = cell.timestamp;
 	this->graph()->addData(nowTime * 0.001, cell.value); // 添加数据
 
-	if (nowTime - oldTime < 50) // 50ms 刷新一次
+	if (nowTime - oldTime < CHART_REFRESH_TIME_MS) // CHART_REFRESH_TIME_MS 刷新一次
 		return;
 	oldTime = nowTime;
 	chartRefresh();

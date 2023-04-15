@@ -22,4 +22,4 @@ https://blog.csdn.net/zong596568821xp/article/details/78893360
 
 ## InteractChart
 
-这里面时间轴单位是毫秒（int），但是有除以1000转换为秒（double），要注意。
+这里面时间轴单位是毫秒（qint64），但是有除以1000转换为秒（double），要注意。
