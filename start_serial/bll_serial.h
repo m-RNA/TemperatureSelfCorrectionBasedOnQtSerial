@@ -3,11 +3,9 @@
 
 #include <QObject>
 #include <QThread>
-#include <QThreadPool>
 #include <QSerialPort>
 #include <QDebug>
 #include "bll_serialrecvanalyse.h"
-#include "interactchart.h"
 #include "bll_codeconverter.h"
 
 typedef struct
@@ -33,14 +31,10 @@ class Bll_SerialPort : public QObject
 {
     Q_OBJECT
 public:
-    Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
-
     explicit Bll_SerialPort(QString name, QObject *parent = nullptr);
     ~Bll_SerialPort();
 
-    // void run() override;
     void setDeviceName(QString name) { deviceName = name; }
-    void setChartAddr(InteractChart *addr) { chartAddr = addr; }
 
     void init(const Bll_SerialPortSetting &setting, RES &res);
 
@@ -56,9 +50,6 @@ signals:
 private:
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
     QSerialPort *serial = nullptr;
-    QThread *threadSerial = nullptr;
-    QThread *threadAnalyse = nullptr;
-    InteractChart *chartAddr = nullptr;
 
     void printSerialPortInitInfo(QSerialPort const *sp)
     {

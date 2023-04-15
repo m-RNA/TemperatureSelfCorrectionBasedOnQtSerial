@@ -1,6 +1,7 @@
 #include "startcommunication.h"
 #include "ui_startcommunication.h"
 #include <QSerialPortInfo>
+#include <QFile>
 #include <QSettings>
 #include "config.h"
 #include "message.h"
@@ -19,8 +20,16 @@ StartCommunication::~StartCommunication()
 {
     saveUiSettings();
 
-    if (bll_SerialPort)
-        bll_SerialPort->deleteLater();
+    if (threadAnalyse)
+    {
+        threadAnalyse->quit();
+        threadAnalyse->wait();
+    }
+    if (threadSerialPort)
+    {
+        threadSerialPort->quit();
+        threadSerialPort->wait();
+    }
 
     if (timerSendRegular)
         timerSendRegular->deleteLater();
@@ -67,6 +76,18 @@ void StartCommunication::saveUiSettings()
     setting.endGroup();
 }
 
+void StartCommunication::setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex)
+{
+    ui->cbSerial->setCurrentIndex(uiIndex.portNameIndex);
+    ui->cbBaudrate->setCurrentText(uiIndex.baudRate);
+    ui->cbDataBit->setCurrentIndex(uiIndex.dataBitsIndex);
+    ui->cbCheckBit->setCurrentIndex(uiIndex.parityIndex);
+    ui->cbStopBit->setCurrentIndex(uiIndex.stopBitsIndex);
+    ui->cbFlowCtrl->setCurrentIndex(uiIndex.flowControlIndex);
+    ui->cbEncode->setCurrentIndex(uiIndex.encodeModeIndex);
+    ui->cbAnalyse->setCurrentIndex(uiIndex.analyseModeIndex);
+}
+
 void StartCommunication::getSettingIndex(Ui_SerialSettingIndex &uiIndex)
 {
     uiIndex.portName = ui->cbSerial->currentText().left(ui->cbSerial->currentText().indexOf(" "));
@@ -101,7 +122,7 @@ bool StartCommunication::eventFilter(QObject *obj, QEvent *event)
 }
 
 /// @brief 设置设备名称
-/// @param s 名称
+/// @param name 名称
 void StartCommunication::setDeviceName(const QString &name)
 {
     deviceName = name;
@@ -148,18 +169,6 @@ void StartCommunication::setEncodeMode(EncodingFormat encodeMode)
 void StartCommunication::setAnalyseMode(int type)
 {
     ui->cbAnalyse->setCurrentIndex(type);
-}
-
-void StartCommunication::setSerialSettingIndex(const Ui_SerialSettingIndex &uiIndex)
-{
-    ui->cbSerial->setCurrentIndex(uiIndex.portNameIndex);
-    ui->cbBaudrate->setCurrentText(uiIndex.baudRate);
-    ui->cbDataBit->setCurrentIndex(uiIndex.dataBitsIndex);
-    ui->cbCheckBit->setCurrentIndex(uiIndex.parityIndex);
-    ui->cbStopBit->setCurrentIndex(uiIndex.stopBitsIndex);
-    ui->cbFlowCtrl->setCurrentIndex(uiIndex.flowControlIndex);
-    ui->cbEncode->setCurrentIndex(uiIndex.encodeModeIndex);
-    ui->cbAnalyse->setCurrentIndex(uiIndex.analyseModeIndex);
 }
 
 void StartCommunication::setCbxSerialIndex(int index)
@@ -291,18 +300,26 @@ void StartCommunication::on_btnSerialSwitch_clicked()
             return;
         }
 
+        QApplication::setOverrideCursor(Qt::WaitCursor); // 设置鼠标为等待状态
+
         RES res;
         bll_SerialPort = new Bll_SerialPort(deviceName); // 创建任务对象
         bll_SerialPort->init(setting, res);
+
+        QApplication::restoreOverrideCursor(); // 恢复鼠标状态
+
         if (res.returnCode < 0) // 串口打开异常
         {
             bll_SerialPort->deleteLater();
             bll_SerialPort = nullptr;
-            // QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
-// - 线缆是否松动?\n\
-// - 串口是否被占用?\n\
-// - 串口配置是否正确?\n\
-// - 是否有串口读写权限?");
+
+            /*
+                        QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
+            - 线缆是否松动?\n\
+            - 串口是否被占用?\n\
+            - 串口配置是否正确?\n\
+            - 是否有串口读写权限?");
+            */
 
             Message::error(deviceName + "\n串口" + res.msg + "请检查:\n\
 - 线缆是否松动?\n\
@@ -318,16 +335,49 @@ void StartCommunication::on_btnSerialSwitch_clicked()
         // 设置编码格式
         setEncodeMode((EncodingFormat)setting.encodeMode);
 
-        connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData, Qt::QueuedConnection);
-        connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData, Qt::QueuedConnection);
-        connect(bll_SerialPort->recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, [&](const SerialAnalyseCell &cell)
-                { emit sgStartAnalyseFinish(cell); });
+        // 设置解码模式
+        if (ui->cbAnalyse->currentIndex() != 0)
+        {
+            recvAnalyse = new Bll_SerialRecvAnalyse;
+            recvAnalyse->setAnalyseMode(ui->cbAnalyse->currentIndex());
+            threadAnalyse = new QThread;
+            recvAnalyse->moveToThread(threadAnalyse);
+            connect(threadAnalyse, &QThread::finished, recvAnalyse, &QObject::deleteLater);
+            connect(threadAnalyse, &QThread::finished, threadAnalyse, &QThread::deleteLater);
+            connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, recvAnalyse, &Bll_SerialRecvAnalyse::working);
+            connect(recvAnalyse, &Bll_SerialRecvAnalyse::sgBll_AnalyseFinish, [&](const SerialAnalyseCell &cell)
+                    { emit sgStartAnalyseFinish(cell); });
+            threadAnalyse->start();
+        }
+
+        threadSerialPort = new QThread;
+        bll_SerialPort->moveToThread(threadSerialPort);
+        connect(threadSerialPort, &QThread::finished, bll_SerialPort, &Bll_SerialPort::deleteLater);
+        connect(threadSerialPort, &QThread::finished, threadSerialPort, &QThread::deleteLater);
+        connect(bll_SerialPort, &Bll_SerialPort::sgRecvData, this, &StartCommunication::slSerialPortRecvData);
+        connect(this, &StartCommunication::sgSerialPortSendData, bll_SerialPort, &Bll_SerialPort::slSendData);
+        threadSerialPort->start();
     }
     else // 打开-->关闭
     {
         serialPortState = false; // 串口状态 置关
-        bll_SerialPort->deleteLater();
-        bll_SerialPort = nullptr;
+
+        if (threadAnalyse != nullptr)
+        {
+            threadAnalyse->quit();
+            threadAnalyse->wait();
+            threadAnalyse = nullptr;
+            recvAnalyse = nullptr;
+        }
+
+        if (threadSerialPort != nullptr)
+        {
+            threadSerialPort->quit();
+            threadSerialPort->wait();
+            threadSerialPort = nullptr;
+            bll_SerialPort = nullptr;
+        }
+
         // bll_SerialPort->close();
     }
     setSerialPortCtrlState(serialPortState);

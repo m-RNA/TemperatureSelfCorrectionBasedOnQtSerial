@@ -28,10 +28,13 @@ int main(int argc, char *argv[])
     qDebug() << "主线程ID：" << QThread::currentThreadId();
 
     QApplication a(argc, argv);
-    // StartCommunication w;
 
-    // 程序异常退出：检查有无野指针，未初始化变量 参考B站：BV1U14y1K7Po
+// 程序异常退出：检查有无野指针，未初始化变量 参考B站：BV1U14y1K7Po
+#if 0
+    StartCommunication w;
+#else
     MainWindow w;
+#endif
     w.show();
     return a.exec();
 

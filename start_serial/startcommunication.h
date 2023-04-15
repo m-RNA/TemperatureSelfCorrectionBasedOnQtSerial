@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QSerialPort>
+#include <QThread>
 #include <QDebug>
 #include "bll_serial.h"
 #include "bll_codeconverter.h"
@@ -71,11 +72,15 @@ signals:
 
 private:
     Ui::StartCommunication *ui;
-    QString settingID = "";
-
+    QString settingID = "";          // 用于保存ini的ID
     QString deviceName = "未知仪器"; // 需要初始化变量，不然会程序会异常退出 参考B站：BV1U14y1K7Po
+
+    Bll_SerialPort *bll_SerialPort = nullptr;
+    QThread *threadSerialPort = nullptr;
+    Bll_SerialRecvAnalyse *recvAnalyse = nullptr;
+    QThread *threadAnalyse = nullptr;
+
     QTimer *timerSendRegular = nullptr;
-    Bll_SerialPort *bll_SerialPort = nullptr; // 任务对象
 
     bool serialPortState = false; // 串口状态 true为开 false为关
     bool recvPauseState = false;  // 暂停接收状态 true为暂停 false为正常

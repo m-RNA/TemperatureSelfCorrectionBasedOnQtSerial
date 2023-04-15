@@ -4,27 +4,18 @@ Bll_SerialPort::Bll_SerialPort(QString name, QObject *parent) : QObject(parent)
 {
     // setAutoDelete(false); // 关掉:放到线程池后自动析构
     this->setDeviceName(name);
-    serial = new QSerialPort();
-    recvAnalyse = new Bll_SerialRecvAnalyse;
-
-    connect(serial, &QSerialPort::readyRead, this, &Bll_SerialPort::slReadyRead, Qt::QueuedConnection);
-    connect(this, &Bll_SerialPort::sgRecvData, recvAnalyse, &Bll_SerialRecvAnalyse::working);
+    serial = new QSerialPort(this);
+    connect(serial, &QSerialPort::readyRead, this, &Bll_SerialPort::slReadyRead);
 }
 
 Bll_SerialPort::~Bll_SerialPort()
 {
-    recvAnalyse->deleteLater();
-
     if (serial->isOpen()) // 退出程序时，关闭使用中的串口
     {
         serial->close(); // 关闭串口
         qDebug() << deviceName << "关闭串口";
     }
-    serial->deleteLater();
     qDebug() << "Bll_SerialPort Destroyed!";
-
-    // 任务对象和线程不需要维护，线程池会维护
-    // ??? 为什么自己维护的会导致程序异常退出，这里明明没有使用线程池吧
 }
 
 /// @brief 初始化我的串口（任务对象） 开启串口
@@ -51,22 +42,6 @@ void Bll_SerialPort::init(const Bll_SerialPortSetting &setting, RES &res)
     // 正常打开
     qDebug() << deviceName << "打开串口";
 
-    // 创建串口接收线程
-    threadSerial = new QThread();
-    this->moveToThread(threadSerial);
-    serial->moveToThread(threadSerial);
-    threadSerial->start();
-
-    // 设置解码模式
-    if (setting.analyseMode != 0)
-    {
-        recvAnalyse->setAnalyseMode(setting.analyseMode);
-        // 创建串口接收数据分析线程
-        threadAnalyse = new QThread();
-        recvAnalyse->moveToThread(threadAnalyse);
-        threadAnalyse->start();
-    }
-
     res.returnCode = 0;
 }
 
@@ -81,10 +56,7 @@ void Bll_SerialPort::slSendData(const QByteArray &data)
 //   串口接收任务
 void Bll_SerialPort::slReadyRead()
 {
-    QByteArray rowRxBuf; // 最新接收数据
-    rowRxBuf = serial->readAll();
-
-    emit sgRecvData(rowRxBuf);
+    emit sgRecvData(serial->readAll()); // 最新接收数据
 
     // qDebug() << deviceName << "串口接收线程ID" << QThread::currentThreadId();
 }
