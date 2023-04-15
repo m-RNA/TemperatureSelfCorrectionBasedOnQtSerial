@@ -1,11 +1,14 @@
 #include "bll_data_wave.h"
+#include "mainwindow.h"
+
+vector<AutoCollectCell> Bll_DataWave::autoCollectDataList = {};
 
 Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
 {
     timerWatchDog = new QTimer(this);
     timerWatchDog->setInterval(5000);
     connect(timerWatchDog, &QTimer::timeout, [&]()
-            {stableState = 2; autoSendStableState(); });
+            {stableState = 2; autoEmitStableState(); });
     timerWatchDog->start();
 }
 
@@ -82,19 +85,26 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         goto CHECK_MIN_MAX;
     }
 
+    if (autoCollectState && (stableState == 1))
+        checkAutoCollect(cell.value);
+
     return;
 
 CHECK_MIN_MAX:
     if (max.value - min.value > range)
+    {
         stableState = 0;
+    }
     else
+    {
         stableState = 1;
+    }
 
 CHECK_STABLE:
-    autoSendStableState();
+    autoEmitStableState();
 }
 
-void Bll_DataWave::autoSendStableState(void)
+void Bll_DataWave::autoEmitStableState(void)
 {
     if (stableState ^ lastStableState)
     {
@@ -105,4 +115,51 @@ void Bll_DataWave::autoSendStableState(void)
             emit sgReceiveTimeout();
     }
     lastStableState = stableState;
+}
+
+void Bll_DataWave::checkAutoCollect(const double &value)
+{
+    qDebug() << "checkAutoCollect" << value;
+    autoCollectState = false;
+
+    if (autoCollectDataList.size() == 0)
+        return;
+
+    for (auto &cell : autoCollectDataList)
+    {
+        // 跳过已经收集过的数据
+        if (cell.isCollect)
+            continue;
+
+        // 检测是否在允许范围内
+        if (cell.value - autoCollectRange < value && cell.value + autoCollectRange > value)
+        {
+            qDebug() << "checkAutoCollect" << cell.value;
+            emit sgAutoCollect();
+            // 自动收集数据职责已经到达
+            // 若人为停止采集，则不会自动采集该点
+            cell.isCollect = true;
+        }
+    }
+}
+
+void Bll_DataWave::setAutoCollectStart()
+{
+    autoCollectState = true;
+}
+
+void Bll_DataWave::setAutoCollectDataList(const vector<double> &list)
+{
+    autoCollectDataList.clear();
+    for (auto &value : list)
+    {
+        autoCollectDataList.push_back({value, false});
+        qDebug() << "setAutoCollectDataList" << value;
+    }
+    qDebug() << "setAutoCollectDataList" << autoCollectDataList.size();
+}
+
+void Bll_DataWave::setAutoCollectRange(const double &range)
+{
+    autoCollectRange = range;
 }

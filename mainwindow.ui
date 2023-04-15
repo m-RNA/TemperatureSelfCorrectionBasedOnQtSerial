@@ -52,7 +52,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="iconSize">
        <size>
@@ -621,62 +621,96 @@
               <string>采集</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
-              <item row="4" column="2">
-               <widget class="QDoubleSpinBox" name="spbxWaveRange">
+              <item row="5" column="1">
+               <widget class="QLabel" name="label_16">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>最少检查</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollectSwitch">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <property name="minimumSize">
+                 <size>
+                  <width>104</width>
+                  <height>0</height>
+                 </size>
                 </property>
-                <property name="prefix">
-                 <string/>
+                <property name="text">
+                 <string>开始采集</string>
                 </property>
-                <property name="suffix">
-                 <string/>
-                </property>
-                <property name="decimals">
-                 <number>3</number>
-                </property>
-                <property name="minimum">
-                 <double>0.001000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>999.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.001000000000000</double>
-                </property>
-                <property name="value">
-                 <double>0.010000000000000</double>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
                 </property>
                </widget>
               </item>
-              <item row="0" column="2">
-               <widget class="QSpinBox" name="spbxSamplePointSum">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+              <item row="6" column="1">
+               <widget class="QLabel" name="label_22">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>稳定时长</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
-                <property name="suffix">
-                 <string/>
-                </property>
+               </widget>
+              </item>
+              <item row="10" column="1" colspan="2">
+               <widget class="QProgressBar" name="pgsbSingle">
                 <property name="minimum">
-                 <number>2</number>
+                 <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>99999</number>
+                 <number>100</number>
                 </property>
                 <property name="value">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="invertedAppearance">
+                 <bool>false</bool>
+                </property>
+                <property name="format">
+                 <string>--:--:--</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1" colspan="2">
+               <widget class="QProgressBar" name="pgsbSum">
+                <property name="maximum">
                  <number>8</number>
+                </property>
+                <property name="value">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="format">
+                 <string>整体进度：%v/%m</string>
                 </property>
                </widget>
               </item>
@@ -696,7 +730,55 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="2">
+              <item row="8" column="1">
+               <widget class="QLabel" name="label_21">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>语音提醒</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_15">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>标定点数</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLabel" name="label_20">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>自动采集</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="2">
                <widget class="QComboBox" name="cbSound">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -739,74 +821,104 @@
                 </item>
                </widget>
               </item>
-              <item row="13" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollectSwitch">
+              <item row="5" column="2">
+               <widget class="QSpinBox" name="spbxWaveNum">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="suffix">
+                 <string>点</string>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>999</number>
+                </property>
+                <property name="value">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QComboBox" name="cbAutoCollect">
+                <item>
+                 <property name="text">
+                  <string>关</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>开</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="4" column="2">
+               <widget class="QDoubleSpinBox" name="spbxWaveRange">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>104</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>开始采集</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collect.ico</normaloff>:/icon/collect.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QLabel" name="label_21">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>语音提醒</string>
-                </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_15">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
+                <property name="prefix">
+                 <string/>
                 </property>
-                <property name="text">
-                 <string>标定点数</string>
+                <property name="suffix">
+                 <string/>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <property name="decimals">
+                 <number>4</number>
                 </property>
-               </widget>
-              </item>
-              <item row="7" column="1" colspan="2">
-               <widget class="QProgressBar" name="pgsbSum">
+                <property name="minimum">
+                 <double>0.000100000000000</double>
+                </property>
                 <property name="maximum">
-                 <number>8</number>
+                 <double>99999.999899999995250</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.001000000000000</double>
+                </property>
+                <property name="stepType">
+                 <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
                 </property>
                 <property name="value">
-                 <number>0</number>
+                 <double>0.010000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QSpinBox" name="spbxSamplePointSum">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
-                <property name="format">
-                 <string>整体进度：%v/%m</string>
+                <property name="suffix">
+                 <string/>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>99</number>
+                </property>
+                <property name="value">
+                 <number>8</number>
                 </property>
                </widget>
               </item>
@@ -826,29 +938,7 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="1" colspan="2">
-               <widget class="QProgressBar" name="pgsbSingle">
-                <property name="minimum">
-                 <number>0</number>
-                </property>
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>false</bool>
-                </property>
-                <property name="format">
-                 <string>--:--:--</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="1" colspan="2">
+              <item row="16" column="1" colspan="2">
                <widget class="QPushButton" name="btnCollectRestart">
                 <property name="enabled">
                  <bool>false</bool>
@@ -865,31 +955,6 @@
                 <property name="icon">
                  <iconset resource="main.qrc">
                   <normaloff>:/icon/collectrestart.ico</normaloff>:/icon/collectrestart.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QSpinBox" name="spbxWaveNum">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-                <property name="suffix">
-                 <string>点</string>
-                </property>
-                <property name="minimum">
-                 <number>2</number>
-                </property>
-                <property name="maximum">
-                 <number>500</number>
-                </property>
-                <property name="value">
-                 <number>10</number>
                 </property>
                </widget>
               </item>
@@ -922,24 +987,48 @@
                 <property name="singleStep">
                  <double>0.100000000000000</double>
                 </property>
+                <property name="stepType">
+                 <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                </property>
                 <property name="value">
                  <double>0.050000000000000</double>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QLabel" name="label_16">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>波动检查</string>
+              <item row="6" column="2">
+               <widget class="QDoubleSpinBox" name="spbxStableTime">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+                <property name="prefix">
+                 <string/>
+                </property>
+                <property name="suffix">
+                 <string>分钟</string>
+                </property>
+                <property name="decimals">
+                 <number>2</number>
+                </property>
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>99.989999999999995</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="stepType">
+                 <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                </property>
+                <property name="value">
+                 <double>0.050000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1318,15 +1407,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>CVTable</class>
+   <extends>QTableWidget</extends>
+   <header>cv_table.h</header>
+  </customwidget>
+  <customwidget>
    <class>FitChart</class>
    <extends>QWidget</extends>
    <header>fitchart.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CVTable</class>
-   <extends>QTableWidget</extends>
-   <header>cv_table.h</header>
   </customwidget>
   <customwidget>
    <class>StartCommunication</class>

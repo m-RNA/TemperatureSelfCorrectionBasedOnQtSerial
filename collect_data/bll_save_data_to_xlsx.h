@@ -1,8 +1,13 @@
 #ifndef BLL_SAVEDATATOXLSX_H
 #define BLL_SAVEDATATOXLSX_H
-// #include <QtXlsx>
+#if USE_LOCAL_COMPILED_LIB == 1
+#include <QtXlsx>
+#else
 #include "xlsxdocument.h"
+#endif
+
 #include "config.h"
+#include "wizard.h"
 using namespace QXlsx;
 using namespace std;
 
@@ -34,8 +39,8 @@ public slots:
     void startPoint();
     void nextPoint();
     void saveReport();
-    void setAutoSave(const bool);
-    void saveInfo(const QStringList &info);
+    static void setAutoSave(const bool);
+    void saveInfo(const BaseInfo &info);
     void saveData_Std(const vector<double> &data);
     void saveData_Dtm(const vector<double> &data);
     void saveFactor(const vector<DECIMAL_TYPE> &factor);
@@ -44,7 +49,7 @@ private:
     Document *report = nullptr;
     size_t index = 0;
     QString fileName = "";
-    bool autoSaveState = false;
+    static bool autoSaveState;
 
     void initReport();
     QString getAverageFormula(int r1, int r2, int c);

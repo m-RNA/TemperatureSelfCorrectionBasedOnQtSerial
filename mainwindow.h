@@ -10,6 +10,7 @@
 #include "bll_data_wave.h"
 #include "bll_data_collect.h"
 #include "message.h"
+#include "wizard.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -36,6 +37,8 @@ public:
 
     void setDeviceName_Std(const QString &name);
     void setDeviceName_Dtm(const QString &name);
+
+    static int getCollectCounter(void);
 
 private slots:
     void on_btnCollectSwitch_clicked();
@@ -80,12 +83,14 @@ private slots:
 
     void on_btnWizard_clicked();
 
+    void on_cbAutoCollect_activated(int index);
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxNextPoint();
     void sgXlsxSaveReport();
     void sgXlsxSetAutoSave(const bool);
-    void sgXlsxSaveInfo(const QStringList &info);
+    void sgXlsxSaveInfo(const BaseInfo &info);
 
     void sgSoundPlay1(const SoundIndex &index);
     void sgSoundPlay2(const SoundIndex &index);
@@ -107,13 +112,14 @@ signals:
 private:
     Ui::MainWindow *ui;
     QTimer *timerCollect = nullptr;
+    QTimer *timerAutoCollectCheck = nullptr;
     CollectBtnState btnSwitchState = CollectBtnState_Start;
     bool isCollecting = false;
     bool waitingStdStable = false;
-    int collectTimeStamp = 0; // 采集时间戳（秒 * TIMESTAMP_FACTOR)
-    int collectCounter = 0;   // 已采集点数
-    int samplePointSum = 8;   // 需要采集点数
-    int pgsbSingleValue = 0;  // 单点进度条值
+    int collectTimeStamp = 0;  // 采集时间戳（秒 * TIMESTAMP_FACTOR)
+    static int collectCounter; // 已采集点数
+    int samplePointSum = 8;    // 需要采集点数
+    int pgsbSingleValue = 0;   // 单点进度条值
 
     void pgsbSingleInit();
     void pgsbSingleReset();
@@ -134,6 +140,8 @@ private:
     void listenDataWaveQuit();
     void collectDataInit();
     void collectDataQuit();
+    void autoCollectTimerInit();
+    void autoCollectTimerQuit();
     void leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y);
 
     size_t order; // 最小二乘法多项式阶数
@@ -143,6 +151,7 @@ private:
     QString old_text = "";
     int soundIndex = 0;
     bool verifyState = false;
+    WizardInfo wizardInfo;
 
     // 任务类对象
     Bll_LeastSquareMethod *taskLeastSquare = nullptr;

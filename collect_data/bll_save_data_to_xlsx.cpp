@@ -1,4 +1,5 @@
 #include "bll_save_data_to_xlsx.h"
+bool Bll_SaveDataToXlsx::autoSaveState = false;
 
 Bll_SaveDataToXlsx::Bll_SaveDataToXlsx(QObject *parent) : QObject(parent)
 {
@@ -45,19 +46,19 @@ void Bll_SaveDataToXlsx::setAutoSave(const bool state)
     autoSaveState = state;
 }
 
-void Bll_SaveDataToXlsx::saveInfo(const QStringList &info)
+void Bll_SaveDataToXlsx::saveInfo(const BaseInfo &info)
 {
     int row = INFO_R;
-    report->write(row, INFO_C, info[0]); // 地点
+    report->write(row, INFO_C, info.place); // 地点
 
-    report->write(++row, INFO_C, info[1]);   // 温度
-    report->write(row, INFO_C + 2, info[2]); // 湿度
+    report->write(++row, INFO_C, info.temp); // 温度
+    report->write(row, INFO_C + 2, info.rh); // 湿度
 
-    report->write(++row, INFO_C, info[3]);   // 日期
-    report->write(row, INFO_C + 2, info[4]); // 人员
+    report->write(++row, INFO_C, info.date);           // 日期
+    report->write(row, INFO_C + 2, info.operatorName); // 人员
 
-    report->write(++row, INFO_C, info[5]); // 标准传感器编号
-    report->write(++row, INFO_C, info[6]); // 待定传感器编号
+    report->write(++row, INFO_C, info.id_Std); // 标准传感器编号
+    report->write(++row, INFO_C, info.id_Dtm); // 待定传感器编号
 
     if (autoSaveState)
         saveReport();

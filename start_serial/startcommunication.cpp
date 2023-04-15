@@ -34,6 +34,7 @@ void StartCommunication::loadUiSettings(const QString &id)
         return;
 
     QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.setIniCodec(QTextCodec::codecForName("GB18030"));
     setting.beginGroup("SerialSetting" + settingID);
     // 找出对应的串口号，然后设置
     int index = ui->cbSerial->findText(setting.value("PortName").toString());
@@ -52,6 +53,7 @@ void StartCommunication::loadUiSettings(const QString &id)
 void StartCommunication::saveUiSettings()
 {
     QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.setIniCodec(QTextCodec::codecForName("GB18030"));
     setting.beginGroup("SerialSetting" + settingID);
     setting.setValue("PortName", ui->cbSerial->currentText());
     setting.setValue("BaudRate", ui->cbBaudrate->currentText());

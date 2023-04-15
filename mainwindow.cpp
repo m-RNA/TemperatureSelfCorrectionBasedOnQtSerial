@@ -16,6 +16,8 @@
 using LeastSquare = MainWindow;
 using Bll_CollectBtn = MainWindow;
 
+int MainWindow::collectCounter = 0; // 初始化静态成员变量
+
 const int PGSB_REFRESH_MS = 500;                             // 进度条刷新间隔
 const double TIMESTAMP_FACTOR = (1000.0f / PGSB_REFRESH_MS); // 时间戳因子，用于计算时间戳
 
@@ -154,21 +156,21 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadUiSettings()
 {
-    // 如果文件不存在，就退出
-    if (!QFile::exists(CONFIG_FILE_NAME))
-        return;
-
     QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.setIniCodec(QTextCodec::codecForName("GB18030"));
 
-    // 1. 读取窗口大小和位置
-    setting.beginGroup("MainWindow");
-    resize(setting.value("size", QSize(800, 600)).toSize());
-    move(setting.value("pos", QPoint(200, 200)).toPoint());
-    setting.endGroup();
+    // 读取窗口大小和位置
+    if (QFile::exists(CONFIG_FILE_NAME))
+    {
+        setting.beginGroup("MainWindow");
+        resize(setting.value("Size").toSize());
+        move(setting.value("Pos", QPoint(0, 0)).toPoint());
+        setting.endGroup();
+    }
 
-    // 2.读取启动时是否显示欢迎界面
+    // 读取启动时是否显示欢迎界面
     setting.beginGroup("Welcome");
-    bool showWelcome = setting.value("show", true).toBool();
+    bool showWelcome = setting.value("Show", true).toBool();
     ui->ckbxWelcome->setChecked(showWelcome);
     if (showWelcome)
         ui->tabMain->setCurrentIndex(0);
@@ -176,27 +178,57 @@ void MainWindow::loadUiSettings()
         ui->tabMain->setCurrentIndex(1);
     setting.endGroup();
 
-    // 3.读取采集设置
+    // 读取采集设置
     setting.beginGroup("Collect");
-    ui->spbxSamplePointSum->setValue(setting.value("sampleTime").toInt());
-    ui->spbxSampleTime->setValue(setting.value("samplePointSum").toDouble());
-    ui->spbxWaveNum->setValue(setting.value("waveNum").toInt());
-    ui->spbxWaveRange->setValue(setting.value("waveRange").toDouble());
+    ui->spbxSamplePointSum->setValue(setting.value("SamplePointSum", 8).toInt());
+    ui->spbxSampleTime->setValue(setting.value("SampleTime", 0.05).toDouble());
+    bool autoCollect = setting.value("AutoCollect", true).toBool();
+    ui->cbAutoCollect->setCurrentIndex(autoCollect);
+    // ui->twTarget->setEnable(autoCollect);
+    // 读取autoList
+    if (QFile::exists(CONFIG_FILE_NAME))
+    {
+        int autoListSize = setting.beginReadArray("AutoCollectDataList");
+        for (int i = 0; i < autoListSize; ++i)
+        {
+            setting.setArrayIndex(i);
+            wizardInfo.collectSetting.autoList.push_back(setting.value("Data").toDouble());
+        }
+        setting.endArray();
+    }
     setting.endGroup();
 
-    // 4. 读取声音设置
+    // 读取波动监测设置
+    setting.beginGroup("WaveCheck");
+    ui->spbxWaveNum->setValue(setting.value("WaveNum", 10).toInt());
+    ui->spbxWaveRange->setValue(setting.value("WaveRange", 0.01).toDouble());
+    ui->spbxStableTime->setValue(setting.value("StableTime", 0.05).toDouble());
+
+    setting.endGroup();
+
+    // 读取声音设置
     setting.beginGroup("Sound");
-    ui->cbSound->setCurrentIndex(setting.value("sound").toInt());
+    ui->cbSound->setCurrentIndex(setting.value("Sound", 1).toInt());
     setting.endGroup();
 
-    // 5. 读取最小二乘法设置
+    // 读取最小二乘法设置
     setting.beginGroup("LeastSquareMethod");
-    ui->spbxOrder->setValue(setting.value("order").toInt());
+    ui->spbxOrder->setValue(setting.value("Order", 3).toInt());
     setting.endGroup();
 
-    // 6. 读取其他设置
-    setting.beginGroup("Other");
-    bool autoSave = setting.value("autoSave").toBool();
+    // 读取向导基本信息
+    setting.beginGroup("WizardBaseInfo");
+    wizardInfo.baseInfo.place = setting.value("Place", "中北大学工程训练中心").toString();
+    wizardInfo.baseInfo.temp = setting.value("Temp", 21).toInt();
+    wizardInfo.baseInfo.rh = setting.value("RH", 52).toInt();
+    wizardInfo.baseInfo.operatorName = setting.value("Operator", "老陈皮").toString();
+    wizardInfo.baseInfo.id_Std = setting.value("ID_Std", "道万").toString();
+    wizardInfo.baseInfo.id_Dtm = setting.value("ID_Dtm", "待定").toString();
+    setting.endGroup();
+
+    // 读取表格设置
+    setting.beginGroup("Xlsx");
+    bool autoSave = setting.value("AutoSave", false).toBool();
     ui->actionAutoSave->setChecked(autoSave);
     emit sgXlsxSetAutoSave(autoSave);
     setting.endGroup();
@@ -205,39 +237,64 @@ void MainWindow::loadUiSettings()
 void MainWindow::saveUiSetting()
 {
     QSettings setting(CONFIG_FILE_NAME, QSettings::IniFormat);
+    setting.setIniCodec(QTextCodec::codecForName("GB18030"));
 
-    // 1. 保存窗口大小和位置
+    // 保存窗口大小和位置
     setting.beginGroup("MainWindow");
-    setting.setValue("size", size());
-    setting.setValue("pos", pos());
+    setting.setValue("Size", size());
+    setting.setValue("Pos", pos());
     setting.endGroup();
 
-    // 2.保存启动时是否显示欢迎界面
+    // 保存启动时是否显示欢迎界面
     setting.beginGroup("Welcome");
-    setting.setValue("show", ui->ckbxWelcome->isChecked());
+    setting.setValue("Show", ui->ckbxWelcome->isChecked());
     setting.endGroup();
 
-    // 3.保存采集设置
+    // 保存采集设置
     setting.beginGroup("Collect");
-    setting.setValue("sampleTime", ui->spbxSamplePointSum->value());
-    setting.setValue("samplePointSum", ui->spbxSampleTime->value());
-    setting.setValue("waveNum", ui->spbxWaveNum->value());
-    setting.setValue("waveRange", ui->spbxWaveRange->value());
+    setting.setValue("SamplePointSum", ui->spbxSamplePointSum->value());
+    setting.setValue("SampleTime", ui->spbxSampleTime->value());
+    setting.setValue("AutoCollect", ui->cbAutoCollect->currentIndex());
+    // 保存autoList
+    setting.beginWriteArray("AutoCollectDataList");
+    for (size_t i = 0; i < wizardInfo.collectSetting.autoList.size(); ++i)
+    {
+        setting.setArrayIndex(i);
+        setting.setValue("Data", wizardInfo.collectSetting.autoList[i]);
+    }
+    setting.endArray();
     setting.endGroup();
 
-    // 4. 保存声音设置
+    // 保存波动监测设置
+    setting.beginGroup("WaveCheck");
+    setting.setValue("WaveNum", ui->spbxWaveNum->value());
+    setting.setValue("WaveRange", ui->spbxWaveRange->value());
+    setting.setValue("StableTime", ui->spbxStableTime->value());
+    setting.endGroup();
+
+    // 保存声音设置
     setting.beginGroup("Sound");
-    setting.setValue("sound", ui->cbSound->currentIndex());
+    setting.setValue("Sound", ui->cbSound->currentIndex());
     setting.endGroup();
 
-    // 5. 保存最小二乘法设置
+    // 保存最小二乘法设置
     setting.beginGroup("LeastSquareMethod");
-    setting.setValue("order", ui->spbxOrder->value());
+    setting.setValue("Order", ui->spbxOrder->value());
     setting.endGroup();
 
-    // 6. 保存其他设置
-    setting.beginGroup("Other");
-    setting.setValue("autoSave", ui->actionAutoSave->isChecked());
+    // 保存向导基本信息
+    setting.beginGroup("WizardBaseInfo");
+    setting.setValue("Place", wizardInfo.baseInfo.place);
+    setting.setValue("Temp", wizardInfo.baseInfo.temp);
+    setting.setValue("RH", wizardInfo.baseInfo.rh);
+    setting.setValue("Operator", wizardInfo.baseInfo.operatorName);
+    setting.setValue("ID_Std", wizardInfo.baseInfo.id_Std);
+    setting.setValue("ID_Dtm", wizardInfo.baseInfo.id_Dtm);
+    setting.endGroup();
+
+    // 保存其他设置
+    setting.beginGroup("Xlsx");
+    setting.setValue("AutoSave", ui->actionAutoSave->isChecked());
     setting.endGroup();
 }
 
@@ -251,6 +308,11 @@ void MainWindow::setDeviceName_Dtm(const QString &name)
 {
     ui->start_Dtm->setDeviceName(name);
     ui->collectPanel_Dtm->setDeviceName(name);
+}
+
+int MainWindow::getCollectCounter(void)
+{
+    return collectCounter;
 }
 
 void MainWindow::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y)
@@ -330,6 +392,11 @@ void MainWindow::listenDataWaveInit()
     threadDataWave->start();
 
     qDebug() << "threadDataWave start";
+
+    if (ui->cbAutoCollect->currentIndex() == 1)
+    {
+        autoCollectTimerInit();
+    }
 }
 
 void MainWindow::listenDataWaveQuit()
@@ -341,6 +408,8 @@ void MainWindow::listenDataWaveQuit()
         threadDataWave = nullptr;
         qDebug() << "threadDataWave quit";
     }
+
+    autoCollectTimerQuit();
 }
 
 void MainWindow::collectDataInit()
@@ -377,6 +446,28 @@ void MainWindow::collectDataQuit()
         threadDataCollect->wait();
         threadDataCollect = nullptr;
         qDebug() << "threadDataCollect quit";
+    }
+}
+
+void MainWindow::autoCollectTimerInit()
+{
+    autoCollectTimerQuit();
+    timerAutoCollectCheck = new QTimer;
+    timerAutoCollectCheck->setInterval(1000);
+    connect(timerAutoCollectCheck, &QTimer::timeout, taskDataWave, &Bll_DataWave::setAutoCollectStart);
+    connect(taskDataWave, &Bll_DataWave::sgAutoCollect, this, &MainWindow::on_btnCollectSwitch_clicked);
+    timerAutoCollectCheck->start();
+    qDebug() << "AutoCollectCheck start";
+}
+
+void MainWindow::autoCollectTimerQuit()
+{
+    if (timerAutoCollectCheck)
+    {
+        timerAutoCollectCheck->stop();
+        timerAutoCollectCheck->deleteLater();
+        timerAutoCollectCheck = nullptr;
+        qDebug() << "AutoCollectCheck quit";
     }
 }
 
@@ -932,32 +1023,52 @@ void MainWindow::on_actionAutoSave_triggered(bool checked)
 
 void MainWindow::on_actionWizard_triggered()
 {
-    Ui_SerialSettingIndex serialSettings_Std;
-    Ui_SerialSettingIndex serialSettings_Dtm;
-    ui->start_Std->getSettingIndex(serialSettings_Std);
-    ui->start_Dtm->getSettingIndex(serialSettings_Dtm);
+    ui->start_Std->getSettingIndex(wizardInfo.ssIndex_Std);
+    ui->start_Dtm->getSettingIndex(wizardInfo.ssIndex_Dtm);
+    wizardInfo.collectSetting.num = ui->spbxSamplePointSum->value();
+    wizardInfo.collectSetting.time = ui->spbxSampleTime->value();
+    wizardInfo.collectSetting.isAuto = ui->cbAutoCollect->currentIndex();
+    wizardInfo.checkWaveSetting.range = ui->spbxWaveRange->value();
+    wizardInfo.checkWaveSetting.num = ui->spbxWaveNum->value();
+    wizardInfo.checkWaveSetting.stableTime = ui->spbxStableTime->value();
 
-    Wizard wizard(serialSettings_Std, serialSettings_Dtm, this);
-    connect(&wizard, &Wizard::wizardInfoFinish, [&](const WizardInfo &info)
+    Wizard wizard(&wizardInfo, this);
+    connect(&wizard, &Wizard::wizardInfoFinish, [&]()
             {
                 qDebug() << "向导结束";
-                if(ui->start_Std->state() == true)
-                    ui->start_Std->on_btnSerialSwitch_clicked();
-                if(ui->start_Dtm->state() == true)
-                    ui->start_Dtm->on_btnSerialSwitch_clicked(); 
-                emit sgXlsxSaveInfo(info.baseInfo);
+                emit sgXlsxSaveInfo(wizardInfo.baseInfo);
 
-                ui->start_Std->setSerialSettingIndex(info.ssIndex_Std);
-                ui->start_Dtm->setSerialSettingIndex(info.ssIndex_Dtm); 
-                ui->start_Std->on_btnSerialSwitch_clicked();
-                ui->start_Dtm->on_btnSerialSwitch_clicked();
-                setDeviceName_Std(info.baseInfo[5]);
-                setDeviceName_Dtm(info.baseInfo[6]);
-                ui->tabMain->setCurrentIndex(2);
                 ui->btnWizard->setEnabled(false);
-                ui->actionWizard->setEnabled(false); 
-                ui->btnWizardEdit->setEnabled(true); 
-                wizard.saveUiSettings(); });
+                ui->btnWizardEdit->setEnabled(true);
+                ui->actionWizard->setEnabled(false);
+
+                ui->start_Std->setSerialSettingIndex(wizardInfo.ssIndex_Std);
+                ui->start_Dtm->setSerialSettingIndex(wizardInfo.ssIndex_Dtm);
+                if (ui->start_Std->state() == true)
+                    ui->start_Std->on_btnSerialSwitch_clicked();
+                if (ui->start_Dtm->state() == true)
+                    ui->start_Dtm->on_btnSerialSwitch_clicked();
+                setDeviceName_Std(wizardInfo.baseInfo.id_Std);
+                setDeviceName_Dtm(wizardInfo.baseInfo.id_Dtm);
+
+                ui->tabMain->setCurrentIndex(2);
+                ui->spbxSamplePointSum->setValue(wizardInfo.collectSetting.num);
+                ui->spbxSampleTime->setValue(wizardInfo.collectSetting.time);
+                bool isAutoCollect = wizardInfo.collectSetting.isAuto;
+                ui->cbAutoCollect->setCurrentIndex(isAutoCollect);
+                if (isAutoCollect)
+                {
+                    qDebug() << "自动采集";
+                    Bll_DataWave::setAutoCollectDataList(wizardInfo.collectSetting.autoList);
+                    autoCollectTimerInit();
+                }
+
+                ui->spbxWaveRange->setValue(wizardInfo.checkWaveSetting.range);
+                ui->spbxWaveNum->setValue(wizardInfo.checkWaveSetting.num);
+                ui->spbxStableTime->setValue(wizardInfo.checkWaveSetting.stableTime);
+
+                ui->start_Std->on_btnSerialSwitch_clicked();
+                ui->start_Dtm->on_btnSerialSwitch_clicked(); });
     wizard.exec();
 }
 
@@ -993,4 +1104,12 @@ void MainWindow::on_btnVerify_clicked()
 void MainWindow::on_btnWizard_clicked()
 {
     on_actionWizard_triggered();
+}
+
+void MainWindow::on_cbAutoCollect_activated(int index)
+{
+    if (index == 1)
+        autoCollectTimerInit();
+    else
+        autoCollectTimerQuit();
 }
