@@ -86,6 +86,8 @@ private slots:
 
     void on_cbAutoCollect_activated(int index);
 
+    void on_actionLock_triggered(bool checked);
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxNextPoint();
@@ -134,6 +136,7 @@ private:
     void goOnCollect();
 
     void setCollectBtnState(const CollectBtnState &state);
+    void setCollectSettingLock(bool lock);
 
     void pictureInit();
     void soundInit();

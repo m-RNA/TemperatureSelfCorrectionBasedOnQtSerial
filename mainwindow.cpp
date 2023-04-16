@@ -570,10 +570,7 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
             Message::error("请同时连接两个仪器");
             return;
         }
-        ui->spbxSamplePointSum->setEnabled(false);
-        ui->spbxSampleTime->setEnabled(false);
-        ui->spbxWaveNum->setEnabled(false);
-        ui->spbxWaveRange->setEnabled(false);
+        setCollectSettingLock(true);
 
         // 最终的完成采集
         if (btnSwitchState == CollectBtnState_End)
@@ -628,12 +625,23 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
     JUDGE_FIRST_COLLECT:
         if (collectCounter == 0)
         {
-            ui->spbxSamplePointSum->setEnabled(true);
-            ui->spbxSampleTime->setEnabled(true);
-            ui->spbxWaveNum->setEnabled(true);
-            ui->spbxWaveRange->setEnabled(true);
+            setCollectSettingLock(false);
         }
     }
+}
+
+void Bll_CollectBtn::setCollectSettingLock(bool lock)
+{
+    bool state = !lock;
+    ui->spbxSamplePointSum->setEnabled(state);
+    ui->spbxSampleTime->setEnabled(state);
+    ui->spbxWaveNum->setEnabled(state);
+    ui->spbxWaveRange->setEnabled(state);
+    ui->spbxStableTime->setEnabled(state);
+    if (lock)
+        ui->actionLock->setChecked(true);
+    else
+        ui->actionLock->setChecked(false);
 }
 
 void Bll_CollectBtn::on_btnCollectRestart_clicked()
@@ -1134,4 +1142,9 @@ void MainWindow::on_cbAutoCollect_activated(int index)
         autoCollectTimerInit();
     else
         autoCollectTimerQuit();
+}
+
+void MainWindow::on_actionLock_triggered(bool checked)
+{
+    setCollectSettingLock(checked);
 }
