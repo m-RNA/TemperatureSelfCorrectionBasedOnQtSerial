@@ -26,7 +26,6 @@ Wizard::Wizard(WizardInfo *info, QWidget *parent) : QWizard(parent),
     ui->spbxSamplePointSum->setValue(wizardInfo->collectSetting.num);
     ui->spbxSampleTime->setValue(wizardInfo->collectSetting.time);
     ui->cbAutoCollect->setCurrentIndex(wizardInfo->collectSetting.isAuto);
-    ui->twTarget->setEnabled(wizardInfo->collectSetting.isAuto);
     ui->spbxWaveRange->setValue(wizardInfo->checkWaveSetting.range);
     ui->spbxWaveNum->setValue(wizardInfo->checkWaveSetting.num);
     ui->spbxStableTime->setValue(wizardInfo->checkWaveSetting.stableTime);
@@ -36,6 +35,22 @@ Wizard::Wizard(WizardInfo *info, QWidget *parent) : QWizard(parent),
     ui->ss_Dtm->setSettingIndex(wizardInfo->ssIndex_Dtm);
     ui->ss_Std->setSerialPortName(wizardInfo->ssIndex_Std.portName);
     ui->ss_Dtm->setSerialPortName(wizardInfo->ssIndex_Dtm.portName);
+
+    ui->twTarget->setRowCount(wizardInfo->collectSetting.num);
+    // 在twTarget 填入autoList的数据
+    int size = (int)wizardInfo->collectSetting.autoList.size();
+    size = size > wizardInfo->collectSetting.num ? wizardInfo->collectSetting.num : size;
+    for (int i = 0; i < size; i++)
+    {
+        ui->twTarget->setItem(i, 0, new QTableWidgetItem(QString::number(wizardInfo->collectSetting.autoList[i])));
+    }
+    // 补上空行
+    for (int i = size; i < wizardInfo->collectSetting.num; i++)
+    {
+        qDebug() << "补上空行 i = " << i;
+        ui->twTarget->setItem(i, 0, new QTableWidgetItem(""));
+    }
+    ui->twTarget->setEnabled(wizardInfo->collectSetting.isAuto);
 
     // 当向导完成时，从向导界面获取配置信息
     connect(this, &Wizard::accepted, this, &Wizard::getInfo);
@@ -170,4 +185,18 @@ void Wizard::on_cbSerial_Dtm_currentIndexChanged(const QString &arg1)
 void Wizard::on_cbAutoCollect_currentIndexChanged(int index)
 {
     ui->twTarget->setEnabled(index);
+}
+
+void Wizard::on_spbxSamplePointSum_valueChanged(int arg1)
+{
+    ui->twTarget->setRowCount(arg1);
+    // 补上空行
+    for (int i = 0; i < arg1; i++)
+    {
+        if (ui->twTarget->item(i, 0) == nullptr)
+        {
+            ui->twTarget->setItem(i, 0, new QTableWidgetItem(""));
+            qDebug() << "补上空行 i = " << i;
+        }
+    }
 }

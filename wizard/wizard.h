@@ -69,6 +69,8 @@ private slots:
 
     void on_cbAutoCollect_currentIndexChanged(int index);
 
+    void on_spbxSamplePointSum_valueChanged(int arg1);
+
 private:
     Ui::Wizard *ui;
     WizardInfo *wizardInfo;
