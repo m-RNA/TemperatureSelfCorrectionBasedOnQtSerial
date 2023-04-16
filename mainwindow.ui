@@ -241,7 +241,7 @@
              </font>
             </property>
             <property name="text">
-             <string>温度自校准上位机</string>
+             <string>温度传感器校准程序</string>
             </property>
             <property name="textFormat">
              <enum>Qt::AutoText</enum>

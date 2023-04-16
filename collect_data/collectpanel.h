@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "interactchart.h"
 #include "bll_serialrecvanalyse.h"
+#include "bll_data_wave.h"
 using namespace std;
 
 namespace Ui
@@ -24,8 +25,7 @@ public:
     void setYAxisFormat(const QString &format, const int precision);
 
     void setOnlineState(bool state);
-    void setStableState(const char state);
-    void setReceiveTimeout(void);
+    void setStableState(const StableStateEnum state);
 
     bool isStable(void);
     double getRange(void);
@@ -51,7 +51,7 @@ private:
     Ui::CollectPanel *ui;
     QString deviceName;
     double range = 0;
-    char stableState = 0;
+    StableStateEnum stableState = STABLE_STATE_INIT;
 
     void setLEDState(int state);
 };

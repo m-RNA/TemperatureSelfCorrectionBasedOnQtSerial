@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 这里是根据表格的行数来设置采集点数的
     samplePointSum = ui->twAverage->rowCount();
     ui->spbxSamplePointSum->setValue(samplePointSum);
-    order = ui->spbxOrder->text().toInt();
+    order = ui->spbxOrder->value();
 
     ui->twAverage->horizontalHeader()->setVisible(true);
     ui->twAverage->verticalHeader()->setVisible(true);
@@ -372,6 +372,7 @@ void MainWindow::pictureInit()
 
 void MainWindow::listenDataWaveInit()
 {
+    ui->collectPanel_Std->setStableState(STABLE_STATE_INIT);
     listenDataWaveQuit();
     taskDataWave = new Bll_DataWave;
     taskDataWave->setRange(ui->spbxWaveRange->value());
@@ -383,7 +384,6 @@ void MainWindow::listenDataWaveInit()
     connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
     connect(threadDataWave, &QThread::finished, threadDataWave, &QThread::deleteLater);
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);
-    connect(taskDataWave, &Bll_DataWave::sgReceiveTimeout, ui->collectPanel_Std, &CollectPanel::setReceiveTimeout);
     connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
     connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);
     connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);
@@ -455,7 +455,7 @@ void MainWindow::autoCollectTimerInit()
 {
     autoCollectTimerQuit();
     timerAutoCollectCheck = new QTimer;
-    timerAutoCollectCheck->setInterval(1000);
+    timerAutoCollectCheck->setInterval(1500);
     connect(timerAutoCollectCheck, &QTimer::timeout, taskDataWave, &Bll_DataWave::setAutoCollectStart);
     connect(taskDataWave, &Bll_DataWave::sgAutoCollect, this, [&]()
             {
@@ -857,7 +857,7 @@ void LeastSquare::updateCollectDataXY(void)
     DECIMAL_TYPE temp;
     collectDataX.clear(); // 重置x容器
     collectDataY.clear(); // 重置y容器
-    qDebug() << "LeastSquare::updateCollectDataXY ";
+    // qDebug() << "LeastSquare::updateCollectDataXY ";
     for (int i = 0; i < samplePointSum; i++)
     {
         QString qsX, qsY;
@@ -867,16 +867,16 @@ void LeastSquare::updateCollectDataXY(void)
             continue;
         // qDebug() << "counter" << counter;
 
-        qDebug() << i;
+        // qDebug() << i;
         temp = stold(qsX.toStdString());
         collectDataX.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
-        qDebug() << globalStringBuffer;
+        // qDebug() << globalStringBuffer;
 
         temp = stold(qsY.toStdString());
         collectDataY.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
-        qDebug() << globalStringBuffer;
+        // qDebug() << globalStringBuffer;
     }
 }
 
@@ -893,7 +893,7 @@ void LeastSquare::tryUpdateFitChart(bool man)
     }
 
     // N个点可以确定一个 唯一的 N-1 阶的曲线
-    order = ui->spbxOrder->text().toInt();
+    order = ui->spbxOrder->value();
     if (collectDataX.size() <= order)
         order = collectDataX.size() - 1;
 

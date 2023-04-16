@@ -17,10 +17,10 @@ CollectPanel::~CollectPanel()
 void CollectPanel::setOnlineState(bool state)
 {
     setLEDState(state);
-    stableState = 0;
+    stableState = STABLE_STATE_INIT;
 }
 
-void CollectPanel::setStableState(const char state)
+void CollectPanel::setStableState(const StableStateEnum state)
 {
     stableState = state;
     setLEDState(3 + state);
@@ -46,16 +46,22 @@ void CollectPanel::setLEDState(int state)
         break;
 
     case 3:
-        ui->ledText->setText("波动超阈");
+        // 这种情况是数据量还没有到达最少长度，暂时不判断波动范围
+        ui->ledText->setText("波动未知");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(255, 176, 5);"); // 黄色
         break;
 
     case 4:
+        ui->ledText->setText("波动超阈");
+        ui->led->setStyleSheet("border-radius:7px;background-color: rgb(255, 176, 5);"); // 黄色
+        break;
+
+    case 5:
         ui->ledText->setText("波动稳定");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(46, 204, 113);"); // 绿色
         break;
 
-    case 5:
+    case 6:
         ui->ledText->setText("解析超时");
         ui->led->setStyleSheet("border-radius:7px;background-color: rgb(255, 176, 5);"); // 黄色
         break;
@@ -114,12 +120,6 @@ QCPAxis *CollectPanel::getXAxis(void)
     return ui->chart->xAxis;
 }
 
-void CollectPanel::setReceiveTimeout(void)
-{
-    stableState = 0;
-    setLEDState(5);
-}
-
 void CollectPanel::slSetRange(const double &range)
 {
     this->range = range;
@@ -128,7 +128,7 @@ void CollectPanel::slSetRange(const double &range)
 
 bool CollectPanel::isStable(void)
 {
-    if (stableState != 1)
+    if (stableState != STABLE_STATE_STABLE)
         return false;
     return true;
 }

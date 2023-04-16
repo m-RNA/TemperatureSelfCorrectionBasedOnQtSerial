@@ -5,10 +5,11 @@ vector<AutoCollectCell> Bll_DataWave::autoCollectDataList = {};
 
 Bll_DataWave::Bll_DataWave(QObject *parent) : QObject(parent)
 {
+    emit sgStableState(STABLE_STATE_INIT);
     timerWatchDog = new QTimer(this);
     timerWatchDog->setInterval(5000);
     connect(timerWatchDog, &QTimer::timeout, [&]()
-            {stableState = 2; autoEmitStableState(); });
+            {stableState = STABLE_STATE_TIMEOUT; autoEmitStableState(); });
     timerWatchDog->start();
 }
 
@@ -70,7 +71,7 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
 
     if (data.length() < checkNum)
     {
-        stableState = 0;
+        stableState = STABLE_STATE_INIT;
         goto CHECK_STABLE;
     }
 
@@ -85,20 +86,16 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         goto CHECK_MIN_MAX;
     }
 
-    if (autoCollectState && (stableState == 1))
+    if (autoCollectState && (stableState == STABLE_STATE_STABLE))
         checkAutoCollect(cell.value);
 
     return;
 
 CHECK_MIN_MAX:
     if (max.value - min.value > range)
-    {
-        stableState = 0;
-    }
+        stableState = STABLE_STATE_UNSTABLE;
     else
-    {
-        stableState = 1;
-    }
+        stableState = STABLE_STATE_STABLE;
 
 CHECK_STABLE:
     autoEmitStableState();
@@ -109,17 +106,15 @@ void Bll_DataWave::autoEmitStableState(void)
     if (stableState ^ lastStableState)
     {
         emit sgStableState(stableState);
-        if (stableState == 1)
+        if (stableState == STABLE_STATE_STABLE)
             emit sgTurnToStable();
-        else if (stableState == 2)
-            emit sgReceiveTimeout();
     }
     lastStableState = stableState;
 }
 
 void Bll_DataWave::checkAutoCollect(const double &value)
 {
-    qDebug() << "checkAutoCollect" << value;
+    // qDebug() << "checkAutoCollect" << value;
     autoCollectState = false;
 
     if (autoCollectDataList.size() == 0)

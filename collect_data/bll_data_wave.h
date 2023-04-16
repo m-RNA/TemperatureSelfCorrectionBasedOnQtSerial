@@ -11,6 +11,14 @@ typedef struct
     bool isCollect;
 } AutoCollectCell;
 
+typedef enum
+{
+    STABLE_STATE_INIT = 0,
+    STABLE_STATE_UNSTABLE,
+    STABLE_STATE_STABLE,
+    STABLE_STATE_TIMEOUT,
+} StableStateEnum;
+
 class Bll_DataWave : public QObject
 {
     Q_OBJECT
@@ -29,8 +37,7 @@ public slots:
 
 signals:
     void sgTurnToStable();
-    void sgStableState(const char state);
-    void sgReceiveTimeout();
+    void sgStableState(const StableStateEnum state);
 
     void sgAutoCollect();
 
@@ -38,8 +45,8 @@ private:
     double range = 0;
     int checkNum = 10;
     int stableTime = 0;
-    char stableState = false;
-    char lastStableState = false;
+    StableStateEnum stableState = STABLE_STATE_INIT;
+    StableStateEnum lastStableState = STABLE_STATE_INIT;
     QTimer *timerWatchDog = nullptr;
     SerialAnalyseCell min;
     SerialAnalyseCell max;
