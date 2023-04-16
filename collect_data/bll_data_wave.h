@@ -20,8 +20,8 @@ public:
 public slots:
     void addData(const SerialAnalyseCell &cell);
     void setRange(const double r);
-    void setInterval(const int ms);
     void setCheckNum(const int num);
+    void setStableTime(const int ms);
 
     void setAutoCollectStart();
     static void setAutoCollectDataList(const vector<double> &list);
@@ -35,9 +35,9 @@ signals:
     void sgAutoCollect();
 
 private:
-    int interval = 0;
-    int checkNum = 10;
     double range = 0;
+    int checkNum = 10;
+    int stableTime = 0;
     char stableState = false;
     char lastStableState = false;
     QTimer *timerWatchDog = nullptr;

@@ -78,6 +78,8 @@ private slots:
 
     void on_spbxWaveRange_valueChanged(double arg1);
 
+    void on_spbxStableTime_valueChanged(double arg1);
+
     void on_btnVerify_clicked();
 
     void on_btnWizard_clicked();
@@ -97,7 +99,7 @@ signals:
 
     void sgSetDataWaveNum(const int num);
     void sgSetDataWaveRange(const double range);
-    void sgSetDataWaveInterval(const int ms);
+    void sgSetDataWaveStableTime(const int ms);
 
     void sgCollectDataFinish_Std();
     void sgCollectDataFinish_Dtm();

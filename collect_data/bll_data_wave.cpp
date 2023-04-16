@@ -17,14 +17,14 @@ void Bll_DataWave::setRange(const double r)
     range = r;
 }
 
-void Bll_DataWave::setInterval(const int ms)
-{
-    interval = ms;
-}
-
 void Bll_DataWave::setCheckNum(const int num)
 {
     checkNum = num;
+}
+
+void Bll_DataWave::setStableTime(const int ms)
+{
+    stableTime = ms;
 }
 
 // 一定时间范围的波动范围检测
@@ -42,7 +42,7 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         return;
     }
 
-    while (data.begin()->timestamp + interval < data.rbegin()->timestamp)
+    while (data.begin()->timestamp + stableTime < data.rbegin()->timestamp)
     {
         if (data.begin()->timestamp >= min.timestamp)
         {

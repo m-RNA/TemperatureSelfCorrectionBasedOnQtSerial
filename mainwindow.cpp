@@ -374,9 +374,9 @@ void MainWindow::listenDataWaveInit()
 {
     listenDataWaveQuit();
     taskDataWave = new Bll_DataWave;
-    taskDataWave->setInterval(3000);
     taskDataWave->setRange(ui->spbxWaveRange->value());
     taskDataWave->setCheckNum(ui->spbxWaveNum->value());
+    taskDataWave->setStableTime(ui->spbxStableTime->value() * 60000);
 
     threadDataWave = new QThread;
     taskDataWave->moveToThread(threadDataWave);
@@ -386,8 +386,8 @@ void MainWindow::listenDataWaveInit()
     connect(taskDataWave, &Bll_DataWave::sgReceiveTimeout, ui->collectPanel_Std, &CollectPanel::setReceiveTimeout);
     connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
     connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);
-    connect(this, &MainWindow::sgSetDataWaveInterval, taskDataWave, &Bll_DataWave::setInterval);
     connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);
+    connect(this, &MainWindow::sgSetDataWaveStableTime, taskDataWave, &Bll_DataWave::setStableTime);
 
     // 标准仪器稳定后，开始采集数据
     connect(taskDataWave, &Bll_DataWave::sgTurnToStable, this, &MainWindow::goOnCollect);
@@ -1098,6 +1098,11 @@ void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 void MainWindow::on_spbxWaveRange_valueChanged(double arg1)
 {
     emit sgSetDataWaveRange(arg1);
+}
+
+void MainWindow::on_spbxStableTime_valueChanged(double arg1)
+{
+    emit sgSetDataWaveStableTime(arg1 * 60000);
 }
 
 void MainWindow::on_btnVerify_clicked()
