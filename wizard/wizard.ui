@@ -581,6 +581,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimum">
+          <number>2</number>
+         </property>
          <property name="value">
           <number>8</number>
          </property>

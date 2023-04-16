@@ -507,6 +507,21 @@ QString MainWindow::collectTimeStampToHhMmSs(int timestamp)
     return QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60);
 }
 
+// 初始化单点进度条
+void MainWindow::pgsbSingleInit()
+{
+    pgsbSingleReset();
+    ui->pgsbSingle->setMaximum(collectTimeStamp);
+}
+
+// 重置单点进度条
+void MainWindow::pgsbSingleReset()
+{
+    pgsbSingleValue = 0;
+    ui->pgsbSingle->setValue(0);
+    ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
+}
+
 void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
 {
     btnSwitchState = state;
@@ -533,21 +548,6 @@ void Bll_CollectBtn::setCollectBtnState(const CollectBtnState &state)
         ui->btnCollectSwitch->setIcon(QIcon("://icon/yes.ico"));
         break;
     }
-}
-
-// 初始化单点进度条
-void MainWindow::pgsbSingleInit()
-{
-    pgsbSingleReset();
-    ui->pgsbSingle->setMaximum(collectTimeStamp);
-}
-
-// 重置单点进度条
-void MainWindow::pgsbSingleReset()
-{
-    pgsbSingleValue = 0;
-    ui->pgsbSingle->setValue(0);
-    ui->pgsbSingle->setFormat(collectTimeStampToHhMmSs(collectTimeStamp));
 }
 
 void Bll_CollectBtn::on_btnCollectSwitch_clicked()
@@ -688,8 +688,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_Next);
 
-        QString msg = "此点采集完成\n" + (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集";
-        QMessageBox msgBox(QMessageBox::Information, "提示", msg, 0, this);
+        QMessageBox msgBox(QMessageBox::Information, "此点采集完成", (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
 
         if (ui->cbSound->currentIndex() > 0)
@@ -716,9 +715,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_End);
 
-        tryUpdateFitChart(false);
-
-        QMessageBox msgBox(QMessageBox::Information, "提示", "全部采集完成！\n请在右下角查看拟合结果", 0, this);
+        QMessageBox msgBox(QMessageBox::Information, "全部采集完成！", (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n请在右下角查看拟合结果", 0, this);
         msgBox.addButton("Yes", QMessageBox::AcceptRole);
 
         if (ui->cbSound->currentIndex() > 0)
@@ -728,6 +725,8 @@ void Bll_CollectBtn::timerCollectTimeOut()
         }
 
         msgBox.exec();
+
+        tryUpdateFitChart(false);
 
         if (ui->cbSound->currentIndex() > 0)
         {
