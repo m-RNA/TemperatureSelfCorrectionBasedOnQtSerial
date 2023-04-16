@@ -912,6 +912,15 @@ void LeastSquare::on_spbxOrder_valueChanged(int arg1)
 {
     order = arg1;
     ui->twFactor->setRowCount(arg1 + 1);
+    // 补上空行
+    for (int i = 0; i < arg1 + 1; i++)
+    {
+        if (ui->twFactor->item(i, 0) == nullptr)
+        {
+            ui->twFactor->setItem(i, 0, new QTableWidgetItem(""));
+            ui->twFactor->item(i, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        }
+    }
 
     // tryUpdateFitChart(false);
 }
@@ -931,6 +940,11 @@ void LeastSquare::setOrderData(const vector<DECIMAL_TYPE> &factor)
         QTableWidgetItem *temp = new QTableWidgetItem(globalStringBuffer); // QString::fromStdString(globalStringBuffer));
         ui->twFactor->setItem(i, 0, temp);
         ui->twFactor->item(i, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    }
+    // 清除残余数据
+    for (int i = order + 1; i < ui->twFactor->rowCount(); i++)
+    {
+        ui->twFactor->item(i, 0)->setText("");
     }
 }
 
