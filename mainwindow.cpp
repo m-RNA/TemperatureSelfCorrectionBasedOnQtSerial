@@ -1099,7 +1099,6 @@ void MainWindow::on_actionWizard_triggered()
                 {
                     qDebug() << "自动采集";
                     Bll_DataWave::setAutoCollectDataList(wizardInfo.collectSetting.autoList);
-                    autoCollectTimerInit();
                 }
 
                 ui->spbxWaveRange->setValue(wizardInfo.checkWaveSetting.range);
