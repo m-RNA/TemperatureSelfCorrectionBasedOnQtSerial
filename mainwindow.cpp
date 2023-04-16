@@ -8,7 +8,7 @@
 #include "wizard.h"
 #include <QSerialPortInfo>
 #include <QSerialPort>
-// #include <QMessageBox>
+#include <QMessageBox>
 #include "message.h"
 #include <QInputDialog>
 #include <QTimer>
@@ -123,7 +123,8 @@ MainWindow::MainWindow(QWidget *parent)
     taskXlsxData = new Bll_SaveDataToXlsx;
     threadXlsx = new QThread();
     taskXlsxData->moveToThread(threadXlsx);
-    connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 防止内存泄漏
+    connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 释放内存资源
+    connect(threadXlsx, &QThread::finished, threadXlsx, &QThread::deleteLater);   // 释放内存资源
     connect(this, &MainWindow::sgXlsxStartPoint, taskXlsxData, &Bll_SaveDataToXlsx::startPoint);
     connect(this, &MainWindow::sgXlsxNextPoint, taskXlsxData, &Bll_SaveDataToXlsx::nextPoint);
     connect(this, &MainWindow::sgXlsxSaveReport, taskXlsxData, &Bll_SaveDataToXlsx::saveReport);
@@ -323,12 +324,11 @@ void MainWindow::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE
         threadLeastSquare->quit();
         threadLeastSquare->wait();
     }
-    taskLeastSquare = new Bll_LeastSquareMethod();
-    threadLeastSquare = new QThread();
+    taskLeastSquare = new Bll_LeastSquareMethod;
+    threadLeastSquare = new QThread;
     taskLeastSquare->moveToThread(threadLeastSquare);
-    connect(threadLeastSquare, &QThread::finished, [&]()
-            {taskLeastSquare->deleteLater(); qDebug() << "threadLeastSquare quit"; });
-
+    connect(threadLeastSquare, &QThread::finished, taskLeastSquare, &Bll_LeastSquareMethod::deleteLater); // 任务结束后自动删除
+    connect(threadLeastSquare, &QThread::finished, threadLeastSquare, &QThread::deleteLater);             // 线程结束后自动删除
     connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::work);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setOrderData);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
@@ -381,6 +381,7 @@ void MainWindow::listenDataWaveInit()
     threadDataWave = new QThread;
     taskDataWave->moveToThread(threadDataWave);
     connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
+    connect(threadDataWave, &QThread::finished, threadDataWave, &QThread::deleteLater);
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);
     connect(taskDataWave, &Bll_DataWave::sgReceiveTimeout, ui->collectPanel_Std, &CollectPanel::setReceiveTimeout);
     connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
@@ -421,7 +422,7 @@ void MainWindow::collectDataInit()
     taskDataCollect_Std->moveToThread(threadDataCollect);
     taskDataCollect_Dtm->moveToThread(threadDataCollect);
     connect(threadDataCollect, &QThread::finished, [&]()
-            {taskDataCollect_Std->deleteLater(); taskDataCollect_Dtm->deleteLater(); });
+            {taskDataCollect_Std->deleteLater(); taskDataCollect_Dtm->deleteLater(); threadDataCollect->deleteLater(); });
 
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataCollect_Std, &Bll_DataCollect::slAddData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, taskDataCollect_Dtm, &Bll_DataCollect::slAddData);
@@ -456,7 +457,22 @@ void MainWindow::autoCollectTimerInit()
     timerAutoCollectCheck = new QTimer;
     timerAutoCollectCheck->setInterval(1000);
     connect(timerAutoCollectCheck, &QTimer::timeout, taskDataWave, &Bll_DataWave::setAutoCollectStart);
-    connect(taskDataWave, &Bll_DataWave::sgAutoCollect, this, &MainWindow::on_btnCollectSwitch_clicked);
+    connect(taskDataWave, &Bll_DataWave::sgAutoCollect, this, [&]()
+            {
+        if ((btnSwitchState == CollectBtnState_Next) || (btnSwitchState == CollectBtnState_Start))
+        {
+            on_btnCollectSwitch_clicked();
+        }
+        else if (btnSwitchState == CollectBtnState_End)
+        {
+            // 只提示一次
+            static bool isShow = false;
+            if (!isShow)
+            {
+                isShow = true;
+                QMessageBox::information(this, "已全部采集完成", "怀疑有重复采集数据，若有，\n可将最后的数据粘贴到该处\n然后点击重采本点即可");
+            }} });
+    // Message::information("已全部采集完成\n怀疑表格里有重复采集数据\n若有重复数据,可以将最后一点的数据剪切到该处\n然后点击重采本点即可", 5000); });
     timerAutoCollectCheck->start();
     qDebug() << "AutoCollectCheck start";
 }
@@ -477,7 +493,8 @@ void MainWindow::soundInit()
     taskSound = new Bll_Sound;
     threadSound = new QThread;
     taskSound->moveToThread(threadSound);
-    connect(threadSound, &QThread::finished, taskSound, &QObject::deleteLater); // 防止内存泄漏
+    connect(threadSound, &QThread::finished, taskSound, &QObject::deleteLater);
+    connect(threadSound, &QThread::finished, threadSound, &QThread::deleteLater);
     connect(this, &MainWindow::sgSoundPlay1, taskSound, &Bll_Sound::play1);
     connect(this, &MainWindow::sgSoundPlay2, taskSound, &Bll_Sound::play2);
     connect(this, &MainWindow::sgSoundStop, taskSound, &Bll_Sound::stop);
