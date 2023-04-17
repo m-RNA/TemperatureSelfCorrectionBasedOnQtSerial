@@ -3,7 +3,8 @@ QT       += core gui printsupport serialport opengl multimedia
 #如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=Xlsx，否则include(D:/QXlsx/QXlsx.pri)
 DEFINES += USE_LOCAL_COMPILED_LIB=1
 QT += xlsx
-#include(D:/QXlsx/QXlsx.pri)
+# INCLUDEPATH +=D:/QXlsx
+# include(D:/QXlsx/QXlsx.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,8 +36,7 @@ INCLUDEPATH +=  \
     least_square_method \
     collect_data \
     start_serial \
-    D:/eigen-3.4.0 \
-    D:/QXlsx
+    D:/eigen-3.4.0
 
 SOURCES += \
     about.cpp \
@@ -103,3 +103,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     main.qrc \
     message/Message.qrc
+
+RC_FILE  += \
+    logo.rc

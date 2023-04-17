@@ -5,10 +5,14 @@
 依赖的库有 Eigen、QXlsx  
 使用 QXlsx 需要安装 Strawberry Perl  
 
+打包命令： windeployqt   
+可使用 Enigma Virtual Box 进一步封包。
+
 下载链接：  
 Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page  
 QXlsx：https://github.com/QtExcel/QXlsx  
-Strawberry Perl：https://strawberryperl.com
+Strawberry Perl：https://strawberryperl.com  
+Enigma Virtual Box：https://enigmaprotector.com/en/aboutvb.html
 
 QXlsx安装教程：  
 https://www.cnblogs.com/ybqjymy/p/17244317.html  
