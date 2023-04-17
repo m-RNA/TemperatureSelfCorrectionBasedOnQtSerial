@@ -191,12 +191,24 @@ void MainWindow::loadUiSettings()
     if (QFile::exists(CONFIG_FILE_NAME))
     {
         int autoListSize = setting.beginReadArray("AutoCollectDataList");
+        if (autoListSize == 0)
+            goto AUTO_LIST_DEFAULT;
         for (int i = 0; i < autoListSize; ++i)
         {
             setting.setArrayIndex(i);
             wizardInfo.collectSetting.autoList.push_back(setting.value("Data").toDouble());
         }
         setting.endArray();
+    }
+    else
+    {
+        // 给autoLis赋默认值 {35, 30, 25, 20, 15, 10, 5, 0.15}
+    AUTO_LIST_DEFAULT:
+        for (int i = 0; i < 7; ++i)
+        {
+            wizardInfo.collectSetting.autoList.push_back(35 - i * 5);
+        }
+        wizardInfo.collectSetting.autoList.push_back(0.15);
     }
     setting.endGroup();
 
