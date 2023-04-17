@@ -47,7 +47,6 @@ Wizard::Wizard(WizardInfo *info, QWidget *parent) : QWizard(parent),
     // 补上空行
     for (int i = size; i < wizardInfo->collectSetting.num; i++)
     {
-        qDebug() << "补上空行 i = " << i;
         ui->twTarget->setItem(i, 0, new QTableWidgetItem(""));
     }
     ui->twTarget->setEnabled(wizardInfo->collectSetting.isAuto);
@@ -196,7 +195,6 @@ void Wizard::on_spbxSamplePointSum_valueChanged(int arg1)
         if (ui->twTarget->item(i, 0) == nullptr)
         {
             ui->twTarget->setItem(i, 0, new QTableWidgetItem(""));
-            qDebug() << "补上空行 i = " << i;
         }
     }
 }

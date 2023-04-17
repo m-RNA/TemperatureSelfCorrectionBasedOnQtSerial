@@ -1411,6 +1411,9 @@
    </property>
   </action>
   <action name="action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>设置</string>
    </property>
