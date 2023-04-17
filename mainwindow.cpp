@@ -230,6 +230,13 @@ void MainWindow::loadUiSettings()
     ui->spbxOrder->setValue(setting.value("Order", 3).toInt());
     setting.endGroup();
 
+    // 读取表格设置
+    setting.beginGroup("Xlsx");
+    bool autoSave = setting.value("AutoSave", false).toBool();
+    ui->actionAutoSave->setChecked(autoSave);
+    emit sgXlsxSetAutoSave(autoSave);
+    setting.endGroup();
+
     // 读取向导基本信息
     setting.beginGroup("WizardBaseInfo");
     wizardInfo.baseInfo.place = setting.value("Place", "中北大学工程训练中心").toString();
@@ -238,13 +245,6 @@ void MainWindow::loadUiSettings()
     wizardInfo.baseInfo.operatorName = setting.value("Operator", "老陈皮").toString();
     wizardInfo.baseInfo.id_Std = setting.value("ID_Std", "道万").toString();
     wizardInfo.baseInfo.id_Dtm = setting.value("ID_Dtm", "待定").toString();
-    setting.endGroup();
-
-    // 读取表格设置
-    setting.beginGroup("Xlsx");
-    bool autoSave = setting.value("AutoSave", false).toBool();
-    ui->actionAutoSave->setChecked(autoSave);
-    emit sgXlsxSetAutoSave(autoSave);
     setting.endGroup();
 }
 
@@ -296,6 +296,11 @@ void MainWindow::saveUiSetting()
     setting.setValue("Order", ui->spbxOrder->value());
     setting.endGroup();
 
+    // 保存其他设置
+    setting.beginGroup("Xlsx");
+    setting.setValue("AutoSave", ui->actionAutoSave->isChecked());
+    setting.endGroup();
+
     // 保存向导基本信息
     setting.beginGroup("WizardBaseInfo");
     setting.setValue("Place", wizardInfo.baseInfo.place);
@@ -304,11 +309,6 @@ void MainWindow::saveUiSetting()
     setting.setValue("Operator", wizardInfo.baseInfo.operatorName);
     setting.setValue("ID_Std", wizardInfo.baseInfo.id_Std);
     setting.setValue("ID_Dtm", wizardInfo.baseInfo.id_Dtm);
-    setting.endGroup();
-
-    // 保存其他设置
-    setting.beginGroup("Xlsx");
-    setting.setValue("AutoSave", ui->actionAutoSave->isChecked());
     setting.endGroup();
 }
 
