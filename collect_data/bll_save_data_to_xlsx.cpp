@@ -37,7 +37,7 @@ void Bll_SaveDataToXlsx::initReport()
         delete report;
     report = new Document(":/ReportTemplate.xlsx");
 
-    fileName = "Test " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
+    fileName = "温度传感器自校准数据表格 " + QDateTime::currentDateTime().toString("yyyy年MM月dd日 hh时mm分ss秒");
     index = 0;
 }
 
@@ -51,14 +51,14 @@ void Bll_SaveDataToXlsx::saveInfo(const BaseInfo &info)
     int row = INFO_R;
     report->write(row, INFO_C, info.place); // 地点
 
-    report->write(++row, INFO_C, info.temp); // 温度
-    report->write(row, INFO_C + 2, info.rh); // 湿度
+    report->write(++row, INFO_C, QString::number(info.temp) + "℃");   // 温度
+    report->write(row, INFO_C + 2, QString::number(info.rh) + "%RH"); // 湿度
 
     report->write(++row, INFO_C, info.date);           // 日期
     report->write(row, INFO_C + 2, info.operatorName); // 人员
 
-    report->write(++row, INFO_C, info.id_Std); // 标准传感器编号
-    report->write(++row, INFO_C, info.id_Dtm); // 待定传感器编号
+    report->write(++row, INFO_C + 1, info.id_Std); // 标准传感器编号
+    report->write(++row, INFO_C + 1, info.id_Dtm); // 待定传感器编号
 
     if (autoSaveState)
         saveReport();

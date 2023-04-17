@@ -65,7 +65,7 @@ void Wizard::getInfo()
     wizardInfo->baseInfo.place = ui->lePlace->text();
     wizardInfo->baseInfo.temp = ui->spbxTemp->value();
     wizardInfo->baseInfo.rh = ui->spbxRH->value();
-    wizardInfo->baseInfo.date = ui->dateEdit->text();
+    wizardInfo->baseInfo.date = ui->dateEdit->date().toString("yyyy/MM/dd");
     wizardInfo->baseInfo.operatorName = ui->leOperator->text();
     wizardInfo->baseInfo.id_Std = ui->leID_Std->text();
     wizardInfo->baseInfo.id_Dtm = ui->leID_Dtm->text();
