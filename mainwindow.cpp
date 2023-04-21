@@ -344,9 +344,9 @@ void MainWindow::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE
     connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::work);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setOrderData);
     connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, ui->chartFit, &FitChart::updateFitPlot);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, this, [&]()
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, this, [&](const QVector<double> &x, const QVector<double> &y)
             {
+                ui->chartFit->updateFitPlot(x, y);
                 threadLeastSquare->quit();
                 threadLeastSquare->wait();
                 threadLeastSquare = nullptr; });
@@ -385,6 +385,8 @@ void MainWindow::pictureInit()
 void MainWindow::listenDataWaveInit()
 {
     ui->collectPanel_Std->setStableState(STABLE_STATE_INIT);
+    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
+
     listenDataWaveQuit();
     taskDataWave = new Bll_DataWave;
     taskDataWave->setRange(ui->spbxWaveRange->value());
@@ -796,10 +798,6 @@ void Bll_CollectBtn::stopCollect()
     ui->collectPanel_Dtm->collectStop();
 
     listenDataWaveInit();
-
-    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
-    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
-
     qDebug() << "停止采集";
 }
 
@@ -812,10 +810,6 @@ void Bll_CollectBtn::finishCollect()
     collectDataQuit();
 
     listenDataWaveInit();
-
-    ui->collectPanel_Std->setOnlineState(ui->start_Std->state());
-    ui->collectPanel_Dtm->setOnlineState(ui->start_Dtm->state());
-
     qDebug() << "本点采集结束";
 }
 
