@@ -1,6 +1,7 @@
 #include "interactchart.h"
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
 #include <QDateTime>
+#include "config.h"
 
 // 刷新时间间隔
 qint64 InteractChart::CHART_REFRESH_TIME_MS = 50;
@@ -275,12 +276,14 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 
 		// 显示tip框
 		const QPointF coords = tracer->position->coords();
+		snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%f", coords.y());
 		if (timelineState)
 		{
+
 			QToolTip::showText(ev->globalPos(),
 							   tr("<h5><table><tr><td align='right'>%1:</td><td>%2</td></tr><tr><td align='right'>时间:<td>%3</td></tr></h5>")
 								   .arg(selectedGraph->name())
-								   .arg(QString::number(coords.y(), 'g', 6))
+								   .arg(globalStringBuffer)
 								   .arg(QDateTime::fromMSecsSinceEpoch(coords.x() * 1000).toString("hh:mm:ss.zzz")), // 将x轴的值转换为时间
 							   this, this->rect());
 		}
@@ -289,8 +292,8 @@ void InteractChart::mouseMoveEvent(QMouseEvent *ev)
 			QToolTip::showText(ev->globalPos(),
 							   tr("<h4>%1</h4><table><tr><td><h5>Y: %2</h5></td><td>, </td><td><h5>X: %3</h5></td></tr></table>")
 								   .arg(selectedGraph->name())
-								   .arg(QString::number(coords.y(), 'g', 6))
-								   .arg(QString::number(coords.x(), 'g', 6)),
+								   .arg(globalStringBuffer)
+								   .arg(QString::number(coords.x())),
 							   this, this->rect());
 		}
 	}

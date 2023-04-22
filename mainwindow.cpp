@@ -889,12 +889,12 @@ void LeastSquare::updateCollectDataXY(void)
         // qDebug() << i;
         temp = stold(qsX.toStdString());
         collectDataX.push_back(temp);
-        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
+        // snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         // qDebug() << globalStringBuffer;
 
         temp = stold(qsY.toStdString());
         collectDataY.push_back(temp);
-        snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
+        // snprintf(globalStringBuffer, sizeof(globalStringBuffer), "toLoDouble = %.20LE", temp);
         // qDebug() << globalStringBuffer;
     }
 }

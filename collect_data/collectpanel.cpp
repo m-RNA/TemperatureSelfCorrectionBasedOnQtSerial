@@ -83,7 +83,8 @@ void CollectPanel::setYAxisFormat(const QString &format, const int precision)
 void CollectPanel::slCollectData(const SerialAnalyseCell &cell)
 {
     // 更新最后示数
-    ui->leastData->setText(QString::number(cell.value));
+    snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%f", cell.value);
+    ui->lbLeastData->setText(globalStringBuffer);
 
     // 将Y轴数据添加到曲线图上
     ui->chart->addYPointBaseOnTime(cell);
