@@ -230,9 +230,9 @@ void MainWindow::loadUiSettings()
     ui->spbxOrder->setValue(setting.value("Order", 3).toInt());
     setting.endGroup();
 
-    // 读取表格设置
+    // 读取表格自动保存设置
     setting.beginGroup("Xlsx");
-    bool autoSave = setting.value("AutoSave", false).toBool();
+    bool autoSave = setting.value("AutoSave", true).toBool();
     ui->actionAutoSave->setChecked(autoSave);
     emit sgXlsxSetAutoSave(autoSave);
     setting.endGroup();
@@ -296,7 +296,7 @@ void MainWindow::saveUiSetting()
     setting.setValue("Order", ui->spbxOrder->value());
     setting.endGroup();
 
-    // 保存其他设置
+    // 保存表格自动保存设置
     setting.beginGroup("Xlsx");
     setting.setValue("AutoSave", ui->actionAutoSave->isChecked());
     setting.endGroup();
@@ -716,16 +716,16 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_Next);
 
-        QMessageBox msgBox(QMessageBox::Information, "此点采集完成", (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" + "请准备下一点采集", 0, this);
-        msgBox.addButton("Yes", QMessageBox::AcceptRole);
-
         if (ui->cbSound->currentIndex() > 0)
         {
             soundInit();
             emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
         }
 
-        msgBox.exec();
+        QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
+                      "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
+                      "请准备下一点采集";
+        QMessageBox::information(this, "此点采集完成", msg);
 
         if (ui->cbSound->currentIndex() > 0)
         {
@@ -743,16 +743,16 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_End);
 
-        QMessageBox msgBox(QMessageBox::Information, "全部采集完成！", (QString) "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" + "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n请在右下角查看拟合结果", 0, this);
-        msgBox.addButton("Yes", QMessageBox::AcceptRole);
-
         if (ui->cbSound->currentIndex() > 0)
         {
             soundInit();
             emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
         }
 
-        msgBox.exec();
+        QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
+                      "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
+                      "请在右下角查看拟合结果";
+        QMessageBox::information(this, "全部采集完成", msg);
 
         tryUpdateFitChart(false);
 
@@ -950,6 +950,7 @@ void LeastSquare::setOrderData(const vector<DECIMAL_TYPE> &factorList)
     }
 }
 
+// 单元格选中变化槽函数
 void LeastSquare::on_twAverage_itemSelectionChanged()
 {
     // 1、记录旧的单元格内容
@@ -962,6 +963,7 @@ void LeastSquare::on_twAverage_itemSelectionChanged()
  * 正则表达式：
  * https://blog.csdn.net/qq_41622002/article/details/107488528
  */
+// 单元格变化
 void LeastSquare::twAverage_itemChanged(QTableWidgetItem *item)
 {
     // 匹配正负整数、正负浮点数
@@ -1062,6 +1064,7 @@ void MainWindow::on_actionAutoSave_triggered(bool checked)
     emit sgXlsxSetAutoSave(checked);
 }
 
+// 向导相关
 void MainWindow::on_actionWizard_triggered()
 {
     ui->start_Std->getSettingIndex(wizardInfo.ssIndex_Std);
@@ -1112,6 +1115,12 @@ void MainWindow::on_actionWizard_triggered()
     wizard.exec();
 }
 
+void MainWindow::on_btnWizard_clicked()
+{
+    on_actionWizard_triggered();
+}
+
+// 波动检测相关
 void MainWindow::on_spbxWaveNum_valueChanged(int arg1)
 {
     emit sgSetDataWaveNum(arg1);
@@ -1127,6 +1136,7 @@ void MainWindow::on_spbxStableTime_valueChanged(double arg1)
     emit sgSetDataWaveStableTime(arg1 * 60000);
 }
 
+// 验证
 void MainWindow::on_btnVerify_clicked()
 {
     verifyState = !verifyState;
@@ -1146,11 +1156,7 @@ void MainWindow::on_btnVerify_clicked()
     }
 }
 
-void MainWindow::on_btnWizard_clicked()
-{
-    on_actionWizard_triggered();
-}
-
+// 自动采集开关
 void MainWindow::on_cbAutoCollect_activated(int index)
 {
     if (index == 1)
@@ -1159,6 +1165,7 @@ void MainWindow::on_cbAutoCollect_activated(int index)
         autoCollectTimerQuit();
 }
 
+// 锁定解锁校准面板
 void MainWindow::on_actionLock_triggered(bool checked)
 {
     setCollectSettingLock(checked);

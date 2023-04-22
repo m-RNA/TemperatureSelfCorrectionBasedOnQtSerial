@@ -57,6 +57,7 @@ void StartCommunication::loadUiSettings(const QString &id)
     ui->cbFlowCtrl->setCurrentIndex(setting.value("FlowControl").toInt());
     ui->cbAnalyse->setCurrentIndex(setting.value("Analyse").toInt());
     ui->spbxRegularTime->setValue(setting.value("SendRegularTime").toInt());
+    ui->teSend->setPlainText(setting.value("SendData").toString());
     setting.endGroup();
 }
 
@@ -73,6 +74,7 @@ void StartCommunication::saveUiSettings()
     setting.setValue("FlowControl", ui->cbFlowCtrl->currentIndex());
     setting.setValue("Analyse", ui->cbAnalyse->currentIndex());
     setting.setValue("SendRegularTime", ui->spbxRegularTime->value());
+    setting.setValue("SendData", ui->teSend->toPlainText());
     setting.endGroup();
 }
 
