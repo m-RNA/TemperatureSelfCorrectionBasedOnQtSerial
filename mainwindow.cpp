@@ -504,6 +504,12 @@ void MainWindow::autoCollectTimerQuit()
 
 void MainWindow::soundInit()
 {
+    if (threadSound)
+    {
+        emit sgSoundStop();
+        threadSound->quit();
+        threadSound->wait();
+    }
     taskSound = new Bll_Sound;
     threadSound = new QThread;
     taskSound->moveToThread(threadSound);
@@ -725,7 +731,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
         {
             emit sgSoundStop();
             threadSound->quit();
-            threadSound->wait(); // 这里需要吗？
+            threadSound->wait();
             threadSound = nullptr;
         }
 
