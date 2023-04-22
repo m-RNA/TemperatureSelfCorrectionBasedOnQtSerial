@@ -171,13 +171,29 @@ void MainWindow::loadUiSettings()
     }
 
     // 读取启动时是否显示欢迎界面
-    setting.beginGroup("Welcome");
-    bool showWelcome = setting.value("Show", true).toBool();
+    setting.beginGroup("UI");
+    bool showWelcome = setting.value("ShowWelcome", true).toBool();
     ui->ckbxWelcome->setChecked(showWelcome);
     if (showWelcome)
         ui->tabMain->setCurrentIndex(0);
     else
         ui->tabMain->setCurrentIndex(1);
+
+    switch (setting.value("Theme", 0).toInt())
+    {
+    case 0:
+        // on_actionLightStyle_triggered();
+        break;
+    case 1:
+        on_actionGrayStyle_triggered();
+        break;
+    case 2:
+        on_actionBlueStyle_triggered();
+        break;
+    case 3:
+        on_actionDarkStyle_triggered();
+        break;
+    }
     setting.endGroup();
 
     // 读取采集设置
@@ -260,8 +276,9 @@ void MainWindow::saveUiSetting()
     setting.endGroup();
 
     // 保存启动时是否显示欢迎界面
-    setting.beginGroup("Welcome");
-    setting.setValue("Show", ui->ckbxWelcome->isChecked());
+    setting.beginGroup("UI");
+    setting.setValue("ShowWelcome", ui->ckbxWelcome->isChecked());
+    setting.setValue("Theme", themeIndex);
     setting.endGroup();
 
     // 保存采集设置
@@ -1156,4 +1173,123 @@ void MainWindow::on_cbAutoCollect_activated(int index)
 void MainWindow::on_actionLock_triggered(bool checked)
 {
     setCollectSettingLock(checked);
+}
+
+/**
+ * QSS主题来自开源项目：https://github.com/feiyangqingyun/QWidgetDemo
+ * QString cssFileList[3] = {":/qss/flatgray.css", ":/qss/lightblue.css", ":/qss/blacksoft.css"};
+ */
+using ColorStyle = MainWindow;
+
+void ColorStyle::loadStyle(const QString &qssFile)
+{
+    // 开启计时
+    QElapsedTimer time;
+    time.start();
+
+    // 加载样式表
+    QString qss;
+    QFile file(qssFile);
+    if (file.open(QFile::ReadOnly))
+    {
+        // 用QTextStream读取样式文件不用区分文件编码 带bom也行
+        QTextStream in(&file);
+        // in.setCodec("utf-8");
+        while (!in.atEnd())
+        {
+            qss += in.readLine() + "\n";
+        }
+        file.close();
+
+        QString paletteColor = qss.mid(20, 7);
+        qApp->setPalette(QPalette(paletteColor));
+        // 用时主要在下面这句
+        qApp->setStyleSheet(qss);
+    }
+
+    qDebug() << "切换主题用时:" << time.elapsed();
+}
+
+void ColorStyle::setChartColorStyle(const int index)
+{
+    if (index == 0)
+        return;
+    ui->chartFit->setColorStyle(index);
+    ui->collectPanel_Std->setChartColorStyle(index);
+    ui->collectPanel_Dtm->setChartColorStyle(index);
+}
+
+void ColorStyle::setColorStyle(const int index)
+{
+    if (index == themeIndex && index == 0)
+        return;
+
+    switch (index)
+    {
+    case 1:
+        loadStyle(":/qss/flatgray.css");
+        break;
+
+    case 2:
+        loadStyle(":/qss/lightblue.css");
+        break;
+
+    case 3:
+        loadStyle(":/qss/blacksoft.css");
+        break;
+    }
+    setChartColorStyle(index);
+}
+
+void ColorStyle::on_actionLightStyle_triggered()
+{
+    ui->actionLightStyle->setChecked(true);
+    if (themeIndex == 0)
+        return;
+    themeIndex = 0;
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    // Message::information("重启软件后生效");
+    QMessageBox::information(this, "提示", "重启软件后生效");
+}
+
+void ColorStyle::on_actionGrayStyle_triggered()
+{
+    ui->actionGrayStyle->setChecked(true);
+    if (themeIndex == 1)
+        return;
+    themeIndex = 1;
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    setColorStyle(themeIndex);
+}
+
+void ColorStyle::on_actionBlueStyle_triggered()
+{
+    ui->actionBlueStyle->setChecked(true);
+    if (themeIndex == 2)
+        return;
+    themeIndex = 2;
+    ui->actionLightStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(false);
+    ui->actionDarkStyle->setChecked(false);
+
+    setColorStyle(themeIndex);
+}
+
+void ColorStyle::on_actionDarkStyle_triggered()
+{
+    ui->actionDarkStyle->setChecked(true);
+    if (themeIndex == 3)
+        return;
+    themeIndex = 3;
+    ui->actionLightStyle->setChecked(false);
+    ui->actionBlueStyle->setChecked(false);
+    ui->actionGrayStyle->setChecked(false);
+
+    setColorStyle(themeIndex);
 }

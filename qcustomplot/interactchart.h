@@ -30,6 +30,8 @@ public slots:
     void addYPoint(const SerialAnalyseCell &cell);
     void addYPointBaseOnTime(const SerialAnalyseCell &cell);
 
+    void setColorStyle(const int style);
+
 protected:
     // 鼠标滚轮事件
     virtual void wheelEvent(QWheelEvent *ev);
@@ -65,6 +67,11 @@ private:
     timeb t1, t2;
     qint64 nowTime, oldTime;
     static qint64 CHART_REFRESH_TIME_MS;
+
+    QCPSelectionDecorator *selectedDec = nullptr; // 选中曲线0的装饰器
+
+    void setAxisColor(const QColor &color, const QColor &selectedColor);
+    void setColor(const QColor &background, const QColor &foreground, const QColor &selectedColor);
 };
 
 #endif // INTERACTCHART_H
