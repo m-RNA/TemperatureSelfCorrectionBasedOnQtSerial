@@ -3,6 +3,9 @@
 #include <QDateTime>
 #include "config.h"
 
+/* 静态变量初始化 */
+// 鼠标按下标志位
+bool InteractChart::mousePressFlag = false;
 // 刷新时间间隔
 qint64 InteractChart::CHART_REFRESH_TIME_MS = 50;
 
@@ -217,6 +220,9 @@ void InteractChart::selectionChanged()
 // 鼠标点击事件（函数重载）
 void InteractChart::mousePressEvent(QMouseEvent *ev)
 {
+	mousePressFlag = true;				 // 鼠标按下标志
+	this->setCursor(Qt::OpenHandCursor); // 鼠标变为手型
+
 	// 如果选择了轴，则只允许拖动该轴的方向
 	// 如果未选择轴，则可以拖动两个方向
 
@@ -227,6 +233,15 @@ void InteractChart::mousePressEvent(QMouseEvent *ev)
 	else
 		this->axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
 	QCustomPlot::mousePressEvent(ev);
+}
+
+// 鼠标释放事件（函数重载）
+void InteractChart::mouseReleaseEvent(QMouseEvent *ev)
+{
+	mousePressFlag = false;			  // 鼠标释放标志
+	this->setCursor(Qt::ArrowCursor); // 鼠标变为箭头型
+
+	QCustomPlot::mouseReleaseEvent(ev);
 }
 
 // 鼠标滚轮事件（函数重载）
@@ -424,18 +439,20 @@ void InteractChart::addYPointBaseOnTime(const SerialAnalyseCell &cell)
 
 void InteractChart::chartRefresh(void)
 {
-	double upper = this->xAxis->range().upper;
-	double lower = this->xAxis->range().lower;
-	double range = upper - lower;
+	if (mousePressFlag == false) // 鼠标没有按下时
+	{
+		// 要先记录 range，再调用 rescaleAxes ，因为 rescaleAxes 会改变 range
+		double range = this->xAxis->range().size();
 
-	if (yAxisAutoZoomState == true)
-		this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
+		if (yAxisAutoZoomState == true)
+			this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
 
-	// 曲线能动起来的关键在这里
-	if (timelineState == true)
-		this->xAxis->setRange(nowTime * 0.001, range, Qt::AlignRight); // 右对齐
-	else
-		this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 右对齐
+		// 曲线能动起来的关键在这里
+		if (timelineState == true)
+			this->xAxis->setRange(nowTime * 0.001, range, Qt::AlignRight); // 右对齐
+		else
+			this->xAxis->setRange(xDefault, range, Qt::AlignRight); // 右对齐
+	}
 
 	this->replot(); // 刷新画图
 

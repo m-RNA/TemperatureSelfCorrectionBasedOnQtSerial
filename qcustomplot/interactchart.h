@@ -35,6 +35,8 @@ protected:
     virtual void wheelEvent(QWheelEvent *ev);
     // 鼠标点击事件
     virtual void mousePressEvent(QMouseEvent *ev);
+    // 鼠标释放事件
+    virtual void mouseReleaseEvent(QMouseEvent *ev);
     // 鼠标移动事件
     virtual void mouseMoveEvent(QMouseEvent *ev);
 
@@ -64,6 +66,8 @@ private:
     bool timelineState = false;
     timeb t1, t2;
     qint64 nowTime, oldTime;
+    static bool mousePressFlag; // 鼠标点击标志位
+
     static qint64 CHART_REFRESH_TIME_MS;
 };
 

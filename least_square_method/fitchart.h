@@ -33,6 +33,8 @@ protected:
     virtual void wheelEvent(QWheelEvent *ev);
     // 鼠标点击事件
     virtual void mousePressEvent(QMouseEvent *ev);
+    // 鼠标释放事件
+    virtual void mouseReleaseEvent(QMouseEvent *ev);
     // 鼠标移动事件
     virtual void mouseMoveEvent(QMouseEvent *ev);
 
@@ -48,17 +50,26 @@ private slots:
     void showCollectPlot();
     void hideFitPlot();
     void showFitPlot();
+    void updateVerifyTracer();
 
     void contextMenuRequest(QPoint pos);
     void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
 private:
-    QCPItemTracer *tracer = nullptr;       // 坐标跟随鼠标
+    QCPItemTracer *tracer = nullptr;       // 坐标
     QCPItemTracer *verifyTracer = nullptr; // 坐标跟随采集数据
+    QTimer *timerVerify = nullptr;         // 定时器
+    qint64 nowTime, oldTime;               // 时间戳
     double xVerify = 0;
     double yVerify = 0;
+    double xRangeHalf = 0;   // x轴范围的二分之一
+    double yRangeHalf = 0;   // y轴范围的二分之一
+    double xRangeOfOne8 = 0; // x轴范围的 1/8
+    double yRangeOfOne8 = 0; // y轴范围的 1/8
 
-    int x_default = 0;
+    bool mousePressFlag = 0; // 鼠标点击标志位
+
+    static qint64 CHART_REFRESH_TIME_MS; // 图表刷新时间间隔
 };
 
 #endif // CUSTOMCHART_H

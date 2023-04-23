@@ -1,6 +1,9 @@
 #include "fitchart.h"
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
 
+// 刷新时间间隔
+qint64 FitChart::CHART_REFRESH_TIME_MS = 100;
+
 FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 {
 	setOpenGl(true);
@@ -26,7 +29,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
 						  QCP::iSelectLegend | QCP::iSelectPlottables);
 
-	this->xAxis->setRange(-8, 8);
+	this->xAxis->setRange(-70000, 70000);
 	this->yAxis->setRange(-5, 5);
 	this->xAxis->setLabel("x轴");
 	this->yAxis->setLabel("y轴");
@@ -85,6 +88,18 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	// 设置右键菜单弹出窗口的策略和连接槽：
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
+	timerVerify = new QTimer(this);
+	timerVerify->setSingleShot(true); // 设置为1次
+	timerVerify->setInterval(CHART_REFRESH_TIME_MS);
+	connect(timerVerify, &QTimer::timeout, this, &FitChart::updateVerifyTracer);
+
+	connect(this->xAxis, static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged), [&]()
+			{ xRangeHalf = this->xAxis->range().size() / 2; 
+			xRangeOfOne8 = this->xAxis->range().size() / 8; });
+	connect(this->yAxis, static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged), [&]()
+			{ yRangeHalf = this->yAxis->range().size() / 2; 
+			yRangeOfOne8 = this->yAxis->range().size() / 8; });
 }
 
 void FitChart::setVerifyTracerVisible(const bool visible)
@@ -201,9 +216,11 @@ void FitChart::selectionChanged()
 // 鼠标点击事件（函数重载）
 void FitChart::mousePressEvent(QMouseEvent *ev)
 {
+	mousePressFlag = true;				 // 鼠标按下标志
+	this->setCursor(Qt::OpenHandCursor); // 鼠标变为手型
+
 	// 如果选择了轴，则只允许拖动该轴的方向
 	// 如果未选择轴，则可以拖动两个方向
-
 	if (this->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
 		this->axisRect()->setRangeDrag(this->xAxis->orientation());
 	else if (this->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
@@ -211,6 +228,15 @@ void FitChart::mousePressEvent(QMouseEvent *ev)
 	else
 		this->axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
 	QCustomPlot::mousePressEvent(ev);
+}
+
+// 鼠标释放事件（函数重载）
+void FitChart::mouseReleaseEvent(QMouseEvent *ev)
+{
+	mousePressFlag = false;			  // 鼠标释放标志
+	this->setCursor(Qt::ArrowCursor); // 鼠标变为箭头型
+
+	QCustomPlot::mouseReleaseEvent(ev);
 }
 
 // 鼠标滚轮事件（函数重载）
@@ -313,36 +339,60 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 	this->replot(); // 刷新画图
 }
 
+// 更新验证光标
 void FitChart::updateVerifyTracerX(const SerialAnalyseCell &x)
 {
-	// qDebug() << "更新验证锚点的x坐标";
 	xVerify = x.value;
-	verifyTracer->position->setCoords(xVerify, yVerify);
-	this->replot();
 
-	// 显示tip框
-	// const QPointF coords = verifyTracer->position->coords();
-	// QToolTip::showText(QCursor::pos(),
-	// 				   tr("<h4>检验</h4><h5>标准: %1<p></p>待定: %2</h5>")
-	// 					   .arg(QString::number(coords.y(), 'g', 6))
-	// 					   .arg(QString::number(coords.x(), 'f', 2)),
-	// 				   this, this->rect());
+	nowTime = x.timestamp; // 获取cell时间戳
 }
 
 void FitChart::updateVerifyTracerY(const SerialAnalyseCell &y)
 {
-	// qDebug() << "更新验证锚点的y坐标";
 	yVerify = y.value;
+
+	nowTime = y.timestamp;						   // 获取cell时间戳
+	if (nowTime - oldTime < CHART_REFRESH_TIME_MS) // CHART_REFRESH_TIME_MS 刷新一次
+	{
+		timerVerify->start();
+		return;
+	}
+
+	updateVerifyTracer();
+
+	oldTime = nowTime;
+}
+
+void FitChart::updateVerifyTracer()
+{
 	verifyTracer->position->setCoords(xVerify, yVerify);
+
+	if (mousePressFlag == false)
+	{
+		/**
+		 * 将 verifyTracer 放到中心
+		 * 允许 verifyTracer 在坐标轴中间对的50%范围内移动
+		 * 如果超出这个范围，会自动调整坐标轴范围，使 verifyTracer 位于这个范围
+		 */
+		if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
+			this->xAxis->setRange(xVerify - xRangeHalf, xVerify + xRangeHalf);
+		else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
+			this->xAxis->setRange(xVerify - xRangeHalf, xVerify + xRangeHalf);
+
+		if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
+			this->yAxis->setRange(yVerify - yRangeHalf, yVerify + yRangeHalf);
+		else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
+			this->yAxis->setRange(yVerify - yRangeHalf, yVerify + yRangeHalf);
+	}
+
 	this->replot();
 
-	// 显示tip框
-	// const QPointF coords = verifyTracer->position->coords();
-	// QToolTip::showText(QCursor::pos(),
-	// 				   tr("<h4>检验</h4><h5>标准: %1<p></p>待定: %2</h5>")
-	// 					   .arg(QString::number(coords.y(), 'g', 6))
-	// 					   .arg(QString::number(coords.x(), 'f', 2)),
-	// 				   this, this->rect());
+	// 显示半透明tip框 , 在widget中心显示 只能在widget里显示
+	// QToolTip::showText(this->mapToGlobal(this->rect().center()),
+	// 				   tr("<h4>标准: %1<p></p>待定: %2</h4>")
+	// 					   .arg(QString::number(yVerify, 'g', 6))
+	// 					   .arg(QString::number(xVerify, 'f', 2)),
+	// 				   this, this->rect(), 1000);
 }
 
 // 清空图线
@@ -429,6 +479,7 @@ void FitChart::moveLegend()
 	}
 }
 
+// 调整图线范围
 void FitChart::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 {
 	// since we know we only have QCPGraphs in the plot, we can immediately access interface1D()

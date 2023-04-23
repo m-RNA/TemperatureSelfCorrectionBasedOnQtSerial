@@ -57,7 +57,9 @@
         "eulerangles": "cpp",
         "regex": "cpp",
         "qsettings": "cpp",
-        "qstring": "cpp"
+        "qstring": "cpp",
+        "bitset": "cpp",
+        "valarray": "cpp"
     },
     "cSpell.words": [
         "ckbx",
