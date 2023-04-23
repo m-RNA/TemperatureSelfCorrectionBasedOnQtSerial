@@ -62,12 +62,15 @@ private:
     qint64 nowTime, oldTime;               // 时间戳
     double xVerify = 0;
     double yVerify = 0;
-    double xRangeHalf = 0;   // x轴范围的二分之一
-    double yRangeHalf = 0;   // y轴范围的二分之一
+    double xRangeHalf = 0;   // x轴范围的 1/2
+    double yRangeHalf = 0;   // y轴范围的 1/2
+    double xRangeOfOne4 = 0; // x轴范围的 1/4
+    double yRangeOfOne4 = 0; // y轴范围的 1/4
     double xRangeOfOne8 = 0; // x轴范围的 1/8
     double yRangeOfOne8 = 0; // y轴范围的 1/8
 
-    bool mousePressFlag = 0; // 鼠标点击标志位
+    bool mousePressFlag = 0;   // 鼠标点击标志位
+    bool mouseReleaseFlag = 0; // 鼠标点击标志位
 
     static qint64 CHART_REFRESH_TIME_MS; // 图表刷新时间间隔
 };

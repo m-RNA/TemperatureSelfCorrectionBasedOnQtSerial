@@ -95,11 +95,13 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	connect(timerVerify, &QTimer::timeout, this, &FitChart::updateVerifyTracer);
 
 	connect(this->xAxis, static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged), [&]()
-			{ xRangeHalf = this->xAxis->range().size() / 2; 
-			xRangeOfOne8 = this->xAxis->range().size() / 8; });
+			{ xRangeOfOne8 = this->xAxis->range().size() / 8; 
+			xRangeOfOne4 = xRangeOfOne8 + xRangeOfOne8; // 加法比除法快
+			xRangeHalf =  xRangeOfOne4 + xRangeOfOne4; });
 	connect(this->yAxis, static_cast<void (QCPAxis::*)(const QCPRange &)>(&QCPAxis::rangeChanged), [&]()
-			{ yRangeHalf = this->yAxis->range().size() / 2; 
-			yRangeOfOne8 = this->yAxis->range().size() / 8; });
+			{ yRangeOfOne8 = this->yAxis->range().size() / 8;
+			yRangeOfOne4 = yRangeOfOne8 + yRangeOfOne8; // 加法比除法快
+			yRangeHalf = yRangeOfOne4 + yRangeOfOne4; });
 }
 
 void FitChart::setVerifyTracerVisible(const bool visible)
@@ -233,7 +235,8 @@ void FitChart::mousePressEvent(QMouseEvent *ev)
 // 鼠标释放事件（函数重载）
 void FitChart::mouseReleaseEvent(QMouseEvent *ev)
 {
-	mousePressFlag = false;			  // 鼠标释放标志
+	mousePressFlag = false;			  // 鼠标按下标志
+	mouseReleaseFlag = true;		  // 鼠标释放标志
 	this->setCursor(Qt::ArrowCursor); // 鼠标变为箭头型
 
 	QCustomPlot::mouseReleaseEvent(ev);
@@ -374,15 +377,33 @@ void FitChart::updateVerifyTracer()
 		 * 允许 verifyTracer 在坐标轴中间对的50%范围内移动
 		 * 如果超出这个范围，会自动调整坐标轴范围，使 verifyTracer 位于这个范围
 		 */
-		if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
-			this->xAxis->setRange(xVerify - xRangeHalf, xVerify + xRangeHalf);
-		else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
-			this->xAxis->setRange(xVerify - xRangeHalf, xVerify + xRangeHalf);
+		if (mouseReleaseFlag)
+		{
+			mouseReleaseFlag = false;
+			// 托动鼠标超范围，将 verifyTracer 放到 1/4 处
+			if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
+				this->xAxis->setRange(xVerify - this->xAxis->range().size() + xRangeOfOne4, xVerify + xRangeOfOne4);
+			else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
+				this->xAxis->setRange(xVerify - xRangeOfOne4, xVerify + this->xAxis->range().size() - xRangeOfOne4);
 
-		if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
-			this->yAxis->setRange(yVerify - yRangeHalf, yVerify + yRangeHalf);
-		else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
-			this->yAxis->setRange(yVerify - yRangeHalf, yVerify + yRangeHalf);
+			if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
+				this->yAxis->setRange(yVerify - this->yAxis->range().size() + yRangeOfOne4, yVerify + yRangeOfOne4);
+			else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
+				this->yAxis->setRange(yVerify - yRangeOfOne4, yVerify + this->yAxis->range().size() - yRangeOfOne4);
+		}
+		else
+		{
+			// 自动移动，使 verifyTracer 位于坐标轴中间
+			if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
+				this->xAxis->setRange(xVerify - xRangeOfOne4 - xRangeOfOne4, xVerify + xRangeOfOne4 + xRangeOfOne4);
+			else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
+				this->xAxis->setRange(xVerify - xRangeOfOne4 - xRangeOfOne4, xVerify + xRangeOfOne4 + xRangeOfOne4);
+
+			if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
+				this->yAxis->setRange(yVerify - yRangeOfOne4 - yRangeOfOne4, yVerify + yRangeOfOne4 + yRangeOfOne4);
+			else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
+				this->yAxis->setRange(yVerify - yRangeOfOne4 - yRangeOfOne4, yVerify + yRangeOfOne4 + yRangeOfOne4);
+		}
 	}
 
 	this->replot();
