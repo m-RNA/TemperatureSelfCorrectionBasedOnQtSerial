@@ -228,6 +228,9 @@ inline BigFloat::BigFloat(const string &num) // 用字符串初始化，格式�
         else
             integer.push_back((char)((*iter) - '0'));
     }
+
+    if (decimal.empty())
+        decimal.push_back(0);
 }
 
 inline BigFloat::BigFloat(const BigFloat &num) // 利用高精度类初始化
