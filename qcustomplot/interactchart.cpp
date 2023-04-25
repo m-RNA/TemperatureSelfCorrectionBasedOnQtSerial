@@ -7,7 +7,7 @@
 // 鼠标按下标志位
 bool InteractChart::mousePressFlag = false;
 // 刷新时间间隔
-qint64 InteractChart::CHART_REFRESH_TIME_MS = 50;
+qint64 InteractChart::CHART_REFRESH_TIME_MS = 40;
 
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {

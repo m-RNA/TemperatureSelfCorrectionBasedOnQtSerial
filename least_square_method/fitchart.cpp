@@ -2,7 +2,7 @@
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
 
 // 刷新时间间隔
-qint64 FitChart::CHART_REFRESH_TIME_MS = 100;
+qint64 FitChart::CHART_REFRESH_TIME_MS = 40;
 
 FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 {
@@ -393,16 +393,12 @@ void FitChart::updateVerifyTracer()
 		}
 		else
 		{
-			// 自动移动，使 verifyTracer 位于坐标轴中间
-			if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
-				this->xAxis->setRange(xVerify - xRangeOfOne4 - xRangeOfOne4, xVerify + xRangeOfOne4 + xRangeOfOne4);
-			else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
-				this->xAxis->setRange(xVerify - xRangeOfOne4 - xRangeOfOne4, xVerify + xRangeOfOne4 + xRangeOfOne4);
-
-			if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
-				this->yAxis->setRange(yVerify - yRangeOfOne4 - yRangeOfOne4, yVerify + yRangeOfOne4 + yRangeOfOne4);
-			else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
-				this->yAxis->setRange(yVerify - yRangeOfOne4 - yRangeOfOne4, yVerify + yRangeOfOne4 + yRangeOfOne4);
+			// 自动移动，使 verifyTracer 位于坐标轴中心
+			if ((xVerify > (this->xAxis->range().upper - xRangeOfOne8)) ||
+				(xVerify < (this->xAxis->range().lower + xRangeOfOne8)) ||
+				(yVerify > (this->yAxis->range().upper - yRangeOfOne8)) ||
+				(yVerify < (this->yAxis->range().lower + yRangeOfOne8)))
+				setVerifyTracerToCenter();
 		}
 	}
 
@@ -414,6 +410,13 @@ void FitChart::updateVerifyTracer()
 	// 					   .arg(QString::number(yVerify, 'g', 6))
 	// 					   .arg(QString::number(xVerify, 'f', 2)),
 	// 				   this, this->rect(), 1000);
+}
+
+// 将 verifyTracer 设置于坐标轴中心，不刷新图表
+void FitChart::setVerifyTracerToCenter()
+{
+	this->xAxis->setRange(xVerify - xRangeHalf, xVerify + xRangeHalf);
+	this->yAxis->setRange(yVerify - yRangeHalf, yVerify + yRangeHalf);
 }
 
 // 清空图线

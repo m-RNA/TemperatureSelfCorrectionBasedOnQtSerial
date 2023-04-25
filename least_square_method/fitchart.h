@@ -73,6 +73,8 @@ private:
     bool mouseReleaseFlag = 0; // 鼠标点击标志位
 
     static qint64 CHART_REFRESH_TIME_MS; // 图表刷新时间间隔
+
+    void setVerifyTracerToCenter();
 };
 
 #endif // CUSTOMCHART_H
