@@ -126,7 +126,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(threadXlsx, &QThread::finished, taskXlsxData, &QObject::deleteLater); // 释放内存资源
     connect(threadXlsx, &QThread::finished, threadXlsx, &QThread::deleteLater);   // 释放内存资源
     connect(this, &MainWindow::sgXlsxStartPoint, taskXlsxData, &Bll_SaveDataToXlsx::startPoint);
-    connect(this, &MainWindow::sgXlsxNextPoint, taskXlsxData, &Bll_SaveDataToXlsx::nextPoint);
     connect(this, &MainWindow::sgXlsxSaveReport, taskXlsxData, &Bll_SaveDataToXlsx::saveReport);
     connect(this, &MainWindow::sgXlsxSetAutoSave, taskXlsxData, &Bll_SaveDataToXlsx::setAutoSave);
     connect(this, &MainWindow::sgXlsxSaveInfo, taskXlsxData, &Bll_SaveDataToXlsx::saveInfo);
@@ -836,7 +835,6 @@ void Bll_CollectBtn::resetCollect()
 void Bll_CollectBtn::nextCollect()
 {
     collectCounter++;
-    emit sgXlsxNextPoint();
 
     qDebug() << "采集下点" << collectCounter;
 }

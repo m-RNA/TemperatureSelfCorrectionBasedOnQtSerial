@@ -18,15 +18,20 @@ using namespace std;
 #define INFO_R 4
 
 #define FACTOR_C 2
-#define FACTOR_R 13
+#define FACTOR_R 14
+#define FACTOR_C_OFFSET 2
 
 #define AVERAGE_C 2
-#define AVERAGE_R 17
+#define AVERAGE_R 18
 #define AVERAGE_C_OFFSET 1
 
-#define DATA_C 1
-#define DATA_R 23
+#define DATA_C 2
+#define DATA_R 27
 #define DATA_C_OFFSET 2
+
+#define RANGE_C DATA_C
+#define RANGE_R (DATA_R - 1)
+#define RANGE_C_OFFSET DATA_C_OFFSET
 
 class Bll_SaveDataToXlsx : public QObject
 {
@@ -37,7 +42,6 @@ public:
 
 public slots:
     void startPoint();
-    void nextPoint();
     void saveReport();
     static void setAutoSave(const bool);
     void saveInfo(const BaseInfo &info);
@@ -47,11 +51,11 @@ public slots:
 
 private:
     Document *report = nullptr;
-    size_t index = 0;
     QString fileName = "";
     static bool autoSaveState;
 
     void initReport();
+    QString getRangeFormula(int r1, int r2, int c);
     QString getAverageFormula(int r1, int r2, int c);
 };
 

@@ -90,7 +90,6 @@ private slots:
 
 signals:
     void sgXlsxStartPoint();
-    void sgXlsxNextPoint();
     void sgXlsxSaveReport();
     void sgXlsxSetAutoSave(const bool);
     void sgXlsxSaveInfo(const BaseInfo &info);
