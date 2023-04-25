@@ -445,9 +445,19 @@ void InteractChart::chartRefresh(void)
 		double range = this->xAxis->range().size();
 
 		if (yAxisAutoZoomState == true)
-			this->rescaleAxes(); // 调整显示区域（要画完才调用）只会缩小 不会放大
+		{
+			/*
+			 * 参考：https://blog.csdn.net/asd_8_8_8_8_8_8_asd/article/details/121449247
+			 * y轴自适应缩放：
+			 * onlyEnlarge 形参：决定是否对y轴只通过放大来自适应。
+			 * inKeyRange  形参：决定是否以当前x轴范围的y轴自适应，而不是根据所有x值的y进行自适应
+			 */
+			graph(0)->rescaleValueAxis(false, true);
+			// 调整显示区域（要画完才调用）只会缩小 不会放大 所以不调用这个
+			// graph(0)->rescaleAxes();
+		}
 
-		// 曲线能动起来的关键在这里
+		// 曲线能水平滚动起来的关键在这里
 		if (timelineState == true)
 			this->xAxis->setRange(nowTime * 0.001, range, Qt::AlignRight); // 右对齐
 		else
