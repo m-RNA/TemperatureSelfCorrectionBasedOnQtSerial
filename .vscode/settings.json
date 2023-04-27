@@ -59,7 +59,10 @@
         "qsettings": "cpp",
         "qstring": "cpp",
         "bitset": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "complex": "cpp",
+        "streambuf": "cpp",
+        "numericaldiff": "cpp"
     },
     "cSpell.words": [
         "ckbx",
