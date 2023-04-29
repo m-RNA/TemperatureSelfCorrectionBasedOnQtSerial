@@ -3,11 +3,12 @@
         {
             "name": "qt",
             "includePath": [
-                "d:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/**",
-                "D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets/",
-                "F:/Senior_Part1/GraduationProject/UpperComputer/TemperatureSensorCalibration/",
-                "F:/Senior_Part1/GraduationProject/UpperComputer/buildTemperatureSensorCalibration/",
                 "D:/eigen-3.4.0/**",
+                "D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/**",
+                "D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets/",
+                "D:/QXlsx/header/**",
+                "D:/QXlsx/source/**",
+                "${workspaceFolder}/../build-TemperatureSensorCalibration-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/",
                 "${workspaceRoot}/**",
                 "${workspaceRoot}/qcustomplot/**",
                 "${workspaceFolder}/sound/**",

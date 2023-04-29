@@ -103,6 +103,15 @@ void Bll_SaveDataToXlsx::saveData(const vector<double> &data, const int index)
     while (report->read(DATA_R + counter, col).toString() != "")
         report->write(DATA_R + counter++, col, QVariant());
 
+    // 在散点图中填入范围
+    // Chart *chart = report->insertChart(CHART_R + (CHART_H + CHART_MARGIN) * index,
+    //                                    CHART_C + (CHART_W + CHART_MARGIN) * MainWindow::getCollectCounter(),
+    //                                    QSize(CHART_W, CHART_H));
+    // chart->setChartType(Chart::CT_ScatterChart);
+    // chart->setGridlinesEnable(true); // 启动主网格线
+    // chart->setChartTitle(QString::number(MainWindow::getCollectCounter() + 1));
+    // chart->addSeries(CellRange(CellReference(DATA_R, col), CellReference(DATA_R + counter - 1, col)));
+
     // 在第一张表里写入对应的平均值公式
     switchWorkSheet(0); // 选中第1张表
     report->write(AVERAGE_R + index, AVERAGE_C + AVERAGE_C_OFFSET * MainWindow::getCollectCounter(),

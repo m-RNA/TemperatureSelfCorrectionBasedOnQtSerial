@@ -4,6 +4,7 @@
 #include <QtXlsx>
 #else
 #include "xlsxdocument.h"
+// #include "xlsxchart.h"
 #endif
 
 #include "config.h"
@@ -32,6 +33,12 @@ using namespace std;
 #define RANGE_C DATA_C
 #define RANGE_R (DATA_R - 2)
 #define RANGE_C_OFFSET DATA_C_OFFSET
+
+// #define CHART_C DATA_C
+// #define CHART_R 3
+// #define CHART_W 400
+// #define CHART_H 200
+// #define CHART_MARGIN 10
 
 class Bll_SaveDataToXlsx : public QObject
 {
