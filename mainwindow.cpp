@@ -728,6 +728,10 @@ void Bll_CollectBtn::timerCollectTimeOut()
         QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
                       "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
                       "请准备下一点采集";
+        // 如果是自动采集，就不弹出消息框
+        // if (ui->cbAutoCollect->currentIndex() == 1)
+        //     Message::information("此点采集完成\n" + msg, 5000);
+        // else
         QMessageBox::information(this, "此点采集完成", msg);
 
         if (ui->cbSound->currentIndex() > 0)
@@ -755,6 +759,10 @@ void Bll_CollectBtn::timerCollectTimeOut()
         QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
                       "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
                       "请在右下角查看拟合结果";
+        // 如果是自动采集，就不弹出消息框
+        // if (ui->cbAutoCollect->currentIndex() == 1)
+        //     Message::information("全部采集完成\n" + msg, 5000);
+        // else
         QMessageBox::information(this, "全部采集完成", msg);
 
         tryUpdateFitChart(false);
