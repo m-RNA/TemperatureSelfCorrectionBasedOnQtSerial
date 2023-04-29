@@ -59,6 +59,8 @@ private slots:
 
     void on_btnClearSendTE_clicked();
 
+    void on_btnSaveRecvTE_clicked();
+
     void on_cbPause_toggled(bool checked);
 
     void on_cbSendRegular_toggled(bool checked);

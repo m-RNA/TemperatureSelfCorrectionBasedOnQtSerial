@@ -617,9 +617,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="pushButton_21">
+            <widget class="QPushButton" name="btnSaveRecvTE">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="whatsThis">
               <string>保存</string>
@@ -874,7 +874,7 @@
              <x>0</x>
              <y>0</y>
              <width>573</width>
-             <height>265</height>
+             <height>184</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_7">

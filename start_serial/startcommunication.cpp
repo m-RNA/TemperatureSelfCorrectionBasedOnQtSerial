@@ -3,6 +3,8 @@
 #include <QSerialPortInfo>
 #include <QFile>
 #include <QSettings>
+#include <QFileDialog>
+#include <QDateTime>
 #include "config.h"
 #include "message.h"
 
@@ -421,6 +423,52 @@ void StartCommunication::setSerialPortCtrlState(bool state)
 void StartCommunication::on_btnClearRecvTE_clicked()
 {
     ui->teRecv->clear();
+}
+
+/**
+ * 参考：
+ * https://blog.51cto.com/u_11320078/5831124
+ * https://blog.csdn.net/YinShiJiaW/article/details/105433656
+ */
+/// @brief 保存接收消息框的数据
+void StartCommunication::on_btnSaveRecvTE_clicked()
+{
+    QFileDialog fileDialog(this);
+    fileDialog.setWindowTitle("保存串口原始数据" + deviceName);
+    fileDialog.setDirectory(QDir::currentPath());
+    fileDialog.setNameFilter("文本文件(*.txt)");
+    fileDialog.setFileMode(QFileDialog::AnyFile);
+    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    fileDialog.setViewMode(QFileDialog::Detail);
+    QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+    fileDialog.selectFile("串口原始数据_" + deviceName + "_" + currentDate + ".txt"); // 设置默认文件名
+
+    if (fileDialog.exec() != QDialog::Accepted)
+        return;
+
+    QString fileName = fileDialog.selectedFiles().first();
+    if (fileName.isEmpty())
+    {
+        Message::warning(deviceName + "\n文件名为空\n串口原始数据未保存");
+        return;
+    }
+
+    QFile *file = new QFile;
+    file->setFileName(fileName);
+    bool ok = file->open(QIODevice::WriteOnly);
+    if (ok)
+    {
+        QTextStream out(file);
+        out << ui->teRecv->toPlainText();
+        file->close();
+        file->deleteLater();
+    }
+    else
+    {
+        Message::error(deviceName + "\n出差啦!\n串口原始数据保存失败\n" + file->errorString());
+        return;
+    }
+    Message::success(deviceName + "\n串口原始数据保存成功");
 }
 
 /// @brief 清空发送数据框
