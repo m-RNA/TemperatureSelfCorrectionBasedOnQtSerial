@@ -1,5 +1,6 @@
 #include "bll_data_wave.h"
 #include "mainwindow.h"
+#include <QDebug>
 
 vector<AutoCollectCell> Bll_DataWave::autoCollectDataList = {};
 

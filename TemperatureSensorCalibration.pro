@@ -28,6 +28,7 @@ LIBS+=-lopengl32 -lglu32
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH +=  \
+    about \
     message \
     big_float\
     wizard\
@@ -39,7 +40,7 @@ INCLUDEPATH +=  \
     D:/eigen-3.4.0
 
 SOURCES += \
-    about.cpp \
+    about/about.cpp \
     collect_data/bll_data_collect.cpp \
     collect_data/bll_data_wave.cpp \
     collect_data/bll_save_data_to_xlsx.cpp \
@@ -67,7 +68,7 @@ HEADERS += \
     collect_data/bll_data_wave.h \
     collect_data/bll_save_data_to_xlsx.h \
     config.h \
-    about.h \
+    about/about.h \
     collect_data/collectpanel.h \
     least_square_method/bll_leastssquare.h \
     least_square_method/cv_table.h \
@@ -85,7 +86,7 @@ HEADERS += \
     wizard/wizard.h
 
 FORMS += \
-    about.ui \
+    about/about.ui \
     collect_data/collectpanel.ui \
     mainwindow.ui \
     start_serial/startcommunication.ui \
