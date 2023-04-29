@@ -17,8 +17,6 @@ class FitChart : public QCustomPlot
 public:
     explicit FitChart(QWidget *parent = nullptr);
 
-    void setVerifyTracerVisible(const bool visible); // 设置是否有验证游标
-
 public slots:
     void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
     void updateFitPlot(const QVector<double> &x, const QVector<double> &y);     // 更新折线图
@@ -50,6 +48,8 @@ private slots:
     void showCollectPlot();
     void hideFitPlot();
     void showFitPlot();
+    void hideVerifyTracer();
+    void showVerifyTracer();
     void updateVerifyTracer();
 
     void contextMenuRequest(QPoint pos);

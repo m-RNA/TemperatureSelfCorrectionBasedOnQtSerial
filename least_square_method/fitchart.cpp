@@ -23,7 +23,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	verifyTracer->setPen(QPen(QColor(23, 111, 217, 200)));
 	verifyTracer->setBrush(Qt::blue);
 	verifyTracer->setSize(6);
-	verifyTracer->setVisible(false); // 暂时不显示
+	verifyTracer->setVisible(true); // 默认显示
 
 	// 设置交互方式
 	this->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
@@ -102,19 +102,6 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 			{ yRangeOfOne8 = this->yAxis->range().size() / 8;
 			yRangeOfOne4 = yRangeOfOne8 + yRangeOfOne8; // 加法比除法快
 			yRangeHalf = yRangeOfOne4 + yRangeOfOne4; });
-}
-
-void FitChart::setVerifyTracerVisible(const bool visible)
-{
-	if (visible)
-	{
-		verifyTracer->setVisible(true);
-	}
-	else
-	{
-		verifyTracer->setVisible(false); // 不显示
-	}
-	replot();
 }
 
 // 双击坐标标签
@@ -306,6 +293,7 @@ void FitChart::mouseMoveEvent(QMouseEvent *ev)
 	replot();
 	QCustomPlot::mouseMoveEvent(ev);
 }
+
 // 寻找曲线
 void FitChart::findGraph()
 {
@@ -342,27 +330,29 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 	this->replot(); // 刷新画图
 }
 
-// 更新验证光标
+// 更新实时光标
 void FitChart::updateVerifyTracerX(const SerialAnalyseCell &x)
 {
-	xVerify = x.value;
+	if (verifyTracer->visible() == false)
+		return;
 
+	xVerify = x.value;
 	nowTime = x.timestamp; // 获取cell时间戳
 }
 
 void FitChart::updateVerifyTracerY(const SerialAnalyseCell &y)
 {
-	yVerify = y.value;
+	if (verifyTracer->visible() == false)
+		return;
 
+	yVerify = y.value;
 	nowTime = y.timestamp;						   // 获取cell时间戳
 	if (nowTime - oldTime < CHART_REFRESH_TIME_MS) // CHART_REFRESH_TIME_MS 刷新一次
 	{
 		timerVerify->start();
 		return;
 	}
-
 	updateVerifyTracer();
-
 	oldTime = nowTime;
 }
 
@@ -457,6 +447,20 @@ void FitChart::showFitPlot()
 	this->replot();
 }
 
+// 隐藏实时光标
+void FitChart::hideVerifyTracer()
+{
+	this->verifyTracer->setVisible(false);
+	this->replot();
+}
+
+// 显示实时光标
+void FitChart::showVerifyTracer()
+{
+	this->verifyTracer->setVisible(true);
+	this->replot();
+}
+
 // 右键菜单
 void FitChart::contextMenuRequest(QPoint pos)
 {
@@ -475,6 +479,12 @@ void FitChart::contextMenuRequest(QPoint pos)
 	{
 		menu->addAction(QIcon("://icon/full.ico"), "适应图线范围", this, &FitChart::findGraph);
 		// menu->addAction("清空绘图", this, &FitChart::clear);
+
+		if (verifyTracer->visible())
+			menu->addAction(QIcon("://icon/hide.ico"), "隐藏实时游标", this, &FitChart::hideVerifyTracer);
+		else
+			menu->addAction(QIcon("://icon/show.ico"), "显示实时游标", this, &FitChart::showVerifyTracer);
+
 		if (this->graph(0)->visible())
 			menu->addAction(QIcon("://icon/hide.ico"), "隐藏采集数据", this, &FitChart::hideCollectPlot);
 		else

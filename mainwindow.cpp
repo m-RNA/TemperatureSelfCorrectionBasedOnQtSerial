@@ -103,8 +103,12 @@ MainWindow::MainWindow(QWidget *parent)
     // 同步指示灯的变化
     connect(ui->start_Std, &StartCommunication::serialStateChange, ui->collectPanel_Std, &CollectPanel::setOnlineState);
     connect(ui->start_Dtm, &StartCommunication::serialStateChange, ui->collectPanel_Dtm, &CollectPanel::setOnlineState);
+
+    // 同步解析数据传输
     connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Std, &CollectPanel::slCollectData);
     connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->collectPanel_Dtm, &CollectPanel::slCollectData);
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
+    connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
 
     connect(ui->collectPanel_Std, &CollectPanel::sgShowData, [&]()
             {ui->tabMain->setCurrentIndex(1); ui->start_Std->showTextEditRx(); });
@@ -1140,17 +1144,17 @@ void MainWindow::on_btnVerify_clicked()
     verifyState = !verifyState;
     if (verifyState)
     {
-        connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
-        connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        // connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
+        // connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        // ui->chartFit->setVerifyTracerVisible(true);
         ui->btnVerify->setText("关闭检验");
-        ui->chartFit->setVerifyTracerVisible(true);
     }
     else
     {
-        disconnect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
-        disconnect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        // disconnect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
+        // disconnect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
+        // ui->chartFit->setVerifyTracerVisible(false);
         ui->btnVerify->setText("开启检验");
-        ui->chartFit->setVerifyTracerVisible(false);
     }
 }
 
