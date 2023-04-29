@@ -383,7 +383,7 @@
           <double>0.000100000000000</double>
          </property>
          <property name="maximum">
-          <double>9999.999900000000707</double>
+          <double>99999.999899999995250</double>
          </property>
          <property name="singleStep">
           <double>0.001000000000000</double>
@@ -450,7 +450,7 @@
           <string>分钟</string>
          </property>
          <property name="minimum">
-          <double>0.100000000000000</double>
+          <double>0.010000000000000</double>
          </property>
          <property name="singleStep">
           <double>0.100000000000000</double>
