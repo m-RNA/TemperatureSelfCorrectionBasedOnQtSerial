@@ -18,7 +18,6 @@ Message::Message(QObject *parent) : QObject(parent)
     {
         throw std::runtime_error("message structure error!");
     }
-    m_nWidth = widget->width();
     m_vecMessage.reserve(50);
 }
 
@@ -37,7 +36,8 @@ void Message::Push(MessageType type, const QString &content, int nDuration)
     connect(pItem, &MessageItem::itemRemoved, this, &Message::removeItem);
     pItem->SetDuration(nDuration);
     height += nMessageItemMargin;
-    pItem->move(QPoint((m_nWidth - pItem->width()) / 2,
+    int mainWidth = qobject_cast<QWidget *>(parent())->width();
+    pItem->move(QPoint((mainWidth - pItem->width()) / 2,
                        height));
     m_vecMessage.emplace_back(pItem);
     pItem->Show();

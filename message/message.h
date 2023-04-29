@@ -51,7 +51,6 @@ private slots:
 private:
     std::vector<MessageItem *> m_vecMessage;
     std::mutex m_qMtx;
-    int m_nWidth;
     static Message *pMessage;
 };
 
