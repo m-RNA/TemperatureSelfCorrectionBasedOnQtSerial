@@ -1357,3 +1357,75 @@ void MainWindow::closeEvent(QCloseEvent *event)
     emit sgXlsxSaveReport(); // 保存数据
     event->accept();
 }
+
+/** 快捷键
+ * Alt + 1：切换到欢迎界面
+ * Alt + 2：切换到调试界面
+ * Alt + 3：切换到校准界面
+ * Alt + S：开关仪器标准串口 Standard
+ * Alt + D：开关待测仪器串口 Determine
+ * Alt + C：开关采集 Collect
+ * Alt + R：重新采集 ReCollect
+ * Alt + F：拟合数据 Fit
+ */
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->modifiers() == Qt::ControlModifier)
+    {
+        if (event->key() == Qt::Key_M)
+        {
+            // 关闭语音提醒
+            if (ui->cbSound->currentIndex() != 0)
+            {
+                ui->cbSound->setCurrentIndex(0);
+            }
+            Message::information("已关闭语音提醒");
+        }
+        event->accept();
+        return;
+    }
+    else if (event->modifiers() == Qt::AltModifier)
+    {
+        if (event->key() == Qt::Key_1)
+        {
+            ui->tabMain->setCurrentIndex(0);
+        }
+        else if (event->key() == Qt::Key_2)
+        {
+            ui->tabMain->setCurrentIndex(1);
+        }
+        else if (event->key() == Qt::Key_3)
+        {
+            ui->tabMain->setCurrentIndex(2);
+        }
+        else if (event->key() == Qt::Key_S)
+        {
+            // 开关仪器标准串口
+            ui->start_Std->on_btnSerialSwitch_clicked();
+        }
+        else if (event->key() == Qt::Key_D)
+        {
+            // 开关待测仪器串口
+            ui->start_Dtm->on_btnSerialSwitch_clicked();
+        }
+        else if (event->key() == Qt::Key_C)
+        {
+            // 开关采集
+            on_btnCollectSwitch_clicked();
+        }
+        else if (event->key() == Qt::Key_R)
+        {
+            // 重新采集
+            if (ui->btnCollectRestart->isEnabled())
+                on_btnCollectRestart_clicked();
+        }
+        else if (event->key() == Qt::Key_F)
+        {
+            // 拟合数据
+            on_btnFit_clicked();
+        }
+        event->accept();
+        return;
+    }
+    QMainWindow::keyPressEvent(event);
+}

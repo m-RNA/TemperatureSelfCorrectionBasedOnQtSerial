@@ -1310,6 +1310,8 @@
     <property name="title">
      <string>帮助</string>
     </property>
+    <addaction name="actionDoc"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menu">
@@ -1433,7 +1435,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>锁定校准设置面板</string>
+    <string>锁定校准配置</string>
+   </property>
+   <property name="toolTip">
+    <string>锁定校准配置</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionLightStyle">
@@ -1446,6 +1454,9 @@
    <property name="text">
     <string>原生主题</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
   </action>
   <action name="actionGrayStyle">
    <property name="checkable">
@@ -1453,6 +1464,9 @@
    </property>
    <property name="text">
     <string>扁平灰白</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
    </property>
   </action>
   <action name="actionBlueStyle">
@@ -1462,6 +1476,9 @@
    <property name="text">
     <string>清凉主题</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
   </action>
   <action name="actionDarkStyle">
    <property name="checkable">
@@ -1469,6 +1486,20 @@
    </property>
    <property name="text">
     <string>暗黑主题</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionDoc">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>文档</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>

@@ -195,5 +195,6 @@ private:
     void loadStyle(const QString &qssFile);
 
     void closeEvent(QCloseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 };
 #endif // MAINWINDOW_H
