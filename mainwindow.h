@@ -88,6 +88,14 @@ private slots:
 
     void on_actionLock_triggered(bool checked);
 
+    void on_actionLightStyle_triggered();
+
+    void on_actionGrayStyle_triggered();
+
+    void on_actionBlueStyle_triggered();
+
+    void on_actionDarkStyle_triggered();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxSaveReport();
@@ -178,5 +186,10 @@ private:
 
     void loadUiSettings();
     void saveUiSetting();
+
+    int themeIndex = 0;
+    void setColorStyle(const int index);
+    void setChartColorStyle(const int index);
+    void loadStyle(const QString &qssFile);
 };
 #endif // MAINWINDOW_H

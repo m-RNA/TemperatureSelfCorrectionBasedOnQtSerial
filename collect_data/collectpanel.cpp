@@ -26,6 +26,11 @@ void CollectPanel::setStableState(const StableStateEnum state)
     setLEDState(3 + state);
 }
 
+void CollectPanel::setChartColorStyle(const int index)
+{
+    ui->chart->setColorStyle(index);
+}
+
 void CollectPanel::setLEDState(int state)
 {
     switch (state)

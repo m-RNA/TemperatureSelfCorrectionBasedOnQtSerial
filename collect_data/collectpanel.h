@@ -26,6 +26,7 @@ public:
 
     void setOnlineState(bool state);
     void setStableState(const StableStateEnum state);
+    void setChartColorStyle(const int index);
 
     bool isStable(void);
     double getRange(void);

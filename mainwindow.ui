@@ -1335,9 +1335,19 @@
     <addaction name="separator"/>
     <addaction name="action"/>
    </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>切换皮肤</string>
+    </property>
+    <addaction name="actionLightStyle"/>
+    <addaction name="actionGrayStyle"/>
+    <addaction name="actionBlueStyle"/>
+    <addaction name="actionDarkStyle"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menuAbout"/>
+   <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout">
@@ -1424,6 +1434,41 @@
    </property>
    <property name="text">
     <string>锁定校准设置面板</string>
+   </property>
+  </action>
+  <action name="actionLightStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>原生主题</string>
+   </property>
+  </action>
+  <action name="actionGrayStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>扁平灰白</string>
+   </property>
+  </action>
+  <action name="actionBlueStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>清凉主题</string>
+   </property>
+  </action>
+  <action name="actionDarkStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>暗黑主题</string>
    </property>
   </action>
  </widget>

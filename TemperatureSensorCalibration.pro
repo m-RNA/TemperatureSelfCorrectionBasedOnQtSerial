@@ -103,7 +103,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     main.qrc \
-    message/Message.qrc
+    message/Message.qrc \
+    qss.qrc
 
 RC_FILE  += \
     logo.rc
