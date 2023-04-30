@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSerialPort>
 #include <QTableWidgetItem>
+#include <QLabel>
 #include "bll_leastssquare.h"
 #include "bll_save_data_to_xlsx.h"
 #include "bll_sound.h"
@@ -149,6 +150,7 @@ private:
 
     void pictureInit();
     void shortcutInit();
+    void statusBarInit();
     void soundInit();
     void listenDataWaveInit();
     void listenDataWaveQuit();
@@ -167,6 +169,9 @@ private:
     bool verifyState = false;
     WizardInfo wizardInfo;
 
+    QLabel *lbRunTime = nullptr;
+    QTimer *timerRunTime = nullptr;
+
     // 任务类对象
     Bll_LeastSquareMethod *taskLeastSquare = nullptr;
     QThread *threadLeastSquare = nullptr;
@@ -184,7 +189,8 @@ private:
     Bll_DataCollect *taskDataCollect_Dtm = nullptr;
     QThread *threadDataCollect = nullptr;
 
-    void updateCollectDataXY(void);
+    void updateRunTime();
+    void updateCollectDataXY();
     void tryUpdateFitChart(bool man);
 
     void loadUiSettings();

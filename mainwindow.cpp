@@ -138,6 +138,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     pictureInit();
     shortcutInit();
+    statusBarInit();
 }
 
 MainWindow::~MainWindow()
@@ -1423,4 +1424,79 @@ void MainWindow::shortcutInit()
                     ui->cbSound->setCurrentIndex(0);
                 }
                 Message::information("已关闭语音提醒"); });
+}
+
+void MainWindow::statusBarInit()
+{
+    QTime time = QTime::currentTime();
+    QString strHello = "";
+
+    // 正常问候语
+    QStringList strListNormal = {
+        "欢迎使用温度传感器校准上位机！",
+        "随时可开始校准任务。",
+        "完美的校准任务从一个友好的欢迎开始~",
+    };
+    // 亲切问候语
+    QStringList strListFriendly = {
+        "一起愉快地开始校准之旅吧！",
+        "好久不见，可想你了，哦不，是温度传感器！",
+        "哟吼，小伙子/姑娘，准备干啥呢？还是先校准吧！",
+        "神秘的科研人员，来看看我们有哪些新奇且坑爹的数据吧！",
+        "Welcome to the sensor calibration wonderland！今天喜提最优数据怎么样？",
+    };
+
+    // 早晨问候语更亲切，因为其他时间段加入这种问候语感觉可能有反效果
+    // 也不知道是不是我多虑了  (￣o￣) . z Z  这个就算彩蛋吧
+    if (time.hour() > 7 && time.hour() < 9)
+        strListNormal.append(strListFriendly);
+
+    // 根据时间问候用户
+    if (time.hour() < 4)
+        strHello = "深夜好！";
+    else if (time.hour() < 6)
+        strHello = "凌晨好！";
+    else if (time.hour() < 9)
+        strHello = "早安！";
+    else if (time.hour() < 12)
+        strHello = "上午好！";
+    else if (time.hour() < 14)
+        strHello = "中午好！";
+    else if (time.hour() < 17)
+        strHello = "下午好！";
+    else if (time.hour() < 19)
+        strHello = "傍晚好！";
+    else
+        strHello = "晚上好！";
+
+    srand(time.second());
+    ui->statusbar->showMessage(strHello + strListNormal[rand() % strListNormal.size()], 30000);
+
+    lbRunTime = new QLabel(this);
+    ui->statusbar->addPermanentWidget(lbRunTime);
+    lbRunTime->setText("运行时间：0:00:00");
+    timerRunTime = new QTimer(this);
+    timerRunTime->start(1000);
+    connect(timerRunTime, &QTimer::timeout, this, &MainWindow::updateRunTime);
+}
+
+void MainWindow::updateRunTime()
+{
+    static time_t startTime = 0;
+    if (startTime == 0)
+    {
+        if (ui->start_Std->state() || ui->start_Dtm->state())
+        {
+            startTime = time(nullptr);
+        }
+        return;
+    }
+
+    time_t now = time(nullptr);
+    int runTime = now - startTime;
+    int hour = runTime / 3600;
+    int min = (runTime % 3600) / 60;
+    int sec = runTime % 60;
+    snprintf(globalStringBuffer, sizeof(globalStringBuffer), "运行时间：%d:%02d:%02d", hour, min, sec);
+    lbRunTime->setText(globalStringBuffer);
 }
