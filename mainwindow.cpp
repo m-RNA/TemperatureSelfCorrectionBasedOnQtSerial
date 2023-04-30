@@ -601,10 +601,6 @@ void Bll_CollectBtn::on_btnCollectSwitch_clicked()
             ui->btnCollectSwitch->setEnabled(false);
             ui->btnCollectRestart->setEnabled(false);
 
-            // 保存报告
-            // taskXlsxData->saveReport();
-            emit sgXlsxSaveReport();
-
             return;
         }
 
@@ -749,6 +745,8 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_End);
+        // 保存报告
+        on_btnSaveReport_clicked();
 
         if (ui->cbSound->currentIndex() > 0)
         {
@@ -1061,7 +1059,7 @@ void MainWindow::on_cbSound_currentIndexChanged(int index)
 void MainWindow::on_btnSaveReport_clicked()
 {
     emit sgXlsxSaveReport();
-    Message::success("文件保存成功");
+    Message::success("Xlsx保存成功");
 }
 
 void MainWindow::on_actionSaveReport_triggered()
