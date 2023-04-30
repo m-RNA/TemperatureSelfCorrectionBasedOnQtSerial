@@ -52,11 +52,14 @@ void Bll_SaveDataToXlsx::startPoint()
                   MainWindow::getCollectCounter() + 1);
 
     switchWorkSheet(1); // 选中第2张表
+    report->write(RANGE_R - 1, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectCounter(),
+                  MainWindow::getCollectCounter() + 1);
+
     int col = DATA_C + DATA_C_OFFSET * MainWindow::getCollectCounter();
-    report->write(DATA_R - 5, col, "第" + QString::number(MainWindow::getCollectCounter() + 1) + "次采集");
-    report->write(DATA_R - 4, col, QDateTime::currentDateTime().toString("hh:mm:ss (yyyy/MM/dd)"));
-    report->write(DATA_R - 3, col, "标准值");
-    report->write(DATA_R - 3, col + 1, "待定值");
+    report->write(DATA_R - 4, col, "第" + QString::number(MainWindow::getCollectCounter() + 1) + "次采集");
+    report->write(DATA_R - 3, col, QDateTime::currentDateTime().toString("hh:mm:ss (yyyy/MM/dd)"));
+    report->write(DATA_R - 2, col, "标准值");
+    report->write(DATA_R - 2, col + 1, "待定值");
 
     if (autoSaveState)
         saveReport();
@@ -94,7 +97,7 @@ void Bll_SaveDataToXlsx::saveData(const vector<double> &data, const int index)
         ++counter;
     }
     // 在求极差的单元格写入公式
-    report->write(RANGE_R, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectCounter() + index,
+    report->write(RANGE_R + index, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectCounter(),
                   getRangeFormula(DATA_R, DATA_R + counter - 1, col));
     // 在求平均值的单元格写入公式
     report->write(DATA_R - 1, col, getAverageFormula(DATA_R, DATA_R + counter - 1, col));

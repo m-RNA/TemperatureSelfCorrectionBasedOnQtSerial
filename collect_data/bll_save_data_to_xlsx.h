@@ -27,12 +27,12 @@ using namespace std;
 #define AVERAGE_C_OFFSET 1
 
 #define DATA_C 2
-#define DATA_R 8
+#define DATA_R 26
 #define DATA_C_OFFSET 2
 
 #define RANGE_C DATA_C
-#define RANGE_R (DATA_R - 2)
-#define RANGE_C_OFFSET DATA_C_OFFSET
+#define RANGE_R 4
+#define RANGE_C_OFFSET 1
 
 // #define CHART_C DATA_C
 // #define CHART_R 3
