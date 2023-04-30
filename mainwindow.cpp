@@ -137,6 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
     pictureInit();
+    shortcutInit();
 }
 
 MainWindow::~MainWindow()
@@ -1359,73 +1360,67 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 /** 快捷键
- * Alt + 1：切换到欢迎界面
- * Alt + 2：切换到调试界面
- * Alt + 3：切换到校准界面
- * Alt + S：开关仪器标准串口 Standard
- * Alt + D：开关待测仪器串口 Determine
- * Alt + C：开关采集 Collect
- * Alt + R：重新采集 ReCollect
- * Alt + F：拟合数据 Fit
+ *  Alt + 1：切换到欢迎界面
+ *  Alt + 2：切换到调试界面
+ *  Alt + 3：切换到校准界面
+ *  Alt + S：开关仪器标准串口 Standard
+ *  Alt + D：开关待测仪器串口 Determine
+ *  Alt + C：开关采集 Collect
+ *  Alt + R：重新采集 ReCollect
+ *  Alt + F：拟合数据 Fit
+ * Ctrl + M: 关闭语音提醒
  */
-void MainWindow::keyPressEvent(QKeyEvent *event)
+void MainWindow::shortcutInit()
 {
-    if (event->modifiers() == Qt::ControlModifier)
-    {
-        if (event->key() == Qt::Key_M)
-        {
-            // 关闭语音提醒
-            if (ui->cbSound->currentIndex() != 0)
+    // 关闭语音提醒
+    QShortcut *shortcut = nullptr;
+
+    // 切换到欢迎界面
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_1), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { ui->tabMain->setCurrentIndex(0); });
+
+    // 切换到调试界面
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_2), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { ui->tabMain->setCurrentIndex(1); });
+
+    // 切换到校准界面
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_3), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { ui->tabMain->setCurrentIndex(2); });
+
+    // 开关仪器标准串口 Standard
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_S), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { ui->start_Std->on_btnSerialSwitch_clicked(); });
+
+    // 开关待测仪器串口 Determine
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_D), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { ui->start_Dtm->on_btnSerialSwitch_clicked(); });
+
+    // 开关采集 Collect
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_C), this);
+    connect(shortcut, &QShortcut::activated, this, &MainWindow::on_btnCollectSwitch_clicked);
+
+    // 重新采集 ReCollect
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_R), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { if (ui->btnCollectRestart->isEnabled())
+                on_btnCollectRestart_clicked(); });
+
+    // 拟合数据 Fit
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F), this);
+    connect(shortcut, &QShortcut::activated, this, &MainWindow::on_btnFit_clicked);
+
+    // 关闭语音提醒
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_M), this);
+    connect(shortcut, &QShortcut::activated, [&]()
             {
-                ui->cbSound->setCurrentIndex(0);
-            }
-            Message::information("已关闭语音提醒");
-        }
-        event->accept();
-        return;
-    }
-    else if (event->modifiers() == Qt::AltModifier)
-    {
-        if (event->key() == Qt::Key_1)
-        {
-            ui->tabMain->setCurrentIndex(0);
-        }
-        else if (event->key() == Qt::Key_2)
-        {
-            ui->tabMain->setCurrentIndex(1);
-        }
-        else if (event->key() == Qt::Key_3)
-        {
-            ui->tabMain->setCurrentIndex(2);
-        }
-        else if (event->key() == Qt::Key_S)
-        {
-            // 开关仪器标准串口
-            ui->start_Std->on_btnSerialSwitch_clicked();
-        }
-        else if (event->key() == Qt::Key_D)
-        {
-            // 开关待测仪器串口
-            ui->start_Dtm->on_btnSerialSwitch_clicked();
-        }
-        else if (event->key() == Qt::Key_C)
-        {
-            // 开关采集
-            on_btnCollectSwitch_clicked();
-        }
-        else if (event->key() == Qt::Key_R)
-        {
-            // 重新采集
-            if (ui->btnCollectRestart->isEnabled())
-                on_btnCollectRestart_clicked();
-        }
-        else if (event->key() == Qt::Key_F)
-        {
-            // 拟合数据
-            on_btnFit_clicked();
-        }
-        event->accept();
-        return;
-    }
-    QMainWindow::keyPressEvent(event);
+                if (ui->cbSound->currentIndex() != 0)
+                {
+                    ui->cbSound->setCurrentIndex(0);
+                }
+                Message::information("已关闭语音提醒"); });
 }

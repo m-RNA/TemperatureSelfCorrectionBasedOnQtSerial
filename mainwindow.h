@@ -148,6 +148,7 @@ private:
     void setCollectSettingLock(bool lock);
 
     void pictureInit();
+    void shortcutInit();
     void soundInit();
     void listenDataWaveInit();
     void listenDataWaveQuit();
@@ -195,6 +196,5 @@ private:
     void loadStyle(const QString &qssFile);
 
     void closeEvent(QCloseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
 };
 #endif // MAINWINDOW_H
