@@ -1314,3 +1314,46 @@ void ColorStyle::on_actionDarkStyle_triggered()
 
     setColorStyle(themeIndex);
 }
+
+void MainWindow::on_actionQuit_triggered()
+{
+    close(); // 关闭MainWindow
+}
+
+// 退出前保存数据
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("警告");
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setButtonText(QMessageBox::Yes, "退出");
+    msgBox.setButtonText(QMessageBox::No, "取消");
+
+    if (isCollecting) // 检查是否正在采集数据
+    {
+        msgBox.setText("正在采集数据\n是否退出程序？");
+        if (msgBox.exec() == QMessageBox::No)
+        {
+            event->ignore();
+            return;
+        }
+
+        // 直接完成采集
+        timerCollect->stop();
+        isCollecting = false;
+        finishCollect();
+    }
+    else if ((collectCounter > 0) && (collectCounter + 1) < samplePointSum) // 检查校准任务是否开始或正在进行
+    {
+        msgBox.setText("校准任务未完成\n是否退出程序？");
+        if (msgBox.exec() == QMessageBox::No)
+        {
+            event->ignore();
+            return;
+        }
+    }
+
+    emit sgXlsxSaveReport(); // 保存数据
+    event->accept();
+}

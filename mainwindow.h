@@ -96,6 +96,8 @@ private slots:
 
     void on_actionDarkStyle_triggered();
 
+    void on_actionQuit_triggered();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxSaveReport();
@@ -191,5 +193,7 @@ private:
     void setColorStyle(const int index);
     void setChartColorStyle(const int index);
     void loadStyle(const QString &qssFile);
+
+    void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H
