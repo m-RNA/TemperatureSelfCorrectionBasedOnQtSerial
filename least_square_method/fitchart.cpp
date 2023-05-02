@@ -7,7 +7,7 @@ qint64 FitChart::CHART_REFRESH_TIME_MS = 40;
 FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 {
 	setOpenGl(true);
-	qDebug() << "FitChart opengle=" << openGl();
+	qDebug() << "FitChart      OpenGL=" << openGl();
 
 	tracer = new QCPItemTracer(this);
 	tracer->setInterpolating(false); // 不插值
@@ -22,7 +22,7 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 	verifyTracer->setStyle(QCPItemTracer::tsCrosshair); // 十字线
 	verifyTracer->setPen(QPen(QColor(23, 111, 217, 200)));
 	verifyTracer->setBrush(Qt::blue);
-	verifyTracer->setSize(6);
+	verifyTracer->setSize(8);
 	verifyTracer->setVisible(true); // 默认显示
 
 	// 设置交互方式

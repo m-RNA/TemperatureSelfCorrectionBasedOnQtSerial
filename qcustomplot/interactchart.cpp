@@ -12,7 +12,7 @@ qint64 InteractChart::CHART_REFRESH_TIME_MS = 40;
 InteractChart::InteractChart(QWidget *parent) : QCustomPlot(parent)
 {
 	setOpenGl(true);
-	qDebug() << "InteractChart opengle=" << openGl();
+	qDebug() << "InteractChart OpenGL=" << openGl();
 
 	tracer = new QCPItemTracer(this);
 	tracer->setInterpolating(false); // 不插值

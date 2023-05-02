@@ -81,12 +81,15 @@ MainWindow::MainWindow(QWidget *parent)
         {
             QTableWidgetItem *temp = new QTableWidgetItem();
             ui->twAverage->setItem(i, j, temp);
-            ui->twAverage->item(i, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         }
     }
     connect(ui->twAverage, &QTableWidget::itemChanged, this, &LeastSquare::twAverage_itemChanged);
 
     connect(this, &LeastSquare::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
+
+    // 同步两个表格的滚动条
+    connect(ui->twAverage->verticalScrollBar(), &QScrollBar::valueChanged, ui->twRange->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->twRange->verticalScrollBar(), &QScrollBar::valueChanged, ui->twAverage->verticalScrollBar(), &QScrollBar::setValue);
 
     // 拟合阶数改变时，迟滞一定时间后更新拟合图表
     timerOrderChangeDelayUpdate = new QTimer(this);
@@ -724,14 +727,32 @@ void Bll_CollectBtn::timerCollectTimeOut()
         emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
     }
 
+    double range_Std = ui->collectPanel_Std->getRange();
+    double range_Dtm = ui->collectPanel_Dtm->getRange();
+    QString strRange_Std = QString::number(range_Std);
+    QString strRange_Dtm = QString::number(range_Dtm);
     rangeList_Std.resize(collectCounter + 1);
     rangeList_Dtm.resize(collectCounter + 1);
-    rangeList_Std[collectCounter] = ui->collectPanel_Std->getRange();
-    rangeList_Dtm[collectCounter] = ui->collectPanel_Dtm->getRange();
+    rangeList_Std[collectCounter] = range_Std;
+    rangeList_Dtm[collectCounter] = range_Dtm;
+    // 更新极差图表
     ui->chartRange->setData(rangeList_Std, rangeList_Dtm);
+    // 填入极差表格
+    if (ui->twRange->item(collectCounter, 0) == nullptr)
+    {
+        ui->twRange->setItem(collectCounter, 0, new QTableWidgetItem(strRange_Std));
+        ui->twRange->item(collectCounter, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    }
+    else
+        ui->twRange->item(collectCounter, 0)->setText(strRange_Std);
+    if (ui->twRange->item(collectCounter, 1) == nullptr)
+    {
+        ui->twRange->setItem(collectCounter, 1, new QTableWidgetItem(strRange_Dtm));
+        ui->twRange->item(collectCounter, 1)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    }
+    else
+        ui->twRange->item(collectCounter, 1)->setText(strRange_Dtm);
 
-    QString strRange_Std = QString::number(ui->collectPanel_Std->getRange());
-    QString strRange_Dtm = QString::number(ui->collectPanel_Dtm->getRange());
     QString msg = "标准仪器极差：" + strRange_Std + "\n" +
                   "待测仪器极差：" + strRange_Dtm + "\n";
 
@@ -888,17 +909,18 @@ void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
     // 设置整体进度条最大值
     ui->pgsbSum->setMaximum(arg1);
 
-    // 设置平均值表格行数
-    ui->twAverage->setRowCount(arg1);
+    ui->twRange->setRowCount(arg1);   // 设置极差表格行数
+    ui->twAverage->setRowCount(arg1); // 设置平均值表格行数
     if (arg1 > samplePointSum)
     {
         // 需要初始化表格Item
-        for (int j = 0; j < 2; j++)
+        for (int i = samplePointSum; i < arg1; i++)
         {
-            QTableWidgetItem *temp = new QTableWidgetItem();
-            int row = arg1 - 1;
-            ui->twAverage->setItem(row, j, temp);
-            ui->twAverage->item(row, j)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            // 平均数表格
+            QTableWidgetItem *itemY = new QTableWidgetItem;
+            QTableWidgetItem *itemX = new QTableWidgetItem;
+            ui->twAverage->setItem(i, 0, itemY);
+            ui->twAverage->setItem(i, 1, itemX);
         }
     }
 
