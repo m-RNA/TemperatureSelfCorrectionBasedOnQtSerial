@@ -720,13 +720,6 @@ void Bll_CollectBtn::timerCollectTimeOut()
     ui->btnCollectRestart->setEnabled(true);
     ui->pgsbSum->setValue(collectCounter + 1);
 
-    // 开启语音提醒
-    if (ui->cbSound->currentIndex() > 0)
-    {
-        soundInit();
-        emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
-    }
-
     double range_Std = ui->collectPanel_Std->getRange();
     double range_Dtm = ui->collectPanel_Dtm->getRange();
     QString strRange_Std = QString::number(range_Std);
@@ -760,6 +753,12 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         setCollectBtnState(CollectBtnState_Next);
 
+        if (ui->cbSound->currentIndex() > 0) // 开启语音提醒
+        {
+            soundInit();
+            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
+        }
+
         msg += "请准备下一点采集";
         // 如果是自动采集，就不弹出消息框
         // if (ui->cbAutoCollect->currentIndex() == 1)
@@ -774,6 +773,11 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         setCollectBtnState(CollectBtnState_End);
 
+        if (ui->cbSound->currentIndex() > 0) // 开启语音提醒
+        {
+            soundInit();
+            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
+        }
         on_btnSaveReport_clicked(); // 保存报告
 
         msg += "请在右下角查看拟合结果";
