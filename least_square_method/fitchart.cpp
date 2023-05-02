@@ -1,5 +1,6 @@
 #include "fitchart.h"
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
+#include <message.h>
 
 // 刷新时间间隔
 qint64 FitChart::CHART_REFRESH_TIME_MS = 40;
@@ -374,17 +375,37 @@ void FitChart::updateVerifyTracer()
 		 */
 		if (mouseReleaseFlag)
 		{
+			static int times = 0;
+			bool outOfRange = false;
+
 			mouseReleaseFlag = false;
 			// 托动鼠标超范围，将 verifyTracer 放到 1/4 处
 			if (xVerify > (this->xAxis->range().upper - xRangeOfOne8))
+			{
+				outOfRange = true;
 				this->xAxis->setRange(xVerify - this->xAxis->range().size() + xRangeOfOne4, xVerify + xRangeOfOne4);
+			}
 			else if (xVerify < (this->xAxis->range().lower + xRangeOfOne8))
+			{
+				outOfRange = true;
 				this->xAxis->setRange(xVerify - xRangeOfOne4, xVerify + this->xAxis->range().size() - xRangeOfOne4);
-
+			}
 			if (yVerify > (this->yAxis->range().upper - yRangeOfOne8))
+			{
+				outOfRange = true;
 				this->yAxis->setRange(yVerify - this->yAxis->range().size() + yRangeOfOne4, yVerify + yRangeOfOne4);
+			}
 			else if (yVerify < (this->yAxis->range().lower + yRangeOfOne8))
+			{
+				outOfRange = true;
 				this->yAxis->setRange(yVerify - yRangeOfOne4, yVerify + this->yAxis->range().size() - yRangeOfOne4);
+			}
+
+			if (outOfRange && times < 3)
+			{
+				Message::information("自由拖动坐标轴？\n右键菜单隐藏实时光标");
+				times++;
+			}
 		}
 		else
 		{
