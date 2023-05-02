@@ -83,6 +83,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &LeastSquare::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
 
+    // 拟合阶数改变时，迟滞一定时间后更新拟合图表
+    timerLeastSquare = new QTimer(this);
+    timerLeastSquare->setInterval(200);
+    timerLeastSquare->setSingleShot(true);
+    connect(timerLeastSquare, &QTimer::timeout, [&]()
+            { tryUpdateFitChart(false); });
+
     /*** LeastSquare End ***/
 
     // 单点进度条
@@ -952,11 +959,14 @@ void LeastSquare::on_spbxOrder_valueChanged(int arg1)
     order = arg1;
     ui->twFactor->setRowCount(arg1 + 1);
 
-    // tryUpdateFitChart(false);
+    // 重置更新拟合图表定时器
+    if (timerLeastSquare) // 初始化完成后才会有定时器
+        timerLeastSquare->start();
 }
 
 void LeastSquare::on_btnFit_clicked()
 {
+    timerLeastSquare->stop();
     tryUpdateFitChart(true);
 }
 

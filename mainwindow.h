@@ -161,6 +161,7 @@ private:
     void leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y);
 
     size_t order; // 最小二乘法多项式阶数
+    QTimer *timerLeastSquare = nullptr;
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
     QRegExp rx;
