@@ -19,9 +19,13 @@ https://www.cnblogs.com/ybqjymy/p/17244317.html
 https://www.codenong.com/cs106908387/    
 https://www.bilibili.com/video/BV1Er4y1C78L/
 
-## InteractChart
+## 代码备忘
 
+- InteractChart  
 这里面时间轴单位是毫秒（qint64），但是有除以1000转换为秒（double），要注意。
+
+- collectCounter  
+  只有调用nextCollect()函数，才会有 collectCounter++
 
 ## 多线程
 

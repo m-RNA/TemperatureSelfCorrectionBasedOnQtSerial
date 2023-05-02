@@ -59,6 +59,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->twFactor->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自适应缩放
     ui->twFactor->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);     // 不可调整
 
+    ui->twRange->horizontalHeader()->setVisible(true);
+    ui->twRange->verticalHeader()->setVisible(true);
+    ui->twRange->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自适应缩放
+    ui->twRange->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);     // 不可调整
+
     QStringList HorizontalHeader;
     // 插入循序即为表头显示顺序
     HorizontalHeader << "Y:标准平均";
@@ -710,75 +715,67 @@ void Bll_CollectBtn::timerCollectTimeOut()
     finishCollect();
 
     ui->btnCollectRestart->setEnabled(true);
+    ui->pgsbSum->setValue(collectCounter + 1);
+
+    // 开启语音提醒
+    if (ui->cbSound->currentIndex() > 0)
+    {
+        soundInit();
+        emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
+    }
+
+    rangeList_Std.resize(collectCounter + 1);
+    rangeList_Dtm.resize(collectCounter + 1);
+    rangeList_Std[collectCounter] = ui->collectPanel_Std->getRange();
+    rangeList_Dtm[collectCounter] = ui->collectPanel_Dtm->getRange();
+    ui->chartRange->setData(rangeList_Std, rangeList_Dtm);
+
+    QString strRange_Std = QString::number(ui->collectPanel_Std->getRange());
+    QString strRange_Dtm = QString::number(ui->collectPanel_Dtm->getRange());
+    QString msg = "标准仪器极差：" + strRange_Std + "\n" +
+                  "待测仪器极差：" + strRange_Dtm + "\n";
+
     if (collectCounter < samplePointSum - 1)
     {
-        ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_Next);
 
-        if (ui->cbSound->currentIndex() > 0)
-        {
-            soundInit();
-            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
-        }
-
-        QString range_Std = QString::number(ui->collectPanel_Std->getRange());
-        QString range_Dtm = QString::number(ui->collectPanel_Dtm->getRange());
-        QString msg = "标准仪器极差：" + range_Std + "\n" +
-                      "待测仪器极差：" + range_Dtm + "\n" +
-                      "请准备下一点采集";
+        msg += "请准备下一点采集";
         // 如果是自动采集，就不弹出消息框
         // if (ui->cbAutoCollect->currentIndex() == 1)
         //     Message::information("此点采集完成\n" + msg, 5000);
         // else
         QMessageBox::information(this, "此点采集完成", msg);
 
-        lbLastRange->setText("上次极差 标准：" + range_Std + " 待测：" + range_Dtm);
-
-        if (ui->cbSound->currentIndex() > 0)
-        {
-            emit sgSoundStop();
-            threadSound->quit();
-            threadSound->wait();
-            threadSound = nullptr;
-        }
-
         // 重置单点进度
         pgsbSingleReset();
     }
     else // 全部采集完成
     {
-        ui->pgsbSum->setValue(collectCounter + 1);
         setCollectBtnState(CollectBtnState_End);
-        // 保存报告
-        on_btnSaveReport_clicked();
 
-        if (ui->cbSound->currentIndex() > 0)
-        {
-            soundInit();
-            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
-        }
+        on_btnSaveReport_clicked(); // 保存报告
 
-        QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
-                      "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
-                      "请在右下角查看拟合结果";
+        msg += "请在右下角查看拟合结果";
         // 如果是自动采集，就不弹出消息框
         // if (ui->cbAutoCollect->currentIndex() == 1)
         //     Message::information("全部采集完成\n" + msg, 5000);
         // else
         QMessageBox::information(this, "全部采集完成", msg);
 
-        tryUpdateFitChart(false);
-
-        if (ui->cbSound->currentIndex() > 0)
-        {
-            emit sgSoundStop();
-            threadSound->quit();
-            threadSound->wait(); // 这里需要吗？
-            threadSound = nullptr;
-        }
-
-        qDebug() << "全部采集完成啦~";
+        tryUpdateFitChart(false); // 更新拟合图表
     }
+
+    // 关闭声音
+    if (ui->cbSound->currentIndex() > 0)
+    {
+        emit sgSoundStop();
+        threadSound->quit();
+        threadSound->wait(); // 这里需要吗？
+        threadSound = nullptr;
+    }
+
+    // 更新状态栏
+    lbLastRange->setText("上次极差 标准：" + strRange_Std + " 待测：" + strRange_Dtm);
 }
 
 // 接着开始采集
@@ -1179,23 +1176,20 @@ void MainWindow::on_spbxStableTime_valueChanged(double arg1)
     emit sgSetDataWaveStableTime(arg1 * 60000);
 }
 
-// 验证
-void MainWindow::on_btnVerify_clicked()
+// 切换视图
+void MainWindow::on_btnSwitchView_clicked()
 {
     verifyState = !verifyState;
+    ui->swFitAverage->setCurrentIndex(verifyState);
+    ui->swRange->setCurrentIndex(verifyState);
+
     if (verifyState)
     {
-        // connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
-        // connect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
-        // ui->chartFit->setVerifyTracerVisible(true);
-        ui->btnVerify->setText("关闭检验");
+        ui->btnSwitchView->setText("绘图视图");
     }
     else
     {
-        // disconnect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerY);
-        // disconnect(ui->start_Dtm, &StartCommunication::sgStartAnalyseFinish, ui->chartFit, &FitChart::updateVerifyTracerX);
-        // ui->chartFit->setVerifyTracerVisible(false);
-        ui->btnVerify->setText("开启检验");
+        ui->btnSwitchView->setText("数据视图");
     }
 }
 
@@ -1254,6 +1248,7 @@ void ColorStyle::setChartColorStyle(const int index)
     if (index == 0)
         return;
     ui->chartFit->setColorStyle(index);
+    ui->chartRange->setColorStyle(index);
     ui->collectPanel_Std->setChartColorStyle(index);
     ui->collectPanel_Dtm->setChartColorStyle(index);
 }
@@ -1548,7 +1543,7 @@ void MainWindow::showMessage(const QString &msg, int timeout)
     ui->statusbar->showMessage(msg, timeout);
 }
 
-// 更新状态栏的拟合值、实际值、误差
+// 更新状态栏的拟合值、实际值、差值、误差
 void MainWindow::updateStatusBarVerifyData()
 {
     if (factor.size() < 2)
@@ -1564,7 +1559,7 @@ void MainWindow::updateStatusBarVerifyData()
     double yVerify = ui->chartFit->getVerifyTracerY();
     double range = yVerify - fitValue;
     QString str;
-    if(range < 0)
+    if (range < 0)
         str = QString("拟合：%1 实际：%2 差值：%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(-range / yVerify * 100, 0, 'f', 2);
     else
         str = QString("拟合：%1 实际：%2 差值：+%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(range / yVerify * 100, 0, 'f', 2);

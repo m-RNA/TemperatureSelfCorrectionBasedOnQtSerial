@@ -49,6 +49,7 @@ SOURCES += \
     least_square_method/bll_leastssquare.cpp \
     least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
+    least_square_method/rangechart.cpp \
     main.cpp \
     message/message.cpp \
     sound/bll_sound.cpp \
@@ -73,6 +74,7 @@ HEADERS += \
     least_square_method/bll_leastssquare.h \
     least_square_method/cv_table.h \
     least_square_method/fitchart.h \
+    least_square_method/rangechart.h \
     mainwindow.h \
     message/message.h \
     qcustomplot/interactchart.h \

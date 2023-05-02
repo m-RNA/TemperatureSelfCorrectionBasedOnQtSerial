@@ -84,7 +84,7 @@ private slots:
 
     void on_spbxStableTime_valueChanged(double arg1);
 
-    void on_btnVerify_clicked();
+    void on_btnSwitchView_clicked();
 
     void on_btnWizard_clicked();
 
@@ -168,6 +168,7 @@ private:
     QTimer *timerOrderChangeDelayUpdate = nullptr;
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
+    vector<double> rangeList_Std, rangeList_Dtm;
     QRegExp rx;
     QString old_text = "";
     int soundIndex = 0;
