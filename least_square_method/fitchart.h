@@ -17,6 +17,9 @@ class FitChart : public QCustomPlot
 public:
     explicit FitChart(QWidget *parent = nullptr);
 
+    double getVerifyTracerX() const;
+    double getVerifyTracerY() const;
+
 public slots:
     void updateCollectPlot(const QVector<double> &x, const QVector<double> &y); // 更新散点图
     void updateFitPlot(const QVector<double> &x, const QVector<double> &y);     // 更新折线图
@@ -37,6 +40,9 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *ev);
     // 鼠标移动事件
     virtual void mouseMoveEvent(QMouseEvent *ev);
+
+signals:
+    void sgShowMessage(const QString &msg, int timeout);
 
 private slots:
     void axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part);

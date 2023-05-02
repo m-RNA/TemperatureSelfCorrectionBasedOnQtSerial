@@ -84,10 +84,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &LeastSquare::collectDataXYChanged, ui->chartFit, &FitChart::updateCollectPlot);
 
     // 拟合阶数改变时，迟滞一定时间后更新拟合图表
-    timerLeastSquare = new QTimer(this);
-    timerLeastSquare->setInterval(200);
-    timerLeastSquare->setSingleShot(true);
-    connect(timerLeastSquare, &QTimer::timeout, [&]()
+    timerOrderChangeDelayUpdate = new QTimer(this);
+    timerOrderChangeDelayUpdate->setInterval(200);
+    timerOrderChangeDelayUpdate->setSingleShot(true);
+    connect(timerOrderChangeDelayUpdate, &QTimer::timeout, [&]()
             { tryUpdateFitChart(false); });
 
     /*** LeastSquare End ***/
@@ -356,32 +356,6 @@ void MainWindow::setDeviceName_Dtm(const QString &name)
 int MainWindow::getCollectCounter(void)
 {
     return collectCounter;
-}
-
-void MainWindow::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y)
-{
-    if (threadLeastSquare != nullptr)
-    {
-        threadLeastSquare->quit();
-        threadLeastSquare->wait();
-    }
-    taskLeastSquare = new Bll_LeastSquareMethod;
-    threadLeastSquare = new QThread;
-    taskLeastSquare->moveToThread(threadLeastSquare);
-    connect(threadLeastSquare, &QThread::finished, taskLeastSquare, &Bll_LeastSquareMethod::deleteLater); // 任务结束后自动删除
-    connect(threadLeastSquare, &QThread::finished, threadLeastSquare, &QThread::deleteLater);             // 线程结束后自动删除
-    connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::work);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setOrderData);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
-    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, this, [&](const QVector<double> &x, const QVector<double> &y)
-            {
-                ui->chartFit->updateFitPlot(x, y);
-                threadLeastSquare->quit();
-                threadLeastSquare->wait();
-                threadLeastSquare = nullptr; });
-
-    threadLeastSquare->start();
-    emit startLeastSquare(order, x, y);
 }
 
 void MainWindow::pictureInit()
@@ -747,14 +721,18 @@ void Bll_CollectBtn::timerCollectTimeOut()
             emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
         }
 
-        QString msg = "标准仪器极差：" + QString::number(ui->collectPanel_Std->getRange()) + "\n" +
-                      "待测仪器极差：" + QString::number(ui->collectPanel_Dtm->getRange()) + "\n" +
+        QString range_Std = QString::number(ui->collectPanel_Std->getRange());
+        QString range_Dtm = QString::number(ui->collectPanel_Dtm->getRange());
+        QString msg = "标准仪器极差：" + range_Std + "\n" +
+                      "待测仪器极差：" + range_Dtm + "\n" +
                       "请准备下一点采集";
         // 如果是自动采集，就不弹出消息框
         // if (ui->cbAutoCollect->currentIndex() == 1)
         //     Message::information("此点采集完成\n" + msg, 5000);
         // else
         QMessageBox::information(this, "此点采集完成", msg);
+
+        lbLastRange->setText("上次极差 标准：" + range_Std + " 待测：" + range_Dtm);
 
         if (ui->cbSound->currentIndex() > 0)
         {
@@ -882,6 +860,32 @@ void MainWindow::on_spbxSampleTime_valueChanged(double arg1)
     ui->pgsbSingle->setFormat(QString::asprintf("%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 3600 % 60));
 }
 
+void LeastSquare::leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y)
+{
+    if (threadLeastSquare != nullptr)
+    {
+        threadLeastSquare->quit();
+        threadLeastSquare->wait();
+    }
+    taskLeastSquare = new Bll_LeastSquareMethod;
+    threadLeastSquare = new QThread;
+    taskLeastSquare->moveToThread(threadLeastSquare);
+    connect(threadLeastSquare, &QThread::finished, taskLeastSquare, &Bll_LeastSquareMethod::deleteLater); // 任务结束后自动删除
+    connect(threadLeastSquare, &QThread::finished, threadLeastSquare, &QThread::deleteLater);             // 线程结束后自动删除
+    connect(this, &LeastSquare::startLeastSquare, taskLeastSquare, &Bll_LeastSquareMethod::work);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, this, &LeastSquare::setOrderData);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::leastSquareMethodFinish, taskXlsxData, &Bll_SaveDataToXlsx::saveFactor);
+    connect(taskLeastSquare, &Bll_LeastSquareMethod::generateFitDataFinish, this, [&](const QVector<double> &x, const QVector<double> &y)
+            {
+                ui->chartFit->updateFitPlot(x, y);
+                threadLeastSquare->quit();
+                threadLeastSquare->wait();
+                threadLeastSquare = nullptr; });
+
+    threadLeastSquare->start();
+    emit startLeastSquare(order, x, y);
+}
+
 void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
 {
     // 设置整体进度条最大值
@@ -960,18 +964,20 @@ void LeastSquare::on_spbxOrder_valueChanged(int arg1)
     ui->twFactor->setRowCount(arg1 + 1);
 
     // 重置更新拟合图表定时器
-    if (timerLeastSquare) // 初始化完成后才会有定时器
-        timerLeastSquare->start();
+    if (timerOrderChangeDelayUpdate) // 初始化完成后才会有定时器
+        timerOrderChangeDelayUpdate->start();
 }
 
 void LeastSquare::on_btnFit_clicked()
 {
-    timerLeastSquare->stop();
+    timerOrderChangeDelayUpdate->stop();
     tryUpdateFitChart(true);
 }
 
 void LeastSquare::setOrderData(const vector<DECIMAL_TYPE> &factorList)
 {
+    factor = factorList;
+
     for (size_t i = 0; i < factorList.size(); i++)
     {
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%.8LE", factorList[factorList.size() - i - 1]);
@@ -1436,6 +1442,7 @@ void MainWindow::shortcutInit()
                 Message::information("已关闭语音提醒"); });
 }
 
+// 状态栏初始化
 void MainWindow::statusBarInit()
 {
     QTime time = QTime::currentTime();
@@ -1482,12 +1489,37 @@ void MainWindow::statusBarInit()
     srand(time.second());
     ui->statusbar->showMessage(strHello + strListNormal[rand() % strListNormal.size()], 30000);
 
+    lbVerifyData = new QLabel(this);
+    ui->statusbar->addPermanentWidget(lbVerifyData);
+    lbVerifyData->setText("拟合：NULL 实际：NULL 差值：NULL 误差：NULL");
+    timerUpdateStatusBarVerifyData = new QTimer(this);
+    timerUpdateStatusBarVerifyData->start(500);
+    connect(timerUpdateStatusBarVerifyData, &QTimer::timeout, this, &MainWindow::updateStatusBarVerifyData);
+
+    // 用竖线分隔
+    QFrame *line;
+    line = new QFrame(this);
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    ui->statusbar->addPermanentWidget(line);
+
+    lbLastRange = new QLabel(this);
+    ui->statusbar->addPermanentWidget(lbLastRange);
+    lbLastRange->setText("上次极差 标准：NULL 待测：NULL");
+
+    line = new QFrame(this);
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    ui->statusbar->addPermanentWidget(line);
+
     lbRunTime = new QLabel(this);
     ui->statusbar->addPermanentWidget(lbRunTime);
     lbRunTime->setText("运行时间：0:00:00");
     timerRunTime = new QTimer(this);
     timerRunTime->start(1000);
     connect(timerRunTime, &QTimer::timeout, this, &MainWindow::updateRunTime);
+
+    connect(ui->chartFit, &FitChart::sgShowMessage, this, &MainWindow::showMessage);
 }
 
 void MainWindow::updateRunTime()
@@ -1509,4 +1541,32 @@ void MainWindow::updateRunTime()
     int sec = runTime % 60;
     snprintf(globalStringBuffer, sizeof(globalStringBuffer), "运行时间：%d:%02d:%02d", hour, min, sec);
     lbRunTime->setText(globalStringBuffer);
+}
+
+void MainWindow::showMessage(const QString &msg, int timeout)
+{
+    ui->statusbar->showMessage(msg, timeout);
+}
+
+// 更新状态栏的拟合值、实际值、误差
+void MainWindow::updateStatusBarVerifyData()
+{
+    if (factor.size() < 2)
+        return;
+
+    // 计算拟合值
+    double fitValue = factor.at(factor.size() - 1);
+    for (size_t j = 1; j < factor.size(); j++)
+    {
+        fitValue += factor.at(factor.size() - 1 - j) * pow(ui->chartFit->getVerifyTracerX(), j);
+    }
+    // 显示拟合值、实际值、差值、误差, 6位小数
+    double yVerify = ui->chartFit->getVerifyTracerY();
+    double range = yVerify - fitValue;
+    QString str;
+    if(range < 0)
+        str = QString("拟合：%1 实际：%2 差值：%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(-range / yVerify * 100, 0, 'f', 2);
+    else
+        str = QString("拟合：%1 实际：%2 差值：+%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(range / yVerify * 100, 0, 'f', 2);
+    lbVerifyData->setText(str);
 }

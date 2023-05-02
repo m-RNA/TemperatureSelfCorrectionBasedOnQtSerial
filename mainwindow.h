@@ -40,6 +40,9 @@ public:
 
     static int getCollectCounter(void);
 
+public slots:
+    void showMessage(const QString &msg, int timeout);
+
 private slots:
     void on_btnCollectSwitch_clicked();
 
@@ -160,8 +163,9 @@ private:
     void autoCollectTimerQuit();
     void leastSquareTaskStart(const int order, const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y);
 
-    size_t order; // 最小二乘法多项式阶数
-    QTimer *timerLeastSquare = nullptr;
+    size_t order;                // 最小二乘法多项式阶数
+    vector<DECIMAL_TYPE> factor; // 系数
+    QTimer *timerOrderChangeDelayUpdate = nullptr;
     vector<DECIMAL_TYPE> collectDataX, collectDataY;
     vector<DECIMAL_TYPE> fitDataX, fitDataY;
     QRegExp rx;
@@ -170,8 +174,12 @@ private:
     bool verifyState = false;
     WizardInfo wizardInfo;
 
+    // 状态栏相关
     QLabel *lbRunTime = nullptr;
+    QLabel *lbLastRange = nullptr;
+    QLabel *lbVerifyData = nullptr;
     QTimer *timerRunTime = nullptr;
+    QTimer *timerUpdateStatusBarVerifyData = nullptr;
 
     // 任务类对象
     Bll_LeastSquareMethod *taskLeastSquare = nullptr;
@@ -193,6 +201,7 @@ private:
     void updateRunTime();
     void updateCollectDataXY();
     void tryUpdateFitChart(bool man);
+    void updateStatusBarVerifyData();
 
     void loadUiSettings();
     void saveUiSetting();

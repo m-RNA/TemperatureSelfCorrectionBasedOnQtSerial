@@ -1,6 +1,5 @@
 #include "fitchart.h"
 #include <QInputDialog> // 保留右上角关闭按钮 传参就ok
-#include <message.h>
 
 // 刷新时间间隔
 qint64 FitChart::CHART_REFRESH_TIME_MS = 40;
@@ -32,8 +31,8 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 
 	this->xAxis->setRange(-70000, 70000);
 	this->yAxis->setRange(-5, 5);
-	this->xAxis->setLabel("x轴");
-	this->yAxis->setLabel("y轴");
+	this->xAxis->setLabel("待定");
+	this->yAxis->setLabel("标准");
 	this->xAxis->setNumberFormat("f");	// 设置坐标轴格式
 	this->xAxis->setNumberPrecision(2); // 设置坐标轴精度
 
@@ -108,6 +107,16 @@ FitChart::FitChart(QWidget *parent) : QCustomPlot(parent)
 			{ yRangeOfOne8 = this->yAxis->range().size() / 8;
 			yRangeOfOne4 = yRangeOfOne8 + yRangeOfOne8; // 加法比除法快
 			yRangeHalf = yRangeOfOne4 + yRangeOfOne4; });
+}
+
+double FitChart::getVerifyTracerX() const
+{
+	return xVerify;
+}
+
+double FitChart::getVerifyTracerY() const
+{
+	return yVerify;
 }
 
 // 双击坐标标签
@@ -336,7 +345,7 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 	this->replot(); // 刷新画图
 }
 
-// 更新实时光标
+// 更新十字游标
 void FitChart::updateVerifyTracerX(const SerialAnalyseCell &x)
 {
 	if (verifyTracer->visible() == false)
@@ -375,7 +384,6 @@ void FitChart::updateVerifyTracer()
 		 */
 		if (mouseReleaseFlag)
 		{
-			static int times = 0;
 			bool outOfRange = false;
 
 			mouseReleaseFlag = false;
@@ -401,11 +409,8 @@ void FitChart::updateVerifyTracer()
 				this->yAxis->setRange(yVerify - yRangeOfOne4, yVerify + this->yAxis->range().size() - yRangeOfOne4);
 			}
 
-			if (outOfRange && times < 3)
-			{
-				Message::information("自由拖动坐标轴？\n右键菜单隐藏实时光标");
-				times++;
-			}
+			if (outOfRange)
+				emit sgShowMessage("自由拖动图表：右键隐藏十字游标", 3000);
 		}
 		else
 		{
@@ -419,13 +424,6 @@ void FitChart::updateVerifyTracer()
 	}
 
 	this->replot();
-
-	// 显示半透明tip框 , 在widget中心显示 只能在widget里显示
-	// QToolTip::showText(this->mapToGlobal(this->rect().center()),
-	// 				   tr("<h4>标准: %1<p></p>待定: %2</h4>")
-	// 					   .arg(QString::number(yVerify, 'g', 6))
-	// 					   .arg(QString::number(xVerify, 'f', 2)),
-	// 				   this, this->rect(), 1000);
 }
 
 // 将 verifyTracer 设置于坐标轴中心，不刷新图表
@@ -473,14 +471,14 @@ void FitChart::showFitPlot()
 	this->replot();
 }
 
-// 隐藏实时光标
+// 隐藏十字游标
 void FitChart::hideVerifyTracer()
 {
 	this->verifyTracer->setVisible(false);
 	this->replot();
 }
 
-// 显示实时光标
+// 显示十字游标
 void FitChart::showVerifyTracer()
 {
 	this->verifyTracer->setVisible(true);
@@ -507,9 +505,9 @@ void FitChart::contextMenuRequest(QPoint pos)
 		// menu->addAction("清空绘图", this, &FitChart::clear);
 
 		if (verifyTracer->visible())
-			menu->addAction(QIcon("://icon/hide.ico"), "隐藏实时游标", this, &FitChart::hideVerifyTracer);
+			menu->addAction(QIcon("://icon/hide.ico"), "隐藏十字游标", this, &FitChart::hideVerifyTracer);
 		else
-			menu->addAction(QIcon("://icon/show.ico"), "显示实时游标", this, &FitChart::showVerifyTracer);
+			menu->addAction(QIcon("://icon/show.ico"), "显示十字游标", this, &FitChart::showVerifyTracer);
 
 		if (this->graph(0)->visible())
 			menu->addAction(QIcon("://icon/hide.ico"), "隐藏采集数据", this, &FitChart::hideCollectPlot);
