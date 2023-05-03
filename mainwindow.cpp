@@ -752,7 +752,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
         ui->twRange->item(getCollectIndex(), 1)->setText(strRange_Dtm);
 
     QString msg = "标准仪器极差：" + strRange_Std + "\n" +
-                  "待测仪器极差：" + strRange_Dtm + "\n";
+                  "待定仪器极差：" + strRange_Dtm + "\n";
 
     if (collectCounter < samplePointSum - 1)
     {
@@ -805,7 +805,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
     }
 
     // 更新状态栏
-    lbLastRange->setText("上次极差 标准：" + strRange_Std + " 待测：" + strRange_Dtm);
+    lbLastRange->setText("上次极差 标准：" + strRange_Std + " 待定：" + strRange_Dtm);
 }
 
 // 接着开始采集
@@ -1025,6 +1025,8 @@ void LeastSquare::tryUpdateFitChart(bool man)
 
     // 启动子线程
     leastSquareTaskStart(order, collectDataX, collectDataY);
+
+    ui->statusbar->showMessage("差值指示灯：<+-0.05 绿色 <+-0.2 黄色", 10000);
 }
 
 void LeastSquare::on_spbxOrder_valueChanged(int arg1)
@@ -1465,7 +1467,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
  *  Alt + 3：切换到校准界面
  *  Alt + 4：切换校准视图
  *  Alt + S：开关仪器标准串口 Standard
- *  Alt + D：开关待测仪器串口 Determine
+ *  Alt + D：开关待定仪器串口 Determine
  *  Alt + C：开关采集 Collect
  *  Alt + R：重新采集 ReCollect
  *  Alt + F：拟合数据 Fit
@@ -1504,7 +1506,7 @@ void MainWindow::shortcutInit()
     connect(shortcut, &QShortcut::activated, [&]()
             { ui->start_Std->on_btnSerialSwitch_clicked(); });
 
-    // 开关待测仪器串口 Determine
+    // 开关待定仪器串口 Determine
     shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_D), this);
     connect(shortcut, &QShortcut::activated, [&]()
             { ui->start_Dtm->on_btnSerialSwitch_clicked(); });
@@ -1579,7 +1581,7 @@ void MainWindow::statusBarInit()
     // 正常问候语
     QStringList strListNormal = {
         "欢迎使用温度传感器校准上位机！",
-        "随时可开始校准任务。",
+        "随时可开始校准任务!",
         "完美的校准任务从一个友好的欢迎开始~",
     };
     // 亲切问候语
@@ -1619,10 +1621,14 @@ void MainWindow::statusBarInit()
 
     lbVerifyData = new QLabel(this);
     ui->statusbar->addPermanentWidget(lbVerifyData);
-    lbVerifyData->setText("拟合：NULL 实际：NULL 差值：NULL 误差：NULL");
+    lbVerifyData->setText("拟合：NULL 实际：NULL 差值：NULL");
     timerUpdateStatusBarVerifyData = new QTimer(this);
     timerUpdateStatusBarVerifyData->start(500);
     connect(timerUpdateStatusBarVerifyData, &QTimer::timeout, this, &MainWindow::updateStatusBarVerifyData);
+
+    ledErrorRange = new QLabel(this);
+    ledErrorRange->setFixedSize(16, 16); // 设置大小
+    ui->statusbar->addPermanentWidget(ledErrorRange);
 
     // 用竖线分隔
     QFrame *line;
@@ -1633,7 +1639,7 @@ void MainWindow::statusBarInit()
 
     lbLastRange = new QLabel(this);
     ui->statusbar->addPermanentWidget(lbLastRange);
-    lbLastRange->setText("上次极差 标准：NULL 待测：NULL");
+    lbLastRange->setText("上次极差 标准：NULL 待定：NULL");
 
     line = new QFrame(this);
     line->setFrameShape(QFrame::VLine);
@@ -1676,7 +1682,7 @@ void MainWindow::showMessage(const QString &msg, int timeout)
     ui->statusbar->showMessage(msg, timeout);
 }
 
-// 更新状态栏的拟合值、实际值、差值、误差
+// 更新状态栏的拟合值、实际值、差值、差值指示灯
 void MainWindow::updateStatusBarVerifyData()
 {
     if (factor.size() < 2)
@@ -1684,17 +1690,29 @@ void MainWindow::updateStatusBarVerifyData()
 
     // 计算拟合值
     double fitValue = factor.at(factor.size() - 1);
+    double xVerify = ui->chartFit->getVerifyTracerX();
+    double yVerify = ui->chartFit->getVerifyTracerY();
     for (size_t j = 1; j < factor.size(); j++)
     {
-        fitValue += factor.at(factor.size() - 1 - j) * pow(ui->chartFit->getVerifyTracerX(), j);
+        fitValue += factor.at(factor.size() - 1 - j) * pow(xVerify, j);
     }
-    // 显示拟合值、实际值、差值、误差, 6位小数
-    double yVerify = ui->chartFit->getVerifyTracerY();
+    // 显示拟合值、实际值、差值, 6位小数
     double range = yVerify - fitValue;
     QString str;
     if (range < 0)
-        str = QString("拟合：%1 实际：%2 差值：%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(abs(range / yVerify) * 100, 0, 'f', 2);
+        str = QString("拟合：%1 实际：%2 差值：%3").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6);
     else
-        str = QString("拟合：%1 实际：%2 差值：+%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(abs(range / yVerify) * 100, 0, 'f', 2);
+        str = QString("拟合：%1 实际：%2 差值：+%3").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6);
     lbVerifyData->setText(str);
+    setLEDErrorRange(range);
+}
+
+void MainWindow::setLEDErrorRange(double range)
+{
+    if (range < 0.05 && range > -0.05)
+        ledErrorRange->setStyleSheet("border-radius:6px;background-color: rgb(46, 204, 113);"); // 绿色
+    else if (range < 0.2 && range > -0.2)
+        ledErrorRange->setStyleSheet("border-radius:6px;background-color: rgb(255, 176, 5);"); // 黄色
+    else
+        ledErrorRange->setStyleSheet("border-radius:6px;background-color: red;"); // 红色
 }

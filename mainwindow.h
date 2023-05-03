@@ -180,6 +180,7 @@ private:
     // 状态栏相关
     QLabel *lbRunTime = nullptr;
     QLabel *lbLastRange = nullptr;
+    QLabel *ledErrorRange = nullptr;
     QLabel *lbVerifyData = nullptr;
     QTimer *timerRunTime = nullptr;
     QTimer *timerUpdateStatusBarVerifyData = nullptr;
@@ -203,6 +204,8 @@ private:
 
     void updateRunTime();
     void updateCollectDataXY();
+
+    void setLEDErrorRange(double range);
     void tryUpdateFitChart(bool man);
     void updateStatusBarVerifyData();
     void switchCalibrateView(int index);
