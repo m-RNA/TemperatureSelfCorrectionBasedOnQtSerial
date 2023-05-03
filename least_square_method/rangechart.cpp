@@ -31,7 +31,7 @@ RangeChart::RangeChart(QWidget *parent) : QCustomPlot(parent)
     yAxis2->setVisible(true);
 
     // set labels:
-    xAxis->setLabel("采集顺序");
+    xAxis->setLabel("采集序号");
     yAxis->setLabel("标准极差");
     yAxis2->setLabel("待定极差");
 

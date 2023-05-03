@@ -17,7 +17,10 @@
 using LeastSquare = MainWindow;
 using Bll_CollectBtn = MainWindow;
 
-int MainWindow::collectCounter = 0; // 初始化静态成员变量
+// 初始化静态成员变量
+int MainWindow::collectCounter = 0;          // 已采集点数
+int MainWindow::collectIndex = 0;            // 采集序号
+bool MainWindow::returnCollectIndex = false; // 是否返回序号
 
 const int PGSB_REFRESH_MS = 500;                             // 进度条刷新间隔
 const double TIMESTAMP_FACTOR = (1000.0f / PGSB_REFRESH_MS); // 时间戳因子，用于计算时间戳
@@ -363,6 +366,8 @@ void MainWindow::setDeviceName_Dtm(const QString &name)
 
 int MainWindow::getCollectIndex(void)
 {
+    if (returnCollectIndex)
+        return collectIndex;
     return collectCounter;
 }
 
@@ -829,7 +834,7 @@ void Bll_CollectBtn::startCollect()
     ui->collectPanel_Std->collectStart();
     ui->collectPanel_Dtm->collectStart();
 
-    qInfo() << "开始采集" << collectCounter << getCollectIndex();
+    qDebug() << "开始采集" << collectCounter << getCollectIndex();
 }
 
 void Bll_CollectBtn::stopCollect()
@@ -851,7 +856,7 @@ void Bll_CollectBtn::finishCollect()
     collectDataQuit();
 
     listenDataWaveInit();
-    qInfo() << "本点采集结束" << collectCounter << getCollectIndex();
+    qDebug() << "本点采集结束" << collectCounter << getCollectIndex();
 }
 
 void Bll_CollectBtn::resetCollect()
@@ -865,14 +870,17 @@ void Bll_CollectBtn::resetCollect()
     ui->collectPanel_Std->collectRestart();
     ui->collectPanel_Dtm->collectRestart();
 
-    qInfo() << "重采本点" << collectCounter;
+    qDebug() << "重采本点" << collectCounter;
 }
 
 void Bll_CollectBtn::nextCollect()
 {
+    returnCollectIndex = false;
+    ui->statusbar->showMessage("Alt+O 或 Alt+P ：切换采集序号，可重新采集之前数据", 15000);
+
     collectCounter++;
 
-    qInfo() << "采集下点" << collectCounter << getCollectIndex();
+    qDebug() << "采集下点" << collectCounter << getCollectIndex();
 }
 
 // 更新单点进度条显示时间
@@ -1063,8 +1071,7 @@ void LeastSquare::on_twAverage_itemSelectionChanged()
                    ->text();
 }
 
-/*
- * 正则表达式：
+/* 正则表达式：
  * https://blog.csdn.net/qq_41622002/article/details/107488528
  */
 // 单元格变化
@@ -1257,8 +1264,8 @@ void MainWindow::on_spbxStableTime_valueChanged(double arg1)
 // 切换视图
 void MainWindow::on_btnSwitchView_clicked()
 {
-    verifyState = !verifyState;
-    switchCalibrateView(verifyState);
+    calibrateViewState = !calibrateViewState;
+    switchCalibrateView(calibrateViewState);
 }
 
 void MainWindow::switchCalibrateView(int index)
@@ -1290,8 +1297,7 @@ void MainWindow::on_actionLock_triggered(bool checked)
     setCollectSettingLock(checked);
 }
 
-/**
- * QSS主题来自开源项目：https://github.com/feiyangqingyun/QWidgetDemo
+/* QSS主题来自开源项目：https://github.com/feiyangqingyun/QWidgetDemo
  * QString cssFileList[3] = {":/qss/flatgray.css", ":/qss/lightblue.css", ":/qss/blacksoft.css"};
  */
 using ColorStyle = MainWindow;
@@ -1457,11 +1463,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
  *  Alt + 1：切换到欢迎界面
  *  Alt + 2：切换到调试界面
  *  Alt + 3：切换到校准界面
+ *  Alt + 4：切换校准视图
  *  Alt + S：开关仪器标准串口 Standard
  *  Alt + D：开关待测仪器串口 Determine
  *  Alt + C：开关采集 Collect
  *  Alt + R：重新采集 ReCollect
  *  Alt + F：拟合数据 Fit
+ *  Alt + O: 采集序号 -1
+ *  Alt + P: 采集序号 +1
  * Ctrl + M: 关闭语音提醒
  */
 void MainWindow::shortcutInit()
@@ -1483,6 +1492,12 @@ void MainWindow::shortcutInit()
     shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_3), this);
     connect(shortcut, &QShortcut::activated, [&]()
             { ui->tabMain->setCurrentIndex(2); });
+
+    // 切换校准界面的视图
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_4), this);
+    connect(shortcut, &QShortcut::activated, [&]()
+            { calibrateViewState = !calibrateViewState;
+                switchCalibrateView(calibrateViewState); });
 
     // 开关仪器标准串口 Standard
     shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_S), this);
@@ -1507,6 +1522,42 @@ void MainWindow::shortcutInit()
     // 拟合数据 Fit
     shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_F), this);
     connect(shortcut, &QShortcut::activated, this, &MainWindow::on_btnFit_clicked);
+
+    // 采集序号 -1
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_O), this);
+    connect(
+        shortcut, &QShortcut::activated, [&]()
+        {
+        if (collectCounter == 0)
+            return;
+
+        collectIndex--;
+        collectIndex %= (collectCounter + 1);
+        if(collectIndex < 0)
+            collectIndex += collectCounter + 1;
+        returnCollectIndex = true;
+
+        setCollectBtnState(CollectBtnState_Start);
+        ui->btnCollectSwitch->setEnabled(true);
+        ui->btnCollectRestart->setEnabled(false);
+        ui->statusbar->showMessage("切换采集序号为：" + QString::number(collectIndex + 1)); });
+
+    // 采集序号 +1
+    shortcut = new QShortcut(QKeySequence(Qt::ALT + Qt::Key_P), this);
+    connect(
+        shortcut, &QShortcut::activated, [&]()
+        {
+        if (collectCounter == 0)
+            return;
+
+        collectIndex++;
+        collectIndex %= (collectCounter + 1);
+        returnCollectIndex = true;
+
+        setCollectBtnState(CollectBtnState_Start);
+        ui->btnCollectSwitch->setEnabled(true);
+        ui->btnCollectRestart->setEnabled(false);
+        ui->statusbar->showMessage("切换采集序号为：" + QString::number(collectIndex + 1)); });
 
     // 关闭语音提醒
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_M), this);
@@ -1642,8 +1693,8 @@ void MainWindow::updateStatusBarVerifyData()
     double range = yVerify - fitValue;
     QString str;
     if (range < 0)
-        str = QString("拟合：%1 实际：%2 差值：%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(-range / yVerify * 100, 0, 'f', 2);
+        str = QString("拟合：%1 实际：%2 差值：%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(abs(range / yVerify) * 100, 0, 'f', 2);
     else
-        str = QString("拟合：%1 实际：%2 差值：+%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(range / yVerify * 100, 0, 'f', 2);
+        str = QString("拟合：%1 实际：%2 差值：+%3 误差：%4%").arg(fitValue, 0, 'f', 6).arg(yVerify, 0, 'f', 6).arg(range, 0, 'f', 6).arg(abs(range / yVerify) * 100, 0, 'f', 2);
     lbVerifyData->setText(str);
 }

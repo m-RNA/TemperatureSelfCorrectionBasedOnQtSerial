@@ -134,6 +134,8 @@ private:
     bool waitingStdStable = false;
     int collectTimeStamp = 0;  // 采集时间戳（秒 * TIMESTAMP_FACTOR)
     static int collectCounter; // 已采集点数
+    static int collectIndex;   // 采集序号
+    static bool returnCollectIndex;   // 是否返回序号
     int samplePointSum = 8;    // 需要采集点数
     int pgsbSingleValue = 0;   // 单点进度条值
 
@@ -172,7 +174,7 @@ private:
     QRegExp rx;
     QString old_text = "";
     int soundIndex = 0;
-    bool verifyState = false;
+    bool calibrateViewState = false;
     WizardInfo wizardInfo;
 
     // 状态栏相关
