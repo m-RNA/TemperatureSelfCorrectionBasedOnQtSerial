@@ -53,7 +53,7 @@
       <enum>Qt::AutoText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="main.qrc">:/icon/appColor.ico</pixmap>
+      <pixmap resource="../main.qrc">:/icon/appColor.ico</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -121,7 +121,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>雏形2号 2023/3/18</string>
+        <string>v1.0 2023/5/3</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -159,7 +159,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="main.qrc"/>
+  <include location="../main.qrc"/>
  </resources>
  <connections>
   <connection>

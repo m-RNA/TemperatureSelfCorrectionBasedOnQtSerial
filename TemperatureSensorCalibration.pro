@@ -1,5 +1,7 @@
 QT       += core gui printsupport serialport opengl multimedia
 
+DEFINES += QT_NO_DEBUG_OUTPUT
+
 #如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=Xlsx，否则include(D:/QXlsx/QXlsx.pri)
 DEFINES += USE_LOCAL_COMPILED_LIB=1
 QT += xlsx
