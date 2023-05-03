@@ -908,6 +908,7 @@ void LeastSquare::leastSquareTaskStart(const int order, const vector<DECIMAL_TYP
     emit startLeastSquare(order, x, y);
 }
 
+// 采集点数改变
 void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
 {
     if (arg1 > samplePointSum)
@@ -945,6 +946,28 @@ void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
     samplePointSum = arg1;
     // 设置整体进度条最大值
     ui->pgsbSum->setMaximum(arg1);
+
+    // 设置采集按钮状态
+    if (collectCounter + 1 > samplePointSum)
+    {
+        collectCounter = samplePointSum - 1;
+        if (btnSwitchState == CollectBtnState_Next)
+            setCollectBtnState(CollectBtnState_End);
+        else if (btnSwitchState == CollectBtnState_Start)
+        {
+            setCollectBtnState(CollectBtnState_End);
+            ui->btnCollectRestart->setEnabled(true);
+        }
+    }
+    else if (collectCounter + 1 < samplePointSum)
+    {
+        if (btnSwitchState == CollectBtnState_End)
+        {
+            setCollectBtnState(CollectBtnState_Next);
+            ui->btnCollectSwitch->setEnabled(true);
+            ui->btnCollectRestart->setEnabled(true);
+        }
+    }
 }
 
 void LeastSquare::updateCollectDataXY(void)
