@@ -46,5 +46,7 @@
         <file>icon/appColor.ico</file>
         <file>picture/NUC_day.jpg</file>
         <file>picture/NUC_day_heart.jpg</file>
+        <file>picture/NUC_night.png</file>
+        <file>picture/NUC_night_library.png</file>
     </qresource>
 </RCC>

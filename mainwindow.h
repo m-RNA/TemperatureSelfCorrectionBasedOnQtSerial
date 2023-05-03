@@ -153,7 +153,7 @@ private:
     void setCollectBtnState(const CollectBtnState &state);
     void setCollectSettingLock(bool lock);
 
-    void pictureInit();
+    void pictureInit(int);
     void shortcutInit();
     void statusBarInit();
     void soundInit();

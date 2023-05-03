@@ -5,9 +5,13 @@
 #include "bll_save_data_to_xlsx.h"
 #include "bll_serialrecvanalyse.h"
 #include "wizard.h"
+#include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char *argv[])
 {
+    srand(time(NULL));
+
 /* 自适应高分辨率（DPI） */
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

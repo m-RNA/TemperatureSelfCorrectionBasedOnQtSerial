@@ -154,7 +154,6 @@ MainWindow::MainWindow(QWidget *parent)
     threadXlsx->start();
     emit sgXlsxSetAutoSave(ui->actionAutoSave->isChecked());
 
-    pictureInit();
     shortcutInit();
     statusBarInit();
 }
@@ -202,9 +201,13 @@ void MainWindow::loadUiSettings()
     else
         ui->tabMain->setCurrentIndex(1);
 
-    switch (setting.value("Theme", 0).toInt())
+    // 读取主题
+    int themeTemp = setting.value("Theme", 0).toInt();
+
+    switch (themeTemp)
     {
     case 0:
+        pictureInit(rand() % 2); // 白天照片
         // on_actionLightStyle_triggered();
         break;
     case 1:
@@ -371,9 +374,31 @@ int MainWindow::getCollectIndex(void)
     return collectCounter;
 }
 
-void MainWindow::pictureInit()
+void MainWindow::pictureInit(int index)
 {
-    QPixmap pix("://picture/NUC_day_heart.jpg");
+    QPixmap pix;
+    switch (index)
+    {
+    case 0:
+        pix.load("://picture/NUC_day.jpg");
+        break;
+
+    case 1:
+        pix.load("://picture/NUC_day_heart.jpg");
+        break;
+
+    case 2:
+        pix.load("://picture/NUC_night.png");
+        break;
+
+    case 3:
+        pix.load("://picture/NUC_night_library.png");
+        break;
+
+    default:
+        pix.load("://picture/NUC_day.jpg");
+    }
+
     // QPixmap temp(pix.size());
     // temp.fill(Qt::transparent);
 
@@ -1390,6 +1415,7 @@ void ColorStyle::on_actionGrayStyle_triggered()
     ui->actionDarkStyle->setChecked(false);
 
     setColorStyle(themeIndex);
+    pictureInit(rand() % 2); // 白天照片
 }
 
 void ColorStyle::on_actionBlueStyle_triggered()
@@ -1403,6 +1429,7 @@ void ColorStyle::on_actionBlueStyle_triggered()
     ui->actionDarkStyle->setChecked(false);
 
     setColorStyle(themeIndex);
+    pictureInit(rand() % 2); // 白天照片
 }
 
 void ColorStyle::on_actionDarkStyle_triggered()
@@ -1416,6 +1443,7 @@ void ColorStyle::on_actionDarkStyle_triggered()
     ui->actionGrayStyle->setChecked(false);
 
     setColorStyle(themeIndex);
+    pictureInit(2); // 黑夜照片
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -1616,7 +1644,6 @@ void MainWindow::statusBarInit()
     else
         strHello = "晚上好！";
 
-    srand(time.second());
     ui->statusbar->showMessage(strHello + strListNormal[rand() % strListNormal.size()], 30000);
 
     lbVerifyData = new QLabel(this);
