@@ -203,6 +203,7 @@ private:
     void updateCollectDataXY();
     void tryUpdateFitChart(bool man);
     void updateStatusBarVerifyData();
+    void switchCalibrateView(int index);
 
     void loadUiSettings();
     void saveUiSetting();

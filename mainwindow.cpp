@@ -910,13 +910,10 @@ void LeastSquare::leastSquareTaskStart(const int order, const vector<DECIMAL_TYP
 
 void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
 {
-    // 设置整体进度条最大值
-    ui->pgsbSum->setMaximum(arg1);
-
-    ui->twRange->setRowCount(arg1);   // 设置极差表格行数
-    ui->twAverage->setRowCount(arg1); // 设置平均值表格行数
     if (arg1 > samplePointSum)
     {
+        ui->twRange->setRowCount(arg1);   // 设置极差表格行数
+        ui->twAverage->setRowCount(arg1); // 设置平均值表格行数
         // 需要初始化表格Item
         for (int i = samplePointSum; i < arg1; i++)
         {
@@ -927,9 +924,27 @@ void LeastSquare::on_spbxSamplePointSum_valueChanged(int arg1)
             ui->twAverage->setItem(i, 1, itemX);
         }
     }
+    else if (arg1 < samplePointSum)
+    {
+        // 判断是否有数据
+        for (int i = samplePointSum - 1; i >= arg1; i--)
+        {
+            if (ui->twAverage->item(i, 0)->text() != "")
+            {
+                QMessageBox::warning(this, "警告", "请先删除多余平均数！");
+                ui->spbxSamplePointSum->setValue(samplePointSum);
+                switchCalibrateView(1);
+                return;
+            }
+        }
+        ui->twRange->setRowCount(arg1);   // 设置极差表格行数
+        ui->twAverage->setRowCount(arg1); // 设置平均值表格行数
+    }
 
     // 设置采集点数
     samplePointSum = arg1;
+    // 设置整体进度条最大值
+    ui->pgsbSum->setMaximum(arg1);
 }
 
 void LeastSquare::updateCollectDataXY(void)
@@ -1206,17 +1221,21 @@ void MainWindow::on_spbxStableTime_valueChanged(double arg1)
 void MainWindow::on_btnSwitchView_clicked()
 {
     verifyState = !verifyState;
-    ui->swFitAverage->setCurrentIndex(verifyState);
-    ui->swRange->setCurrentIndex(verifyState);
+    switchCalibrateView(verifyState);
+}
 
-    if (verifyState)
-    {
+void MainWindow::switchCalibrateView(int index)
+{
+    if (index > 1 || index < 0)
+        return;
+
+    ui->swFitAverage->setCurrentIndex(index);
+    ui->swRange->setCurrentIndex(index);
+
+    if (index == 1)
         ui->btnSwitchView->setText("绘图视图");
-    }
     else
-    {
         ui->btnSwitchView->setText("数据视图");
-    }
 }
 
 // 自动采集开关
