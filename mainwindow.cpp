@@ -1485,7 +1485,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
         }
     }
 
-    emit sgXlsxSaveReport(); // 保存数据
+    if (collectCounter > 0)
+        emit sgXlsxSaveReport(); // 保存数据
     event->accept();
 }
 
