@@ -42,13 +42,19 @@ RangeChart::RangeChart(QWidget *parent) : QCustomPlot(parent)
     yAxis2->setTickLength(3, 3);
     yAxis2->setSubTickLength(1, 1);
 
+    // 结尾带箭头
     yAxis->setUpperEnding(QCPLineEnding::esLineArrow);
     yAxis2->setUpperEnding(QCPLineEnding::esLineArrow);
 }
 
-void RangeChart::setData(const vector<double> &_Std, const vector<double> &_Dtm)
+RangeChart::~RangeChart()
 {
-    int size = _Std.size() < _Dtm.size() ? _Dtm.size() : _Std.size();
+    bar_Std->deleteLater();
+}
+
+void RangeChart::setData(const vector<double> &r_Std, const vector<double> &r_Dtm)
+{
+    int size = r_Std.size() < r_Dtm.size() ? r_Dtm.size() : r_Std.size();
     if (x.size() < size)
     {
         x.resize(size);
@@ -61,15 +67,15 @@ void RangeChart::setData(const vector<double> &_Std, const vector<double> &_Dtm)
     {
         x.resize(size);
     }
-    QVector<double> q_Std = QVector<double>(_Std.begin(), _Std.end());
-    QVector<double> q_Dtm = QVector<double>(_Dtm.begin(), _Dtm.end());
+    QVector<double> q_Std = QVector<double>(r_Std.begin(), r_Std.end());
+    QVector<double> q_Dtm = QVector<double>(r_Dtm.begin(), r_Dtm.end());
 
     bar_Std->setData(x, q_Std);
     graph(0)->setData(x, q_Dtm);
 
     // 设置坐标轴范围
-    yAxis->setRange(0, *max_element(_Std.begin(), _Std.end()) * 1.3);
-    yAxis2->setRange(0, *max_element(_Dtm.begin(), _Dtm.end()) * 1.3);
+    yAxis->setRange(0, *max_element(r_Std.begin(), r_Std.end()) * 1.3);
+    yAxis2->setRange(0, *max_element(r_Dtm.begin(), r_Dtm.end()) * 1.3);
     xAxis->setRange(0, size + 1);
 
     replot();

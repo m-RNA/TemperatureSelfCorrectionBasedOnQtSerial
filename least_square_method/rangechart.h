@@ -10,6 +10,8 @@ class RangeChart : public QCustomPlot
     Q_OBJECT
 public:
     RangeChart(QWidget *parent);
+    ~RangeChart();
+
     void setData(const vector<double> &std, const vector<double> &dtm);
 
     void setColorStyle(const int style);
