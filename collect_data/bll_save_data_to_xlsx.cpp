@@ -48,15 +48,15 @@ void Bll_SaveDataToXlsx::setAutoSave(const bool state)
 void Bll_SaveDataToXlsx::startPoint()
 {
     switchWorkSheet(0); // 选中第1张表
-    report->write(AVERAGE_R - 1, AVERAGE_C + AVERAGE_C_OFFSET * MainWindow::getCollectCounter(),
-                  MainWindow::getCollectCounter() + 1);
+    report->write(AVERAGE_R - 1, AVERAGE_C + AVERAGE_C_OFFSET * MainWindow::getCollectIndex(),
+                  MainWindow::getCollectIndex() + 1);
 
     switchWorkSheet(1); // 选中第2张表
-    report->write(RANGE_R - 1, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectCounter(),
-                  MainWindow::getCollectCounter() + 1);
+    report->write(RANGE_R - 1, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectIndex(),
+                  MainWindow::getCollectIndex() + 1);
 
-    int col = DATA_C + DATA_C_OFFSET * MainWindow::getCollectCounter();
-    report->write(DATA_R - 4, col, "第" + QString::number(MainWindow::getCollectCounter() + 1) + "次采集");
+    int col = DATA_C + DATA_C_OFFSET * MainWindow::getCollectIndex();
+    report->write(DATA_R - 4, col, "第" + QString::number(MainWindow::getCollectIndex() + 1) + "次采集");
     report->write(DATA_R - 3, col, QDateTime::currentDateTime().toString("hh:mm:ss (yyyy/MM/dd)"));
     report->write(DATA_R - 2, col, "标准值");
     report->write(DATA_R - 2, col + 1, "待定值");
@@ -90,14 +90,14 @@ void Bll_SaveDataToXlsx::saveData(const vector<double> &data, const int index)
     switchWorkSheet(1); // 选中第2张表
 
     size_t counter = 0;
-    int col = DATA_C + DATA_C_OFFSET * MainWindow::getCollectCounter() + index;
+    int col = DATA_C + DATA_C_OFFSET * MainWindow::getCollectIndex() + index;
     for (double d : data)
     {
         report->write(DATA_R + counter, col, d);
         ++counter;
     }
     // 在求极差的单元格写入公式
-    report->write(RANGE_R + index, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectCounter(),
+    report->write(RANGE_R + index, RANGE_C + RANGE_C_OFFSET * MainWindow::getCollectIndex(),
                   getRangeFormula(DATA_R, DATA_R + counter - 1, col));
     // 在求平均值的单元格写入公式
     report->write(DATA_R - 1, col, getAverageFormula(DATA_R, DATA_R + counter - 1, col));
@@ -108,16 +108,16 @@ void Bll_SaveDataToXlsx::saveData(const vector<double> &data, const int index)
 
     // 在散点图中填入范围
     // Chart *chart = report->insertChart(CHART_R + (CHART_H + CHART_MARGIN) * index,
-    //                                    CHART_C + (CHART_W + CHART_MARGIN) * MainWindow::getCollectCounter(),
+    //                                    CHART_C + (CHART_W + CHART_MARGIN) * MainWindow::getCollectIndex(),
     //                                    QSize(CHART_W, CHART_H));
     // chart->setChartType(Chart::CT_ScatterChart);
     // chart->setGridlinesEnable(true); // 启动主网格线
-    // chart->setChartTitle(QString::number(MainWindow::getCollectCounter() + 1));
+    // chart->setChartTitle(QString::number(MainWindow::getCollectIndex() + 1));
     // chart->addSeries(CellRange(CellReference(DATA_R, col), CellReference(DATA_R + counter - 1, col)));
 
     // 在第一张表里写入对应的平均值公式
     switchWorkSheet(0); // 选中第1张表
-    report->write(AVERAGE_R + index, AVERAGE_C + AVERAGE_C_OFFSET * MainWindow::getCollectCounter(),
+    report->write(AVERAGE_R + index, AVERAGE_C + AVERAGE_C_OFFSET * MainWindow::getCollectIndex(),
                   getAverageReferFormula(DATA_R, DATA_R + counter - 1, col));
 
     if (autoSaveState)

@@ -361,7 +361,7 @@ void MainWindow::setDeviceName_Dtm(const QString &name)
     ui->collectPanel_Dtm->setDeviceName(name);
 }
 
-int MainWindow::getCollectCounter(void)
+int MainWindow::getCollectIndex(void)
 {
     return collectCounter;
 }
@@ -726,25 +726,25 @@ void Bll_CollectBtn::timerCollectTimeOut()
     QString strRange_Dtm = QString::number(range_Dtm);
     rangeList_Std.resize(collectCounter + 1);
     rangeList_Dtm.resize(collectCounter + 1);
-    rangeList_Std[collectCounter] = range_Std;
-    rangeList_Dtm[collectCounter] = range_Dtm;
+    rangeList_Std[getCollectIndex()] = range_Std;
+    rangeList_Dtm[getCollectIndex()] = range_Dtm;
     // 更新极差图表
     ui->chartRange->setData(rangeList_Std, rangeList_Dtm);
     // 填入极差表格
-    if (ui->twRange->item(collectCounter, 0) == nullptr)
+    if (ui->twRange->item(getCollectIndex(), 0) == nullptr)
     {
-        ui->twRange->setItem(collectCounter, 0, new QTableWidgetItem(strRange_Std));
-        ui->twRange->item(collectCounter, 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->twRange->setItem(getCollectIndex(), 0, new QTableWidgetItem(strRange_Std));
+        ui->twRange->item(getCollectIndex(), 0)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     }
     else
-        ui->twRange->item(collectCounter, 0)->setText(strRange_Std);
-    if (ui->twRange->item(collectCounter, 1) == nullptr)
+        ui->twRange->item(getCollectIndex(), 0)->setText(strRange_Std);
+    if (ui->twRange->item(getCollectIndex(), 1) == nullptr)
     {
-        ui->twRange->setItem(collectCounter, 1, new QTableWidgetItem(strRange_Dtm));
-        ui->twRange->item(collectCounter, 1)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->twRange->setItem(getCollectIndex(), 1, new QTableWidgetItem(strRange_Dtm));
+        ui->twRange->item(getCollectIndex(), 1)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     }
     else
-        ui->twRange->item(collectCounter, 1)->setText(strRange_Dtm);
+        ui->twRange->item(getCollectIndex(), 1)->setText(strRange_Dtm);
 
     QString msg = "标准仪器极差：" + strRange_Std + "\n" +
                   "待测仪器极差：" + strRange_Dtm + "\n";
@@ -829,7 +829,7 @@ void Bll_CollectBtn::startCollect()
     ui->collectPanel_Std->collectStart();
     ui->collectPanel_Dtm->collectStart();
 
-    qDebug() << "开始采集" << collectCounter;
+    qInfo() << "开始采集" << collectCounter << getCollectIndex();
 }
 
 void Bll_CollectBtn::stopCollect()
@@ -851,7 +851,7 @@ void Bll_CollectBtn::finishCollect()
     collectDataQuit();
 
     listenDataWaveInit();
-    qDebug() << "本点采集结束";
+    qInfo() << "本点采集结束" << collectCounter << getCollectIndex();
 }
 
 void Bll_CollectBtn::resetCollect()
@@ -865,14 +865,14 @@ void Bll_CollectBtn::resetCollect()
     ui->collectPanel_Std->collectRestart();
     ui->collectPanel_Dtm->collectRestart();
 
-    qDebug() << "重采本点" << collectCounter;
+    qInfo() << "重采本点" << collectCounter;
 }
 
 void Bll_CollectBtn::nextCollect()
 {
     collectCounter++;
 
-    qDebug() << "采集下点" << collectCounter;
+    qInfo() << "采集下点" << collectCounter << getCollectIndex();
 }
 
 // 更新单点进度条显示时间
@@ -1128,14 +1128,28 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::setAverageTableItem_Std(const string &data)
 {
-    QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(data));
-    ui->twAverage->setItem(collectCounter, 0, data_Std);
+    if (ui->twAverage->item(getCollectIndex(), 0) == nullptr)
+    {
+        QTableWidgetItem *data_Std = new QTableWidgetItem(QString::fromStdString(data));
+        ui->twAverage->setItem(getCollectIndex(), 0, data_Std);
+    }
+    else
+    {
+        ui->twAverage->item(getCollectIndex(), 0)->setText(QString::fromStdString(data));
+    }
 }
 
 void MainWindow::setAverageTableItem_Dtm(const string &data)
 {
-    QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(data));
-    ui->twAverage->setItem(collectCounter, 1, data_Dtm);
+    if (ui->twAverage->item(getCollectIndex(), 1) == nullptr)
+    {
+        QTableWidgetItem *data_Dtm = new QTableWidgetItem(QString::fromStdString(data));
+        ui->twAverage->setItem(getCollectIndex(), 1, data_Dtm);
+    }
+    else
+    {
+        ui->twAverage->item(getCollectIndex(), 1)->setText(QString::fromStdString(data));
+    }
 }
 
 void MainWindow::on_cbSound_currentIndexChanged(int index)
@@ -1425,7 +1439,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         isCollecting = false;
         finishCollect();
     }
-    else if ((collectCounter > 0) && (collectCounter + 1) < samplePointSum) // 检查校准任务是否开始或正在进行
+    else if ((ui->pgsbSum->value() > 0) && (collectCounter + 1) < samplePointSum) // 检查校准任务是否开始或正在进行
     {
         msgBox.setText("校准任务未完成\n是否退出程序？");
         if (msgBox.exec() == QMessageBox::No)

@@ -38,7 +38,7 @@ public:
     void setDeviceName_Std(const QString &name);
     void setDeviceName_Dtm(const QString &name);
 
-    static int getCollectCounter(void);
+    static int getCollectIndex(void);
 
 public slots:
     void showMessage(const QString &msg, int timeout);
