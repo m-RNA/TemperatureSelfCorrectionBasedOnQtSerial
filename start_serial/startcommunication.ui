@@ -880,6 +880,9 @@
            <layout class="QGridLayout" name="gridLayout_7">
             <item row="4" column="2">
              <widget class="QCheckBox" name="checkBox_25">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -929,6 +932,9 @@
             </item>
             <item row="0" column="2">
              <widget class="QCheckBox" name="checkBox_26">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -955,6 +961,9 @@
             </item>
             <item row="3" column="3">
              <widget class="QPushButton" name="pushButton_9">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>发送</string>
               </property>
@@ -962,6 +971,9 @@
             </item>
             <item row="4" column="3">
              <widget class="QPushButton" name="pushButton_10">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>发送</string>
               </property>
@@ -979,6 +991,9 @@
             </item>
             <item row="3" column="2">
              <widget class="QCheckBox" name="checkBox_24">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1005,6 +1020,9 @@
             </item>
             <item row="1" column="2">
              <widget class="QCheckBox" name="checkBox_11">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1038,6 +1056,9 @@
             </item>
             <item row="2" column="3">
              <widget class="QPushButton" name="pushButton_8">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>发送</string>
               </property>
@@ -1045,6 +1066,9 @@
             </item>
             <item row="0" column="3">
              <widget class="QPushButton" name="pushButton_3">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1071,6 +1095,9 @@
             </item>
             <item row="2" column="2">
              <widget class="QCheckBox" name="checkBox_23">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1084,6 +1111,9 @@
             </item>
             <item row="1" column="3">
              <widget class="QPushButton" name="pushButton_4">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>发送</string>
               </property>
