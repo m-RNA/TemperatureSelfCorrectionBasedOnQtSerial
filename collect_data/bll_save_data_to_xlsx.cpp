@@ -143,8 +143,8 @@ void Bll_SaveDataToXlsx::saveFactor(const vector<DECIMAL_TYPE> &factor)
     for (DECIMAL_TYPE f : factor)
     {
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%.8LE", f);
-        report->write(FACTOR_R, FACTOR_C + counter, globalStringBuffer); // 系数
-        report->write(FACTOR_R - 1, FACTOR_C + counter, order);          // 次数
+        report->write(FACTOR_R, FACTOR_C + counter, globalStringBuffer);         // 系数
+        report->write(FACTOR_R - 1, FACTOR_C + counter, QString::number(order)); // 次数
         counter += FACTOR_C_OFFSET;
         order--;
     }
