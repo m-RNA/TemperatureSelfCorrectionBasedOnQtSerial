@@ -1,28 +1,30 @@
 QT       += core gui printsupport serialport opengl multimedia
 
-DEFINES += QT_NO_DEBUG_OUTPUT
-
-#如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=Xlsx，否则include(D:/QXlsx/QXlsx.pri)
-DEFINES += USE_LOCAL_COMPILED_LIB=1
-QT += xlsx
-# INCLUDEPATH +=D:/QXlsx
-# include(D:/QXlsx/QXlsx.pri)
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
-
-#关闭编译器对未使用的函数参数和变量的警告
-QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-unused-variable
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
+DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QCUSTOMPLOT_USE_OPENGL
-LIBS+=-lopengl32 -lglu32
+
+# OpenGl平台相关
+win32 {
+    LIBS+=-lopengl32 -lglu32
+}
+unix {
+    LIBS = -lGL -lGLU -lglut
+}
+
+#如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=Xlsx，否则include(../QXlsx/QXlsx.pri)
+DEFINES += USE_LOCAL_COMPILED_LIB=1
+QT += xlsx
+# INCLUDEPATH +=../QXlsx
+# include(../QXlsx/QXlsx.pri)
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -39,7 +41,7 @@ INCLUDEPATH +=  \
     least_square_method \
     collect_data \
     start_serial \
-    D:/eigen-3.4.0
+    ../eigen-3.4.0
 
 SOURCES += \
     about/about.cpp \

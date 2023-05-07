@@ -2,22 +2,36 @@
 
 ## 开发环境与依赖
 基于Qt 5.14.2开发  
-依赖的库有 Eigen-3.4.0、QXlsx-1.4.5 (1.4.6对图表支持应该有BUG)  
-其中 QXlsx 又依赖 Perl ,安装 Strawberry Perl 或者 ActivePerl 可以解决 
+依赖库：
+- OpenGl（可选）  
+- Eigen-3.4.0
+- QXlsx-1.4.5（1.4.6对图表支持应该有BUG）  
 
-打包命令： windeployqt   
-可使用 Enigma Virtual Box 进一步封包
+其中 QXlsx 又依赖 Perl（Linux自带，Windows可以安装 Strawberry Perl 或者 ActivePerl 解决） 
+
+打包命令：
+- Windows：windeployqt（Qt自带）  
+可使用 Enigma Virtual Box 进一步封包  
+- Linux：linuxdeployqt（需要安装）  
 
 下载链接：  
-Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page  
-QXlsx：https://github.com/QtExcel/QXlsx/releases/  
-Strawberry Perl：https://strawberryperl.com  
-Enigma Virtual Box：https://enigmaprotector.com/en/aboutvb.html
+- Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page
+- QXlsx：https://github.com/QtExcel/QXlsx/releases/
+- Strawberry Perl (Win)：https://strawberryperl.com
+- Enigma Virtual Box (Win)：https://enigmaprotector.com/en/aboutvb.html
+- linuxdeployqt (Linux)：https://github.com/probonopd/linuxdeployqt/releases
 
 QXlsx安装教程：  
-https://www.cnblogs.com/ybqjymy/p/17244317.html  
-https://www.codenong.com/cs106908387/    
-https://www.bilibili.com/video/BV1Er4y1C78L/
+- https://www.cnblogs.com/ybqjymy/p/17244317.html
+- https://www.codenong.com/cs106908387/
+- https://www.bilibili.com/video/BV1Er4y1C78L/
+
+OpenGl安装教程：  
+- Linux：https://blog.csdn.net/sinat_33896833/article/details/107362959
+- Windows：https://blog.csdn.net/a6627651/article/details/10303869
+
+linuxdeployqt教程：
+- https://blog.csdn.net/qq_43627907/article/details/122021584
 
 ## 代码备忘
 
@@ -36,8 +50,8 @@ https://www.bilibili.com/video/BV1Er4y1C78L/
 - https://blog.csdn.net/qq_44365088/article/details/119087454
 
 1、创建
-TestObject* object = new TestObject;  
 ```Cpp
+TestObject* object = new TestObject;
 QThread* thread = new QThread;
 object->moveToThread(thread );
 connect(thread,&QThread::finished,object,&TestObject::deleteLater);	// 退出后释放TestObject对象资源
