@@ -83,6 +83,7 @@ void RangeChart::setData(const vector<double> &r_Std, const vector<double> &r_Dt
 
 void RangeChart::setAxisColor(const QColor &color, const QColor &selectedColor = Qt::blue)
 {
+    Q_UNUSED(selectedColor);
     xAxis->setBasePen(QPen(color));
     yAxis->setBasePen(QPen(color));
     xAxis->setTickPen(QPen(color));

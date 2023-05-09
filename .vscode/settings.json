@@ -90,7 +90,8 @@
         "mutex": "cpp",
         "stdexcept": "cpp",
         "cinttypes": "cpp",
-        "qline": "cpp"
+        "qline": "cpp",
+        "openglsupport": "cpp"
     },
     "cSpell.words": [
         "ckbx",
