@@ -220,8 +220,12 @@ void FitChart::selectionChanged()
 // 鼠标点击事件（函数重载）
 void FitChart::mousePressEvent(QMouseEvent *ev)
 {
-	mousePressFlag = true;				 // 鼠标按下标志
-	this->setCursor(Qt::OpenHandCursor); // 鼠标变为手型
+	// 判断是否为鼠标左键按下
+	if (ev->button() == Qt::LeftButton)
+	{
+		mousePressFlag = true;				 // 鼠标按下标志
+		this->setCursor(Qt::OpenHandCursor); // 鼠标变为手型
+	}
 
 	// 如果选择了轴，则只允许拖动该轴的方向
 	// 如果未选择轴，则可以拖动两个方向
@@ -237,9 +241,13 @@ void FitChart::mousePressEvent(QMouseEvent *ev)
 // 鼠标释放事件（函数重载）
 void FitChart::mouseReleaseEvent(QMouseEvent *ev)
 {
-	mousePressFlag = false;			  // 鼠标按下标志
-	mouseReleaseFlag = true;		  // 鼠标释放标志
-	this->setCursor(Qt::ArrowCursor); // 鼠标变为箭头型
+	// 判断是否为鼠标左键释放
+	if (ev->button() == Qt::LeftButton)
+	{
+		mousePressFlag = false;			  // 鼠标按下标志
+		mouseReleaseFlag = true;		  // 鼠标释放标志
+		this->setCursor(Qt::ArrowCursor); // 鼠标变为箭头型
+	}
 
 	QCustomPlot::mouseReleaseEvent(ev);
 }
