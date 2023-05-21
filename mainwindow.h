@@ -11,6 +11,7 @@
 #include "bll_data_wave.h"
 #include "bll_data_collect.h"
 #include "wizard.h"
+#include "othersetting.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -68,8 +69,6 @@ private slots:
 
     void on_spbxSampleTime_valueChanged(double arg1);
 
-    void on_cbSound_currentIndexChanged(int index);
-
     void on_btnSaveReport_clicked();
 
     void on_actionSaveReport_triggered();
@@ -102,6 +101,8 @@ private slots:
 
     void on_actionQuit_triggered();
 
+    void on_actionSetting_triggered();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxSaveReport();
@@ -119,6 +120,8 @@ signals:
     void sgCollectDataFinish_Std();
     void sgCollectDataFinish_Dtm();
 
+    void sgSetAutoCollectRange(const double range);
+
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
 
@@ -132,12 +135,12 @@ private:
     CollectBtnState btnSwitchState = CollectBtnState_Start;
     bool isCollecting = false;
     bool waitingStdStable = false;
-    int collectTimeStamp = 0;  // 采集时间戳（秒 * TIMESTAMP_FACTOR)
-    static int collectCounter; // 已采集点数
-    static int collectIndex;   // 采集序号
-    static bool returnCollectIndex;   // 是否返回序号
-    int samplePointSum = 8;    // 需要采集点数
-    int pgsbSingleValue = 0;   // 单点进度条值
+    int collectTimeStamp = 0;       // 采集时间戳（秒 * TIMESTAMP_FACTOR)
+    static int collectCounter;      // 已采集点数
+    static int collectIndex;        // 采集序号
+    static bool returnCollectIndex; // 是否返回序号
+    int samplePointSum = 8;         // 需要采集点数
+    int pgsbSingleValue = 0;        // 单点进度条值
 
     void pgsbSingleInit();
     void pgsbSingleReset();
@@ -176,7 +179,7 @@ private:
     int soundIndex = 0;
     bool calibrateViewState = false;
     WizardInfo wizardInfo;
-
+    OtherSettingData otherSettingData;
     // 状态栏相关
     QLabel *lbRunTime = nullptr;
     QLabel *lbLastRange = nullptr;

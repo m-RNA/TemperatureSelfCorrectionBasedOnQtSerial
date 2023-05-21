@@ -259,12 +259,6 @@ void MainWindow::loadUiSettings()
     ui->spbxWaveNum->setValue(setting.value("WaveNum", 10).toInt());
     ui->spbxWaveRange->setValue(setting.value("WaveRange", 0.01).toDouble());
     ui->spbxStableTime->setValue(setting.value("StableTime", 0.05).toDouble());
-
-    setting.endGroup();
-
-    // 读取声音设置
-    setting.beginGroup("Sound");
-    ui->cbSound->setCurrentIndex(setting.value("Sound", 1).toInt());
     setting.endGroup();
 
     // 读取最小二乘法设置
@@ -287,6 +281,14 @@ void MainWindow::loadUiSettings()
     wizardInfo.baseInfo.operatorName = setting.value("Operator", "老陈皮").toString();
     wizardInfo.baseInfo.id_Std = setting.value("ID_Std", "道万").toString();
     wizardInfo.baseInfo.id_Dtm = setting.value("ID_Dtm", "待定").toString();
+    setting.endGroup();
+
+    // 读取其他设置
+    setting.beginGroup("Other");
+    otherSettingData.soundIndex = setting.value("Sound", 1).toInt();
+    otherSettingData.autoRange = setting.value("AutoRange", 0.5).toDouble();
+    otherSettingData.yellowRange = setting.value("YellowRange", 0.2).toDouble();
+    otherSettingData.redRange = setting.value("RedRange", 0.5).toDouble();
     setting.endGroup();
 }
 
@@ -329,11 +331,6 @@ void MainWindow::saveUiSetting()
     setting.setValue("StableTime", ui->spbxStableTime->value());
     setting.endGroup();
 
-    // 保存声音设置
-    setting.beginGroup("Sound");
-    setting.setValue("Sound", ui->cbSound->currentIndex());
-    setting.endGroup();
-
     // 保存最小二乘法设置
     setting.beginGroup("LeastSquareMethod");
     setting.setValue("Order", ui->spbxOrder->value());
@@ -352,6 +349,14 @@ void MainWindow::saveUiSetting()
     setting.setValue("Operator", wizardInfo.baseInfo.operatorName);
     setting.setValue("ID_Std", wizardInfo.baseInfo.id_Std);
     setting.setValue("ID_Dtm", wizardInfo.baseInfo.id_Dtm);
+    setting.endGroup();
+
+    // 保存其他设置
+    setting.beginGroup("Other");
+    setting.setValue("Sound", otherSettingData.soundIndex);
+    setting.setValue("AutoRange", otherSettingData.autoRange);
+    setting.setValue("YellowRange", otherSettingData.yellowRange);
+    setting.setValue("RedRange", otherSettingData.redRange);
     setting.endGroup();
 }
 
@@ -438,15 +443,17 @@ void MainWindow::listenDataWaveInit()
     taskDataWave->moveToThread(threadDataWave);
     connect(threadDataWave, &QThread::finished, taskDataWave, &QObject::deleteLater);
     connect(threadDataWave, &QThread::finished, threadDataWave, &QThread::deleteLater);
-    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);
-    connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState);
-    connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);
-    connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);
-    connect(this, &MainWindow::sgSetDataWaveStableTime, taskDataWave, &Bll_DataWave::setStableTime);
-
+    connect(ui->start_Std, &StartCommunication::sgStartAnalyseFinish, taskDataWave, &Bll_DataWave::addData);   // 监测标准仪器数据
+    connect(taskDataWave, &Bll_DataWave::sgStableState, ui->collectPanel_Std, &CollectPanel ::setStableState); // 同步稳定状态
+    connect(this, &MainWindow::sgSetDataWaveRange, taskDataWave, &Bll_DataWave::setRange);                     // 设置波动阈值
+    connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);                    // 设置最少检查点数
+    connect(this, &MainWindow::sgSetDataWaveStableTime, taskDataWave, &Bll_DataWave::setStableTime);           // 设置最短稳定时间
+    connect(this, &MainWindow::sgSetAutoCollectRange, taskDataWave, &Bll_DataWave::setAutoCollectRange);       // 设置拓展自动采集范围
     // 标准仪器稳定后，开始采集数据
     connect(taskDataWave, &Bll_DataWave::sgTurnToStable, this, &MainWindow::goOnCollect);
+
     threadDataWave->start();
+    emit sgSetAutoCollectRange(otherSettingData.autoRange); // 更新拓展自动采集范围
 
     qDebug() << "threadDataWave start";
 
@@ -783,10 +790,10 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         setCollectBtnState(CollectBtnState_Next);
 
-        if (ui->cbSound->currentIndex() > 0) // 开启语音提醒
+        if (otherSettingData.soundIndex > 0) // 开启语音提醒
         {
             soundInit();
-            emit sgSoundPlay1((SoundIndex)ui->cbSound->currentIndex());
+            emit sgSoundPlay1((SoundIndex)otherSettingData.soundIndex);
         }
 
         msg += "请准备下一点采集";
@@ -803,10 +810,10 @@ void Bll_CollectBtn::timerCollectTimeOut()
     {
         setCollectBtnState(CollectBtnState_End);
 
-        if (ui->cbSound->currentIndex() > 0) // 开启语音提醒
+        if (otherSettingData.soundIndex > 0) // 开启语音提醒
         {
             soundInit();
-            emit sgSoundPlay2((SoundIndex)ui->cbSound->currentIndex());
+            emit sgSoundPlay2((SoundIndex)otherSettingData.soundIndex);
         }
         on_btnSaveReport_clicked(); // 保存报告
 
@@ -821,7 +828,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
     }
 
     // 关闭声音
-    if (ui->cbSound->currentIndex() > 0)
+    if (otherSettingData.soundIndex > 0)
     {
         emit sgSoundStop();
         threadSound->quit();
@@ -1051,7 +1058,8 @@ void LeastSquare::tryUpdateFitChart(bool man)
     // 启动子线程
     leastSquareTaskStart(order, collectDataX, collectDataY);
 
-    ui->statusbar->showMessage("差值指示灯：<+-0.05 绿色 <+-0.2 黄色", 10000);
+    QString msg = QString("差值指示灯：<±%1 绿色,<±%2 黄色.其他 红色（可在设置修改）").arg(otherSettingData.yellowRange).arg(otherSettingData.redRange);
+    ui->statusbar->showMessage(msg, 10000);
 }
 
 void LeastSquare::on_spbxOrder_valueChanged(int arg1)
@@ -1183,20 +1191,6 @@ void MainWindow::setAverageTableItem_Dtm(const string &data)
     else
     {
         ui->twAverage->item(getCollectIndex(), 1)->setText(QString::fromStdString(data));
-    }
-}
-
-void MainWindow::on_cbSound_currentIndexChanged(int index)
-{
-    if (index <= 0)
-    {
-        if (threadSound)
-        {
-            emit sgSoundStop();
-            threadSound->quit();
-            threadSound->wait();
-            threadSound = nullptr;
-        }
     }
 }
 
@@ -1594,10 +1588,7 @@ void MainWindow::shortcutInit()
     shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_M), this);
     connect(shortcut, &QShortcut::activated, [&]()
             {
-                if (ui->cbSound->currentIndex() != 0)
-                {
-                    ui->cbSound->setCurrentIndex(0);
-                }
+                otherSettingData.soundIndex = 0;
                 Message::information("已关闭语音提醒"); });
 }
 
@@ -1737,10 +1728,22 @@ void MainWindow::updateStatusBarVerifyData()
 
 void MainWindow::setLEDErrorRange(double range)
 {
-    if (range < 0.05 && range > -0.05)
+    if (range < otherSettingData.yellowRange && range > -otherSettingData.yellowRange)
         ledErrorRange->setStyleSheet("border-radius:6px;background-color: rgb(46, 204, 113);"); // 绿色
-    else if (range < 0.2 && range > -0.2)
+    else if (range < otherSettingData.redRange && range > -otherSettingData.redRange)
         ledErrorRange->setStyleSheet("border-radius:6px;background-color: rgb(255, 176, 5);"); // 黄色
     else
         ledErrorRange->setStyleSheet("border-radius:6px;background-color: red;"); // 红色
+}
+
+void MainWindow::on_actionSetting_triggered()
+{
+    OtherSetting otherSetting(this);
+    otherSetting.setOtherSetting(otherSettingData);
+
+    if (otherSetting.exec() == QDialog::Accepted)
+    {
+        otherSetting.getOtherSetting(otherSettingData);
+        sgSetAutoCollectRange(otherSettingData.autoRange);
+    }
 }

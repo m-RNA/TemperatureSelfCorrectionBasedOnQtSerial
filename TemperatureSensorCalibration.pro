@@ -9,7 +9,7 @@ CONFIG += c++11
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += QT_NO_DEBUG_OUTPUT
+# DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QCUSTOMPLOT_USE_OPENGL
 
 # OpenGl平台相关
@@ -56,6 +56,7 @@ SOURCES += \
     least_square_method/rangechart.cpp \
     main.cpp \
     message/message.cpp \
+    othersetting.cpp \
     sound/bll_sound.cpp \
     start_serial/bll_codeconverter.cpp \
     start_serial/bll_serial.cpp \
@@ -81,6 +82,7 @@ HEADERS += \
     least_square_method/rangechart.h \
     mainwindow.h \
     message/message.h \
+    othersetting.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
     sound/bll_sound.h \
@@ -95,6 +97,7 @@ FORMS += \
     about/about.ui \
     collect_data/collectpanel.ui \
     mainwindow.ui \
+    othersetting.ui \
     start_serial/startcommunication.ui \
     wizard/serialsetting.ui \
     wizard/wizard.ui

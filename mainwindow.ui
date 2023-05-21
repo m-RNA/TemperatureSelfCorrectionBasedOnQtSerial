@@ -703,22 +703,6 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
               <item row="3" column="1" colspan="2">
-               <widget class="QProgressBar" name="pgsbSum">
-                <property name="maximum">
-                 <number>8</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="format">
-                 <string>整体进度：%v/%m</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1" colspan="2">
                <widget class="QProgressBar" name="pgsbSingle">
                 <property name="minimum">
                  <number>0</number>
@@ -740,27 +724,7 @@
                 </property>
                </widget>
               </item>
-              <item row="10" column="1" colspan="2">
-               <widget class="QPushButton" name="btnCollectRestart">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>重采该点</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/icon/collectrestart.ico</normaloff>:/icon/collectrestart.ico</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1" colspan="2">
+              <item row="8" column="1" colspan="2">
                <widget class="QPushButton" name="btnCollectSwitch">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -783,63 +747,40 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="label_21">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
+              <item row="9" column="1" colspan="2">
+               <widget class="QPushButton" name="btnCollectRestart">
+                <property name="enabled">
+                 <bool>false</bool>
                 </property>
-                <property name="text">
-                 <string>语音提醒</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QComboBox" name="cbSound">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="currentIndex">
-                 <number>2</number>
+                <property name="text">
+                 <string>重采该点</string>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>关</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>粤语</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>普通话</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>台湾话</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>东北话</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>陕西话</string>
-                 </property>
-                </item>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/icon/collectrestart.ico</normaloff>:/icon/collectrestart.ico</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" colspan="2">
+               <widget class="QProgressBar" name="pgsbSum">
+                <property name="maximum">
+                 <number>8</number>
+                </property>
+                <property name="value">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="format">
+                 <string>整体进度：%v/%m</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -1439,7 +1380,7 @@
     </property>
     <addaction name="actionLock"/>
     <addaction name="separator"/>
-    <addaction name="action"/>
+    <addaction name="actionSetting"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
@@ -1526,12 +1467,15 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="action">
+  <action name="actionSetting">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>设置</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionLock">
