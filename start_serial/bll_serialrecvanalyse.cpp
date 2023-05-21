@@ -55,9 +55,7 @@ void Bll_SerialRecvAnalyse::setAnalyseMode(int type)
 bool Bll_SerialRecvAnalyse::canIntoNum(const QString data)
 {
     QRegExp reg("^[-+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)(\\s|\r?\n|\r)*$");
-    if (reg.exactMatch(data))
-        return true;
-    return false;
+    return reg.exactMatch(data);
 }
 
 // 数据格式
@@ -69,10 +67,12 @@ void Bll_SerialRecvAnalyse::analyseNum()
     while (1)
     {
         // 读取串口，附在 buffer 之后
-        int endIndex = buffer.indexOf("\n");
+        int endIndex = buffer.indexOf("\r\n");
+        if (endIndex <= 0)
+            endIndex = buffer.indexOf("\n");
 
-        // 没找到一帧数据
-        if (endIndex < 0)
+        // 没有完整的一帧数据，直接返回
+        if (endIndex <= 0)
         {
             // 清空缓冲区
             buffer.clear();
@@ -115,10 +115,10 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
         endIndex = buffer.indexOf(" ;\r\n", index);
 
         // 没有完整的一帧数据，直接返回
-        if (endIndex == -1)
+        if (endIndex <= 3)
         {
-            // 丢弃帧头前的数据
-            buffer.remove(0, index);
+            // 丢弃帧尾前的数据
+            buffer.remove(0, endIndex + 3);
             return;
         }
 

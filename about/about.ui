@@ -112,7 +112,7 @@
    <item row="4" column="2" colspan="2">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>m-RNA@qq.com</string>
+      <string>Gitee.com/ChenJJian</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

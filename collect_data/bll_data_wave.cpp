@@ -35,7 +35,7 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
     timerWatchDog->start();
     data.push_back(cell);
 
-    // 第一个数据
+    // 第一个数据,最值赋值为该成员
     if (data.length() == 1)
     {
     FIRST:
@@ -44,10 +44,13 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         return;
     }
 
+    // 当队首的时间戳超出检查时间窗口时
     while (data.begin()->timestamp + stableTime < data.rbegin()->timestamp)
     {
+        // 如果队首刚刚好是最值，则更新最值
         if (data.begin()->timestamp >= min.timestamp)
         {
+            // 忽略队首，更新最值
             min = data.at(1);
             for (int i = 2; i < data.length(); ++i)
             {
@@ -57,6 +60,7 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
         }
         else if (data.begin()->timestamp >= max.timestamp)
         {
+            // 忽略队首，更新最值
             max = data.at(1);
             for (int i = 2; i < data.length(); ++i)
             {
@@ -64,18 +68,19 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
                     max = data.at(i);
             }
         }
-        data.pop_front();
+        data.pop_front(); // 弹出队首
     }
-
-    if (data.length() == 1)
-        goto FIRST;
 
     if (data.length() < checkNum)
     {
+        if (data.length() == 1)
+            goto FIRST;
+
         stableState = STABLE_STATE_INIT;
         goto CHECK_STABLE;
     }
 
+    // 最大值 > 队尾成员数据 > 最小值
     if (cell.value > max.value)
     {
         max = cell;
