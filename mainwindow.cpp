@@ -470,6 +470,7 @@ void MainWindow::listenDataWaveQuit()
         threadDataWave->quit();
         threadDataWave->wait();
         threadDataWave = nullptr;
+        taskDataWave = nullptr;
         qDebug() << "threadDataWave quit";
     }
 
@@ -509,12 +510,17 @@ void MainWindow::collectDataQuit()
         threadDataCollect->quit();
         threadDataCollect->wait();
         threadDataCollect = nullptr;
+        taskDataCollect_Std = nullptr;
+        taskDataCollect_Dtm = nullptr;
         qDebug() << "threadDataCollect quit";
     }
 }
 
 void MainWindow::autoCollectTimerInit()
 {
+    if (taskDataWave == nullptr)
+        return;
+
     autoCollectTimerQuit();
     timerAutoCollectCheck = new QTimer;
     timerAutoCollectCheck->setInterval(1500);
@@ -942,7 +948,8 @@ void LeastSquare::leastSquareTaskStart(const int order, const vector<DECIMAL_TYP
                 ui->chartFit->updateFitPlot(x, y);
                 threadLeastSquare->quit();
                 threadLeastSquare->wait();
-                threadLeastSquare = nullptr; });
+                threadLeastSquare = nullptr; 
+                taskLeastSquare = nullptr;});
 
     threadLeastSquare->start();
     emit startLeastSquare(order, x, y);
@@ -1306,6 +1313,12 @@ void MainWindow::switchCalibrateView(int index)
 // 自动采集开关
 void MainWindow::on_cbAutoCollect_activated(int index)
 {
+    if (ui->start_Std->state() == false)
+    {
+        ui->statusbar->showMessage("请先打开标准仪器串口", 3000);
+        return;
+    }
+
     if (index == 1)
         autoCollectTimerInit();
     else
