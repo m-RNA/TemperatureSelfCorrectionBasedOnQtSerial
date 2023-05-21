@@ -8,7 +8,7 @@ OtherSetting::OtherSetting(QWidget *parent) : QDialog(parent),
     // 去掉问号，只保留关闭
     this->setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     // 设置默认窗口大小
-    this->setFixedSize(190, 225);
+    this->resize(352, 117);
 }
 
 OtherSetting::~OtherSetting()
