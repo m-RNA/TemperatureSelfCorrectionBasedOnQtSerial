@@ -30,10 +30,11 @@ public slots:
     void setRange(const double r);
     void setCheckNum(const int num);
     void setStableTime(const int ms);
+    void setAutoCollectRange(const double &range);
+    void setAnalyseTimeout(const int &ms);
 
     void setAutoCollectStart();
     static void setAutoCollectDataList(const vector<double> &list);
-    void setAutoCollectRange(const double &range);
 
 signals:
     void sgTurnToStable();

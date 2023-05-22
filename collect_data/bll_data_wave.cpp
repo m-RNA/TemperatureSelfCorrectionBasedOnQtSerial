@@ -35,36 +35,27 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
     timerWatchDog->start();
     data.push_back(cell);
 
-    // 第一个数据,最值赋值为该成员
-    if (data.length() == 1)
-    {
-    FIRST:
-        max = cell;
-        min = cell;
-        return;
-    }
-
     // 当队首的时间戳超出检查时间窗口时
     while (data.begin()->timestamp + stableTime < data.rbegin()->timestamp)
     {
         // 如果队首刚刚好是最值，则更新最值
-        if (data.begin()->timestamp >= min.timestamp)
+        if (data.begin()->timestamp == min.timestamp)
         {
             // 忽略队首，更新最值
             min = data.at(1);
             for (int i = 2; i < data.length(); ++i)
             {
-                if (data.at(i).value < min.value)
+                if (data.at(i).value <= min.value)
                     min = data.at(i);
             }
         }
-        else if (data.begin()->timestamp >= max.timestamp)
+        else if (data.begin()->timestamp == max.timestamp)
         {
             // 忽略队首，更新最值
             max = data.at(1);
             for (int i = 2; i < data.length(); ++i)
             {
-                if (data.at(i).value > max.value)
+                if (data.at(i).value >= max.value)
                     max = data.at(i);
             }
         }
@@ -73,37 +64,42 @@ void Bll_DataWave::addData(const SerialAnalyseCell &cell)
 
     if (data.length() < checkNum)
     {
+        // 第一个数据,最值赋值为该成员
         if (data.length() == 1)
-            goto FIRST;
-
+        {
+            max = cell;
+            min = cell;
+        }
         stableState = STABLE_STATE_INIT;
+        goto CHECK_EMIT;
+    }
+
+    // 检查最值
+    if (cell.value >= max.value)
+    {
+        max = cell;
+        goto CHECK_STABLE;
+    }
+    else if (cell.value <= min.value)
+    {
+        min = cell;
         goto CHECK_STABLE;
     }
 
     // 最大值 > 队尾成员数据 > 最小值
-    if (cell.value > max.value)
-    {
-        max = cell;
-        goto CHECK_MIN_MAX;
-    }
-    else if (cell.value < min.value)
-    {
-        min = cell;
-        goto CHECK_MIN_MAX;
-    }
-
     if (autoCollectState && (stableState == STABLE_STATE_STABLE))
         checkAutoCollect(cell.value);
 
+    // 这种情况下，稳定状态不会改变，直接返回
     return;
 
-CHECK_MIN_MAX:
+CHECK_STABLE:
     if (max.value - min.value > range)
         stableState = STABLE_STATE_UNSTABLE;
     else
         stableState = STABLE_STATE_STABLE;
 
-CHECK_STABLE:
+CHECK_EMIT:
     autoEmitStableState();
 }
 
@@ -163,4 +159,9 @@ void Bll_DataWave::setAutoCollectDataList(const vector<double> &list)
 void Bll_DataWave::setAutoCollectRange(const double &range)
 {
     autoCollectRange = range;
+}
+
+void Bll_DataWave::setAnalyseTimeout(const int &ms)
+{
+    timerWatchDog->setInterval(ms);
 }

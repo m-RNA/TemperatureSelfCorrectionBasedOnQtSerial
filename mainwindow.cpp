@@ -286,6 +286,7 @@ void MainWindow::loadUiSettings()
     // 读取其他设置
     setting.beginGroup("Other");
     otherSettingData.soundIndex = setting.value("Sound", 1).toInt();
+    otherSettingData.analyseTimeout = setting.value("AnalyseTimeout", 5000).toInt();
     otherSettingData.autoRange = setting.value("AutoRange", 0.5).toDouble();
     otherSettingData.yellowRange = setting.value("YellowRange", 0.2).toDouble();
     otherSettingData.redRange = setting.value("RedRange", 0.5).toDouble();
@@ -354,6 +355,7 @@ void MainWindow::saveUiSetting()
     // 保存其他设置
     setting.beginGroup("Other");
     setting.setValue("Sound", otherSettingData.soundIndex);
+    setting.setValue("AnalyseTimeout", otherSettingData.analyseTimeout);
     setting.setValue("AutoRange", otherSettingData.autoRange);
     setting.setValue("YellowRange", otherSettingData.yellowRange);
     setting.setValue("RedRange", otherSettingData.redRange);
@@ -449,11 +451,13 @@ void MainWindow::listenDataWaveInit()
     connect(this, &MainWindow::sgSetDataWaveNum, taskDataWave, &Bll_DataWave::setCheckNum);                    // 设置最少检查点数
     connect(this, &MainWindow::sgSetDataWaveStableTime, taskDataWave, &Bll_DataWave::setStableTime);           // 设置最短稳定时间
     connect(this, &MainWindow::sgSetAutoCollectRange, taskDataWave, &Bll_DataWave::setAutoCollectRange);       // 设置拓展自动采集范围
+    connect(this, &MainWindow::sgSetAnalyseTimeout, taskDataWave, &Bll_DataWave::setAnalyseTimeout);           // 设置解析超时时间
     // 标准仪器稳定后，开始采集数据
     connect(taskDataWave, &Bll_DataWave::sgTurnToStable, this, &MainWindow::goOnCollect);
 
     threadDataWave->start();
-    emit sgSetAutoCollectRange(otherSettingData.autoRange); // 更新拓展自动采集范围
+    emit sgSetAutoCollectRange(otherSettingData.autoRange);    // 更新拓展自动采集范围
+    emit sgSetAnalyseTimeout(otherSettingData.analyseTimeout); // 更新解析超时时间
 
     qDebug() << "threadDataWave start";
 
@@ -949,7 +953,7 @@ void LeastSquare::leastSquareTaskStart(const int order, const vector<DECIMAL_TYP
                 threadLeastSquare->quit();
                 threadLeastSquare->wait();
                 threadLeastSquare = nullptr; 
-                taskLeastSquare = nullptr;});
+                taskLeastSquare = nullptr; });
 
     threadLeastSquare->start();
     emit startLeastSquare(order, x, y);
@@ -1757,6 +1761,7 @@ void MainWindow::on_actionSetting_triggered()
     if (otherSetting.exec() == QDialog::Accepted)
     {
         otherSetting.getOtherSetting(otherSettingData);
-        sgSetAutoCollectRange(otherSettingData.autoRange);
+        emit sgSetAutoCollectRange(otherSettingData.autoRange);    // 更新自动采集范围
+        emit sgSetAnalyseTimeout(otherSettingData.analyseTimeout); // 更新解析超时时间
     }
 }

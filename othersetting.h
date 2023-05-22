@@ -6,6 +6,7 @@
 typedef struct
 {
     int soundIndex;
+    int analyseTimeout;
     double autoRange;
     double yellowRange;
     double redRange;

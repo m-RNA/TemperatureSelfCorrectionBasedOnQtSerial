@@ -8,7 +8,7 @@ OtherSetting::OtherSetting(QWidget *parent) : QDialog(parent),
     // 去掉问号，只保留关闭
     this->setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     // 设置默认窗口大小
-    this->resize(352, 117);
+    this->resize(190, 280);
 }
 
 OtherSetting::~OtherSetting()
@@ -29,6 +29,7 @@ void OtherSetting::on_spbxRed_valueChanged(double arg1)
 void OtherSetting::setOtherSetting(const OtherSettingData &data)
 {
     ui->cbSound->setCurrentIndex(data.soundIndex);
+    ui->spbxAnalyseTimeout->setValue(data.analyseTimeout);
     ui->spbxAutoRange->setValue(data.autoRange);
     ui->spbxYellow->setValue(data.yellowRange);
     ui->spbxRed->setValue(data.redRange);
@@ -37,6 +38,7 @@ void OtherSetting::setOtherSetting(const OtherSettingData &data)
 void OtherSetting::getOtherSetting(OtherSettingData &data)
 {
     data.soundIndex = ui->cbSound->currentIndex();
+    data.analyseTimeout = ui->spbxAnalyseTimeout->value();
     data.autoRange = ui->spbxAutoRange->value();
     data.yellowRange = ui->spbxYellow->value();
     data.redRange = ui->spbxRed->value();

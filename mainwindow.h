@@ -121,6 +121,7 @@ signals:
     void sgCollectDataFinish_Dtm();
 
     void sgSetAutoCollectRange(const double range);
+    void sgSetAnalyseTimeout(const int ms);
 
     void collectDataXYChanged(const QVector<double> &x, const QVector<double> &y);
     void fitDataChanged(const vector<double> &x, const vector<double> &y);
