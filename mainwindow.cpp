@@ -5,6 +5,7 @@
 #include "interactchart.h"
 #include "fitchart.h"
 #include "about.h"
+#include "help_doc.h"
 #include "wizard.h"
 #include <QSerialPortInfo>
 #include <QSerialPort>
@@ -1764,4 +1765,10 @@ void MainWindow::on_actionSetting_triggered()
         emit sgSetAutoCollectRange(otherSettingData.autoRange);    // 更新自动采集范围
         emit sgSetAnalyseTimeout(otherSettingData.analyseTimeout); // 更新解析超时时间
     }
+}
+
+void MainWindow::on_actionDoc_triggered()
+{
+    HelpDoc doc(this);
+    doc.exec();
 }

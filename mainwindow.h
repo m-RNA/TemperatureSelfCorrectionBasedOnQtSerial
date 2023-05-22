@@ -103,6 +103,8 @@ private slots:
 
     void on_actionSetting_triggered();
 
+    void on_actionDoc_triggered();
+
 signals:
     void sgXlsxStartPoint();
     void sgXlsxSaveReport();

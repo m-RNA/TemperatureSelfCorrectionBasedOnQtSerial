@@ -41,6 +41,8 @@ INCLUDEPATH +=  \
     least_square_method \
     collect_data \
     start_serial \
+    othersetting \
+    document \
     ../eigen-3.4.0
 
 SOURCES += \
@@ -50,13 +52,14 @@ SOURCES += \
     collect_data/bll_save_data_to_xlsx.cpp \
     collect_data/collectpanel.cpp \
     config.c \
+    document/help_doc.cpp \
     least_square_method/bll_leastssquare.cpp \
     least_square_method/cv_table.cpp \
     least_square_method/fitchart.cpp \
     least_square_method/rangechart.cpp \
     main.cpp \
     message/message.cpp \
-    othersetting.cpp \
+    othersetting/othersetting.cpp \
     sound/bll_sound.cpp \
     start_serial/bll_codeconverter.cpp \
     start_serial/bll_serial.cpp \
@@ -76,13 +79,14 @@ HEADERS += \
     config.h \
     about/about.h \
     collect_data/collectpanel.h \
+    document/help_doc.h \
     least_square_method/bll_leastssquare.h \
     least_square_method/cv_table.h \
     least_square_method/fitchart.h \
     least_square_method/rangechart.h \
     mainwindow.h \
     message/message.h \
-    othersetting.h \
+    othersetting/othersetting.h \
     qcustomplot/interactchart.h \
     qcustomplot/qcustomplot.h \
     sound/bll_sound.h \
@@ -96,8 +100,9 @@ HEADERS += \
 FORMS += \
     about/about.ui \
     collect_data/collectpanel.ui \
+    document/help_doc.ui \
     mainwindow.ui \
-    othersetting.ui \
+    othersetting/othersetting.ui \
     start_serial/startcommunication.ui \
     wizard/serialsetting.ui \
     wizard/wizard.ui
