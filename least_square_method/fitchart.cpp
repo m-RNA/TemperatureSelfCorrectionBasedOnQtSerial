@@ -356,19 +356,21 @@ void FitChart::updateFitPlot(const QVector<double> &x, const QVector<double> &y)
 // 更新十字游标
 void FitChart::updateVerifyTracerX(const SerialAnalyseCell &x)
 {
+	xVerify = x.value;
+
 	if (verifyTracer->visible() == false)
 		return;
 
-	xVerify = x.value;
 	nowTime = x.timestamp; // 获取cell时间戳
 }
 
 void FitChart::updateVerifyTracerY(const SerialAnalyseCell &y)
 {
+	yVerify = y.value;
+
 	if (verifyTracer->visible() == false)
 		return;
 
-	yVerify = y.value;
 	nowTime = y.timestamp;						   // 获取cell时间戳
 	if (nowTime - oldTime < CHART_REFRESH_TIME_MS) // CHART_REFRESH_TIME_MS 刷新一次
 	{
