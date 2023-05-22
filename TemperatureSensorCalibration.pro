@@ -20,11 +20,11 @@ unix {
     LIBS = -lGL -lGLU -lglut
 }
 
-#如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=Xlsx，否则include(../QXlsx/QXlsx.pri)
+#如果USE_LOCAL_COMPILED_LIB = 1 ，QT+=xlsx，否则include(../xlsx/qtxlsx.pri)
 DEFINES += USE_LOCAL_COMPILED_LIB=1
 QT += xlsx
-# INCLUDEPATH +=../QXlsx
-# include(../QXlsx/QXlsx.pri)
+# INCLUDEPATH +=../xlsx
+# include(../xlsx/qtxlsx.pri)
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

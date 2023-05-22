@@ -4,19 +4,19 @@
 ## 依赖库
 - OpenGl（可选）  
 - Eigen-3.4.0
-- QXlsx-1.4.5（1.4.6对图表支持应该有BUG）  
+- QtXlsx-0.3.0（QXlsx对图表支持没QtXlsx良好）  
 
-其中 QXlsx 又依赖 Perl（Linux自带，Windows可以安装 Strawberry Perl 或者 ActivePerl 解决） 
+其中 QtXlsx 又依赖 Perl（Linux自带，Windows可以安装 Strawberry Perl 或者 ActivePerl 解决） 
 
 ## 打包命令
+- Linux  ：linuxdeployqt（需要安装）  
 - Windows：windeployqt（Qt自带）  
 可使用 Enigma Virtual Box 进一步封包  
-- Linux：linuxdeployqt（需要安装）  
 
 ## 下载链接
 共用：  
 - Eigen：https://eigen.tuxfamily.org/index.php?title=Main_Page  
-- QXlsx：https://github.com/QtExcel/QXlsx/releases/
+- QtXlsx：https://github.com/dbzhang800/QtXlsxWriter
 
 Windows：  
 - Strawberry Perl：https://strawberryperl.com  
@@ -27,7 +27,7 @@ Linux：
 
 ## 安装教程
 
-QXlsx：  
+QXlsx(不用编译也可以用的)： 
 - https://www.cnblogs.com/ybqjymy/p/17244317.html
 - https://www.codenong.com/cs106908387/
 - https://www.bilibili.com/video/BV1Er4y1C78L/
