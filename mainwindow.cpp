@@ -289,8 +289,8 @@ void MainWindow::loadUiSettings()
     otherSettingData.soundIndex = setting.value("Sound", 1).toInt();
     otherSettingData.analyseTimeout = setting.value("AnalyseTimeout", 5000).toInt();
     otherSettingData.autoRange = setting.value("AutoRange", 0.5).toDouble();
-    otherSettingData.yellowRange = setting.value("YellowRange", 0.2).toDouble();
-    otherSettingData.redRange = setting.value("RedRange", 0.5).toDouble();
+    otherSettingData.yellowRange = setting.value("YellowRange", 0.002).toDouble();
+    otherSettingData.redRange = setting.value("RedRange", 0.02).toDouble();
     setting.endGroup();
 }
 
