@@ -67,17 +67,11 @@ void Bll_SerialRecvAnalyse::analyseNum()
     while (1)
     {
         // 读取串口，附在 buffer 之后
-        int endIndex = buffer.indexOf("\r\n");
-        if (endIndex <= 0)
-            endIndex = buffer.indexOf("\n");
+        int endIndex = buffer.indexOf("\n");
 
         // 没有完整的一帧数据，直接返回
         if (endIndex <= 0)
-        {
-            // 清空缓冲区
-            buffer.clear();
             return;
-        }
 
         QByteArray rxFrame = buffer.left(endIndex);
         if (canIntoNum(rxFrame))
@@ -95,6 +89,8 @@ void Bll_SerialRecvAnalyse::analyseNum()
 
 // 数据格式
 // $T=019.1263 ;
+const char *daoWanTechHead = "$T=";
+const char *daoWanTechTail = " ;\r\n";
 void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 {
     SerialAnalyseCell cell;
@@ -102,29 +98,44 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
 
     while (1)
     {
-        int index = buffer.indexOf("$T=");
+        int index = buffer.indexOf('$');
         if (index == -1)
         {
             // 数据异常，清空缓冲区
             buffer.clear();
             return;
         }
-        // 找到了数据包起始标志
-
-        int endIndex = -1;
-        endIndex = buffer.indexOf(" ;\r\n", index);
-
-        // 没有完整的一帧数据，直接返回
-        if (endIndex <= 3)
+        // 帧头不完整，直接返回
+        if ((index + (int)sizeof(daoWanTechHead) - 2) >= buffer.size())
+            return;
+        if (buffer.at(index + 1) != 'T' || buffer.at(index + 2) != '=')
         {
-            // 丢弃帧尾前的数据
-            buffer.remove(0, endIndex + 3);
+            // 数据异常，清空缓冲区
+            buffer.clear();
             return;
         }
 
-        // 找到了数据包结束标志
-        QByteArray rxFrame = buffer.mid(index + 3, endIndex - index - 3);
-        // qDebug() << id << "rxFrame:" << rxFrame;
+        /* 找到了数据包起始标志 */
+
+        int endIndex = buffer.indexOf('\n', index + (int)sizeof(daoWanTechHead) - 1);
+
+        // 没有完整的一帧数据，直接返回
+        if (endIndex == -1)
+            return;
+
+        if (buffer.at(endIndex - 1) != '\r' || buffer.at(endIndex - 2) != ';' || buffer.at(endIndex - 3) != ' ')
+        {
+            // 数据异常，清空缓冲区
+            buffer.clear();
+            return;
+        }
+
+        /* 找到了数据包结束标志 */
+
+        qDebug() << id << "row:" << buffer.mid(index, endIndex);
+
+        QByteArray rxFrame = buffer.mid(index + 3, endIndex - index - 6);
+        qDebug() << id << "rxFrame:" << rxFrame;
 
         // 处理解析出来的数据
         if (canIntoNum(rxFrame))
@@ -136,6 +147,6 @@ void Bll_SerialRecvAnalyse::analyseDaoWanTech()
             emit sgBll_AnalyseFinish(cell);
         }
         // 从缓冲区中移除已经解析的数据包
-        buffer.remove(0, endIndex + 2);
+        buffer.remove(0, endIndex + 1);
     }
 }
