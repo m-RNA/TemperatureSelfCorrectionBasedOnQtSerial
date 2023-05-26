@@ -34,10 +34,10 @@ Bll_LeastSquareMethod::Bll_LeastSquareMethod(QObject *parent) : QObject(parent)
     最小二乘法参考：
     https://blog.csdn.net/weixin_44344462/article/details/88850409
 
-    A W = B
-    AT A W = AT B
-    (AT A)^(-1) AT A W = (AT A)^(-1) AT B
-    W = (AT A)^(-1) AT B
+    A X = B
+    AT A X = AT B
+    (AT A)^(-1) AT A X = (AT A)^(-1) AT B
+    X = (AT A)^(-1) AT B
 */
 void Bll_LeastSquareMethod::work(size_t order,
                                  const vector<DECIMAL_TYPE> &x, const vector<DECIMAL_TYPE> &y)
@@ -51,7 +51,7 @@ void Bll_LeastSquareMethod::work(size_t order,
 
     // 创建A矩阵
     MatrixX_Dec A(x.size(), order + 1);
-    for (unsigned long long i = 0; i < x.size(); ++i) // 遍历所有点
+    for (size_t i = 0; i < x.size(); ++i) // 遍历所有点
     {
         for (int n = order, dex = 0; n >= 1; --n, ++dex) // 遍历order到1阶
         {
@@ -62,21 +62,24 @@ void Bll_LeastSquareMethod::work(size_t order,
 
     // 创建B矩阵
     MatrixX_Dec B(y.size(), 1);
-    for (unsigned long long i = 0; i < y.size(); ++i)
+    for (size_t i = 0; i < y.size(); ++i)
     {
         B(i, 0) = y.at(i);
     }
 
-    // 创建矩阵W
-    MatrixX_Dec W;
-    W = (A.transpose() * A).inverse() * A.transpose() * B;
+    // 创建矩阵X
+    MatrixX_Dec X;
+    if (A.rows() == A.cols()) // 如果A是方阵，那么可以直接求逆
+        X = A.inverse() * B;
+    else
+        X = (A.transpose() * A).inverse() * A.transpose() * B;
 
-    // 打印W结果
+    // 打印X结果
     qDebug() << "Factor:";
     vector<DECIMAL_TYPE> factor;
     for (size_t i = 0; i <= order; i++)
     {
-        DECIMAL_TYPE temp = W(i, 0);
+        DECIMAL_TYPE temp = X(i, 0);
         factor.push_back(temp);
         snprintf(globalStringBuffer, sizeof(globalStringBuffer), "%LE", temp);
         qDebug() << globalStringBuffer;
