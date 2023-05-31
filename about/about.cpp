@@ -25,7 +25,7 @@ About::About(QWidget *parent) : QDialog(parent),
     char date_buf[16];
     Get_Compile_Date_Base(&Year, &Month, &Day); // 取编译时间
     sprintf(date_buf, "%02d%02d%02d", Year, Month, Day);
-    ui->lbBuildDate->setText("build" + QString(date_buf));
+    ui->lbBuildDate->setText("Build" + QString(date_buf));
 }
 
 About::~About()

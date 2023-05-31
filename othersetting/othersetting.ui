@@ -67,8 +67,14 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label">
+        <property name="toolTip">
+         <string>目标温度点±容许误差这个范围内可以触发自动采集</string>
+        </property>
+        <property name="toolTipDuration">
+         <number>0</number>
+        </property>
         <property name="text">
-         <string>拓宽目标</string>
+         <string>容许误差</string>
         </property>
        </widget>
       </item>
