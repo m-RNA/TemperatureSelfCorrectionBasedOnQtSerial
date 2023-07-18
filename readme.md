@@ -15,23 +15,23 @@ Doc文件夹中有**答辩PPT**和**毕设说明书**。
 串口收发：  
 ![](Doc/image/串口模块.gif)
 
-解析数据与波形绘制:
+解析数据与波形绘制:  
 ![](Doc/image/解析数据.gif)
 
-波动监测：
+波动监测：  
 ![](Doc/image/波动1.gif)
 
 自动采集：  
 ![](Doc/image/自动采集模块.gif)  
 
-最小二乘法拟合：
+最小二乘法拟合：  
 ![](Doc/image/拟合模块.gif)  
 
 语音提示：  
 ![](Doc/image/3.png)  
 极差统计：  
 ![](Doc/image/4.png)  
-数据保存为Xlsx表格：
+数据保存为Xlsx表格：  
 ![](Doc/image/5.png)  
 实时拟合误差指示：  
 ![](Doc/image/6.png)  
