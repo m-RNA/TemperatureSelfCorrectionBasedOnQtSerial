@@ -236,6 +236,7 @@ void MainWindow::loadUiSettings()
         int autoListSize = setting.beginReadArray("AutoCollectDataList");
         if (autoListSize == 0)
             goto AUTO_LIST_DEFAULT;
+        wizardInfo.collectSetting.autoList.clear();
         for (int i = 0; i < autoListSize; ++i)
         {
             setting.setArrayIndex(i);
@@ -563,12 +564,7 @@ void MainWindow::autoCollectTimerQuit()
 
 void MainWindow::soundInit()
 {
-    if (threadSound)
-    {
-        emit sgSoundStop();
-        threadSound->quit();
-        threadSound->wait();
-    }
+    soundQuit();
     taskSound = new Bll_Sound;
     threadSound = new QThread;
     taskSound->moveToThread(threadSound);
@@ -578,6 +574,18 @@ void MainWindow::soundInit()
     connect(this, &MainWindow::sgSoundPlay2, taskSound, &Bll_Sound::play2);
     connect(this, &MainWindow::sgSoundStop, taskSound, &Bll_Sound::stop);
     threadSound->start();
+}
+
+void MainWindow::soundQuit()
+{
+    if (threadSound)
+    {
+        emit sgSoundStop();
+        threadSound->quit();
+        threadSound->wait();
+        threadSound = nullptr;
+        taskSound = nullptr;
+    }
 }
 
 QString MainWindow::collectTimeStampToHhMmSs(int timestamp)
@@ -839,13 +847,7 @@ void Bll_CollectBtn::timerCollectTimeOut()
     }
 
     // 关闭声音
-    if (otherSettingData.soundIndex > 0)
-    {
-        emit sgSoundStop();
-        threadSound->quit();
-        threadSound->wait(); // 这里需要吗？
-        threadSound = nullptr;
-    }
+    soundQuit();
 
     // 更新状态栏
     lbLastRange->setText("上次极差 标准：" + strRange_Std + " 待定：" + strRange_Dtm);

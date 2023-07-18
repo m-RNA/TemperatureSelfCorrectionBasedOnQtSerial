@@ -318,18 +318,19 @@ void StartCommunication::on_btnSerialSwitch_clicked()
             bll_SerialPort = nullptr;
 
             /*
-                        QMessageBox::critical(this, deviceName, "串口" + res.msg + "请检查:\n\
+                        QMessageBox::critical(this, deviceName, + res.msg + "请检查:\n\
             - 线缆是否松动?\n\
             - 串口是否被占用?\n\
             - 串口配置是否正确?\n\
             - 是否有串口读写权限?");
             */
 
-            Message::error(deviceName + "\n串口" + res.msg + "请检查:\n\
-- 线缆是否松动?\n\
-- 串口是否被占用?\n\
-- 串口配置是否正确?\n\
-- 是否有串口读写权限?");
+            Message::error(deviceName + "\n串口" + res.msg);
+//+ "请检查:\n\
+//- 线缆是否松动?\n\
+//- 串口是否被占用?\n\
+//- 串口配置是否正确?\n\
+//- 是否有串口读写权限?");
             return;
         }
 
@@ -465,7 +466,7 @@ void StartCommunication::on_btnSaveRecvTE_clicked()
     }
     else
     {
-        Message::error(deviceName + "\n出差啦!\n串口原始数据保存失败\n" + file->errorString());
+        Message::error(deviceName + "\n出错啦!\n串口原始数据保存失败\n" + file->errorString());
         return;
     }
     Message::success(deviceName + "\n串口原始数据保存成功");

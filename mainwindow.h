@@ -163,6 +163,7 @@ private:
     void shortcutInit();
     void statusBarInit();
     void soundInit();
+    void soundQuit();
     void listenDataWaveInit();
     void listenDataWaveQuit();
     void collectDataInit();
