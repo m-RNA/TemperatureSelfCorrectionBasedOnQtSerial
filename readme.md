@@ -1,3 +1,49 @@
+# 温度传感器校准上位机
+
+**Fork** Me Please ~
+
+Doc文件夹中有**答辩PPT**和**毕设说明书**。
+
+毕设答辩实录：https://www.bilibili.com/video/BV1ek4y1p7Bp/
+
+上位机支持多平台：
+![](Doc/image/1.png)
+
+上位机功能模块框图：
+![](Doc/image/2.png)
+
+串口收发：  
+![](Doc/image/串口模块.gif)
+
+解析数据与波形绘制:
+![](Doc/image/解析数据.gif)
+
+波动监测：
+![](Doc/image/波动1.gif)
+
+自动采集：  
+![](Doc/image/自动采集模块.gif)  
+
+最小二乘法拟合：
+![](Doc/image/拟合模块.gif)  
+
+语音提示：  
+![](Doc/image/3.png)  
+极差统计：  
+![](Doc/image/4.png)  
+数据保存为Xlsx表格：
+![](Doc/image/5.png)  
+实时拟合误差指示：  
+![](Doc/image/6.png)  
+友好的界面设计：
+![](Doc/image/7.png)  
+![](Doc/image/8.png)  
+![](Doc/image/9.png)  
+测试结果：
+![](Doc/image/10.png)  
+
+
+
 # 开发环境与依赖
 
 基于Qt 5.14.2 GCC开发  
